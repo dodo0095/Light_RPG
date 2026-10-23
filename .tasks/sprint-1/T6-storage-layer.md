@@ -7,11 +7,11 @@
 | Sprint | Sprint 1 |
 | 指派給 | frontend-developer |
 | 優先級 | P0 |
-| 狀態 | assigned |
+| 狀態 | in_progress |
 | 依賴 | T1,T3 |
 | 預估 | 2d |
 | 建立時間 | 2026-10-23T07:23:49.853Z |
-| 開始時間 | — |
+| 開始時間 | 2026-10-23T09:14:42.135Z |
 | 完工時間 | — |
 
 ---
@@ -34,3 +34,6 @@
 
 ### 2026-10-23T07:23:49.853Z — 建立任務（assigned）
 由 tech-lead 依 `proposal/sprint1-dev-plan.md` 第 6 節派工（老闆 2026-10-23 指示繼續執行）
+
+### 2026-10-23T09:14:42.135Z — 狀態變更 → in_progress
+依賴調整（tech-lead 決定）：T3 spike 要等 T2 部署通道，先以 fake-indexeddb 開發；T3 的 S2（Safari 遷移流程）結果出來後若有差異，以修正任務補上。風險：Safari 行為與 fake-indexeddb 不同
