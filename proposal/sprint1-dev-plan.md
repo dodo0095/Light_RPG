@@ -258,7 +258,7 @@ T2 → X6 → T3 ─┬→ T4 ────────────────�
 |------|---------|------|------|
 | T1 | 2026-10-23 | ✅ 完成 | commit 055d112；Vite／Vitest 釘舊版（postmortem-log） |
 | T2 | 2026-10-23 | ✅ 完成 | 部署機＋Caddy 上線，rpg.starklab.tw iPhone 實測可開 |
-| T3 | | | |
+| T3 | 2026-10-23 | ✅ 完成 | WebKit IDB 驗證通過（1 Minor）；LINE 內建瀏覽器不支援 SW → F1 新增提示 |
 | T4 | | | |
 | T5 | 2026-10-23 | ✅ 完成 | commit 1597eb2；只含 schema，正式 balance.json 等 X2 後於 T9 開工時填入 |
 | T6 | 2026-10-23 | ✅ 完成 | commit 550a362；先於 T3 以 fake-indexeddb 開發，Safari 差異待 S2 |

@@ -18,7 +18,7 @@
 
 ## 任務描述
 
-`src/services/`：clock、把 core 與 storage 接起來、日結觸發（啟動、回到前景、計時器、打卡前）、日結單一 transaction 寫入與防重複。
+`src/services/`：clock、把 core 與 storage 接起來、日結觸發（啟動、回到前景、計時器、打卡前）、日結單一 transaction 寫入與防重複。 另依 T3 結果：啟動時呼叫 `navigator.storage.persist()` 並保存結果供設定頁顯示；transaction 內只能 await IDB 操作（不得 await 計時器／網路）；寫入 installId（data-model 4.1）。
 
 對應提案書第 2 節：#2、#3。規範依據：`.knowledge/architecture.md`、`.knowledge/data-model.md`、`.knowledge/day-rollover.md`。
 

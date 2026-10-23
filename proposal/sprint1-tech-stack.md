@@ -111,9 +111,45 @@ Sprint 1 要做一個裝在 iPhone 主畫面、可離線使用的 PWA，資料�
 - **Django 的位置**：第二版做雲端同步時，Django 可以當同步伺服器（企劃書 1.2 節本來就把它列為候選）。D2 已經預留 UUID、`updatedAt`、軟刪除，到時候接 Django 不用改資料結構。
 - **Node.js 當後端**：第二版也可以用 Node.js（例如 Fastify）寫同步伺服器，好處是前後端都是 TypeScript，可以共用資料型別。Django 和 Node.js 的取捨留到第二版再提案。
 
-## 9. spike 結果
+## 9. spike 結果（2026-10-23）
 
-（定案後執行 spike S1～S3，結果填在這裡。）
+工具：診斷頁 `https://rpg.starklab.tw/__spike/index.html`（`spike/diag/`），只用 `spike-` 前綴測試資料庫，前後清除。
+
+| 執行環境 | 結果 |
+|---------|------|
+| Windows Chrome 156（上線網址，經 Caddy＋CSP＋SW） | 10 ✅ |
+| iPhone iOS 18.7，**LINE 內建瀏覽器**（WebKit WKWebView） | 8 ✅、1 ⚠️、1 ❌ |
+| 老闆 iPhone Safari 主畫面 App（手動） | 加入主畫面、全螢幕、飛航模式開啟：通過 |
+
+### S1：iOS 安裝／離線／儲存
+
+- 主畫面安裝、全螢幕、離線開啟：✅（老闆實測）
+- **LINE 內建瀏覽器不支援 Service Worker**（`serviceWorker in navigator = false`）：從 LINE 點連結開啟，**無法離線、無法正確安裝**。→ 規格新增：偵測到不支援時提示「請用 Safari 開啟」（feature-spec F1）
+- `navigator.storage.persist()` 在 LINE 內建瀏覽器回 `false`；Chrome 回 `true`。主畫面 App 的結果**尚未取得**（診斷頁無法在主畫面 App 內開啟）→ T12 啟動時呼叫 `persist()`，並在設定頁顯示是否已取得持久儲存，試用期間觀察；匯出備份（T18）仍是主要保護
+- 配額約 9.8 GB，容量不是問題
+
+### S2：Safari（WebKit）IndexedDB 行為
+
+| # | 項目 | WebKit 結果 | 影響 |
+|---|------|-----------|------|
+| 1 | 版本探測後是否留下空資料庫 | ❌ 會留下 version 0 的空資料庫（fake-indexeddb、Chrome 不會） | 🟡 Minor：`readStoredVersion` 兩次都正確回 0，之後以 v1 開啟走正常升級。功能不受影響，只多一個空殼。不修改；T23 實機驗收需涵蓋「全新安裝」 |
+| 2 | 升級＋失敗回滾 | ✅ v1（3000 筆事件）→v2 178 ms；中途失敗退回 v1、資料不變、備份仍在 | 遷移設計成立 |
+| 3 | 舊連線 versionchange／blocked | ✅ 舊連線收到 versionchange 並關閉；不關閉的連線會讓升級等待，關閉後完成 | 設計成立 |
+| 4 | structuredClone、databases() | ✅ 可用 | — |
+| 5 | 複合索引、unique 衝突 | ✅ 缺 taskId 的記錄不進索引；衝突為 ConstraintError 且整個 transaction 中止 | 與 fake-indexeddb 一致 |
+| 6 | transaction 內 await | ✅ 微任務後可繼續寫；`setTimeout` 後寫入丟 TransactionInactiveError | 規則：transaction 內只能 await IDB 操作，不得 await 計時器或網路 |
+| 7 | 1 MB／5 MB 備份快照 | ✅ 18 ms／58 ms | 自動備份可行 |
+
+### S3：bundle 量測（`pnpm build`，gzip -9）
+
+| 檔案 | raw | gzip |
+|------|-----|------|
+| 主程式 `assets/index-*.js`（含 Preact、儲存層之外的 S1 外殼） | 28.4 KB | 11.6 KB |
+| `workbox-window` | 5.7 KB | 2.4 KB |
+| `sw.js`＋`workbox-*.js`（Service Worker，不影響首屏） | 132 KB | 29.8 KB |
+| 首屏 JS 合計 | — | **13.7 KB** |
+
+結論：方案 A 的體積符合預期，遠低於需要擔心的程度。
 
 ---
 
