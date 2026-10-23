@@ -7,11 +7,11 @@
 | Sprint | Sprint 1 |
 | 指派給 | frontend-developer |
 | 優先級 | P0 |
-| 狀態 | assigned |
+| 狀態 | in_progress |
 | 依賴 | T5,T7 |
 | 預估 | 2d |
 | 建立時間 | 2026-10-23T07:23:49.853Z |
-| 開始時間 | — |
+| 開始時間 | 2026-10-23T20:30:00.596Z |
 | 完工時間 | — |
 
 ---
@@ -42,3 +42,6 @@
 
 ### 2026-10-23T13:33:03.503Z — 狀態變更 → assigned
 X2、X5 解除：數值決策表 v1.0 老闆確認（.knowledge/decision-tables.md）。開工時依附錄 A 建立 balance.json，並依決策表第 11 節調整 balance.schema.ts、測試設定檔；data-model 第 5、6.1 節與 day-rollover TC-UN-07～09 已同步。
+
+### 2026-10-23T20:30:00.596Z — 狀態變更 → in_progress
+開始執行。tech-lead 決定（決策表第 11 節 #2、#3）：拿掉 hp.max 陣列型與 levelCurve formula 型，只保留 v1.0 採用的結構
