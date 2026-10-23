@@ -235,3 +235,26 @@ export interface DaySummary {
   penaltyEventId: string | null;
   configVersion: string;
 }
+
+// ---------------------------------------------------------------------------
+// 以下為 T6（儲存層）需要的型別
+// ---------------------------------------------------------------------------
+
+/** 自訂獎勵，data-model.md 第 4.5 節。 */
+export interface Reward {
+  id: string;
+  createdAt: IsoDateTime;
+  updatedAt: IsoDateTime;
+  /** 軟刪除時間；`null` 表示未刪除 */
+  deletedAt: IsoDateTime | null;
+  title: string;
+  cost: number;
+  sourceTemplateId: string | null;
+  sortOrder: number;
+}
+
+/** `meta` store 的一筆 key-value，data-model.md 第 4.1 節。 */
+export interface MetaRecord {
+  key: string;
+  value: unknown;
+}
