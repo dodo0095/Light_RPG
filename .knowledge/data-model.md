@@ -87,7 +87,7 @@
 |------|------|------|
 | `id`, `createdAt`, `updatedAt` | — | 共通欄位 |
 | `rolloverTime` | `string`（`HH:mm`） | 換日時間。預設值從設定檔 `defaults.rolloverTime` 讀取，不寫在程式碼裡 |
-| `pendingRolloverTime` | `{ time: string; effectiveFromDayKey: DayKey } \| null` | 使用者改了換日時間，從下一個遊戲日才生效（理由見 day-rollover.md 第 5.7 節） |
+| `pendingRolloverTimes` | `{ time: string; effectiveFromDayKey: DayKey }[]`（依生效日由舊到新，平常最多 2 筆） | 使用者改了換日時間，不立刻生效，排進這個清單（規則見 day-rollover.md 第 5.7 節；v0.3 由單筆改成清單） |
 | `timeZone` | `string`（IANA，例如 `Asia/Taipei`） | 上次日結時偵測到的時區；用來判斷「時區有沒有變」 |
 | `lastSettledDayKey` | `DayKey \| null` | 最後一個已經結算完的遊戲日。這一天（含）之前的打卡都不能再取消 |
 | `lastOpenedAt` | `string \| null` | 最後一次打開 App 的時間（試用指標使用） |

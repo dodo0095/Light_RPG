@@ -1,7 +1,7 @@
 # 晨光之誓 — 換日／日結模組設計
 
 > 層級：🔴 規範
-> 狀態：v0.2（2026-10-23，tech-lead）— 修正 `R_effective` 定義、換日時間排程、夏令時間結束；來源：T7 實作回報
+> 狀態：v0.3（2026-10-23，tech-lead）— 補「已有 pending 時再排程」；v0.2：修正 `R_effective` 定義、換日時間排程、夏令時間結束；來源：T7 實作回報
 > 相關：`.knowledge/data-model.md`（欄位定義）、`.knowledge/decision-tables.md`（數值，product-manager 產出）
 > **數值**：本文件不寫任何數字。以下符號都對應設定檔或使用者設定：
 >
@@ -75,11 +75,12 @@ effectiveDayKey = max(computeDayKey(now, tz, R), nextDay(lastSettledDayKey))
 **`R_effective(d)` 的定義**：遊戲日 `d` **從什麼時間開始**，也就是「日曆日 `d` 的當地時間 `R_effective(d)`」是 `d−1` 和 `d` 的分界。（v0.2 修正：舊版只說「d 使用哪個換日時間」，沒說是開始還是結束，換日時間改晚時會算出兩種答案。）
 
 ```
-如果 settings.pendingRolloverTime 存在，而且 d ≥ pendingRolloverTime.effectiveFromDayKey：
-  R_effective(d) = pendingRolloverTime.time
-否則：
-  R_effective(d) = settings.rolloverTime
+pending = settings.pendingRolloverTimes 中，effectiveFromDayKey ≤ d 的最後一筆（清單依生效日由舊到新排序）
+如果有：R_effective(d) = pending.time
+否則：  R_effective(d) = settings.rolloverTime
 ```
+
+> v0.3：`pendingRolloverTime`（單筆）改成 `pendingRolloverTimes`（清單）。單筆無法表達「明天用排程 A、後天起用排程 B」的過渡期，任何把它擠成單筆的做法都會讓今天或明天的分界被改到（T7 實作時找到反例）。
 
 計算「現在是哪一天」（`currentDayKey`）只用一條規則，不重算：
 
@@ -118,7 +119,8 @@ dayKey = (m ≥ R_effective(c)) ? c : c 的前一天
    f. 如果 HP 在這一天降到 0：照 balance.hpDepletion 處理，寫一筆 hp_depleted 事件
       （補算多天時是否每天都可能觸發，見待確認 #3）
 6. settings.lastSettledDayKey = today 的前一天
-7. 如果 settings.pendingRolloverTime 的生效日 ≤ today：把它寫進 settings.rolloverTime，並清空 pendingRolloverTime（見 5.7）。
+7. 整理 settings.pendingRolloverTimes：生效日 ≤ today 的項目中，最後一筆的 time 寫進 settings.rolloverTime，這些項目全部移除；生效日 > today 的保留（見 5.7）。
+   安全性：遊戲日 today 只可能落在日曆日 today 或 today 的下一天，這兩天的開始時間在整理前後都相同。
    補算區間裡的每一天都在步驟 5 用 R_effective(d) 判斷，所以生效日落在補算區間內也不會算錯。
 8. settings.timeZone = timeZone
 ```
@@ -200,17 +202,21 @@ S1 不提供「補登昨天」（2026-10-23 老闆決定）。
 
 如果改了 `R` 立刻生效，遊戲日可能突然往前跳，造成還沒打卡的 Dailies 被立刻結算扣血。
 
-**做法**：寫入 `settings.pendingRolloverTime`，在那之前一律用舊的 `R`。生效日用純函式 `scheduleRolloverChange(now, timeZone, settings, newTime)` 決定：
+**做法**：不直接改 `rolloverTime`，而是在 `settings.pendingRolloverTimes` 加一筆排程。純函式 `scheduleRolloverChange(now, timeZone, settings, newTime)` 回傳新的完整 `RolloverSettings`：
 
 ```
-today = currentDayKey(now, …)
+today = currentDayKey(now, timeZone, settings)
+(c, m) = now 的當地日曆日與分鐘數
 E = today 的下一天
-如果「日曆日 E 的當地新 R 時間」≤ now（新 R 比現在的時刻還早，E 用新 R 的話已經開始了）：
+如果 (c, m) ≥ (E, newR)（依日期再依分鐘比較；表示「日曆日 E 的新 R 時刻」已經過了）：
   E = E 的下一天
-回傳 { time: newTime, effectiveFromDayKey: E }
+新清單 = 原清單中生效日 < E 的項目 ＋ { time: newTime, effectiveFromDayKey: E }
+回傳 { rolloverTime: 不變, pendingRolloverTimes: 新清單 }
 ```
 
-保證：改設定的當下，`currentDayKey` 的結果不變（不會立刻換日、不會立刻結算）。
+為什麼正確：生效日 < E 的項目都保留，所以 E 之前每一天的開始時間完全不變；E 的開始時間改成新 R，而前面的判斷保證這個時刻還沒到。因此不論原本有幾筆排程，改設定的當下 `currentDayKey` 都不變（不會立刻換日、不會立刻結算）。
+
+清單長度：日結步驟 7 會把已生效的項目併入 `rolloverTime`，所以清單平常最多 2 筆。
 
 ### 5.8 使用者手動調手機時間
 
@@ -260,7 +266,8 @@ E = today 的下一天
 | TC-DK-08 | 夏令時間重複的一小時 | `R` 落在重複的小時，前一天已結算 | `effectiveDayKey` 不倒退 |
 | TC-DK-09 | 換日時間改晚的過渡日 | 舊 R 早於新 R，生效日 E | E 當地時間介於舊 R、新 R 之間 → `E−1`；到新 R → E；逐分鐘不跳號不倒退 |
 | TC-DK-10 | 換日時間改早的過渡日 | 舊 R 晚於新 R，生效日 E | E 當地時間到新 R 就換成 E |
-| TC-DK-11 | 排程不立即生效 | 在任何時刻呼叫 `scheduleRolloverChange`（新 R 比現在早或晚） | 套用前後 `currentDayKey` 相同 |
+| TC-DK-11 | 排程不立即生效 | 在任何時刻呼叫 `scheduleRolloverChange`（新 R 比現在早或晚；清單為空、有 1 筆、有 2 筆，生效日為今天／明天／後天；連續排程多次） | 套用前後 `currentDayKey` 相同；之後逐分鐘掃描兩天不跳號不倒退 |
+| TC-DK-12 | 日結整理排程清單 | 清單含生效日 ≤ today 與 > today 的項目 | 整理前後 `currentDayKey` 與今天、明天的開始時間相同 |
 | TC-DK-07 | 星期判斷 | `R` 之前的週六凌晨 | 星期算週五 |
 | TC-ST-01 | 正常一天 | 2 個 Daily，完成 1 個 | 扣 `P(未完成的難度)`；完成的 streak + 1，沒完成的歸零；1 筆 summary |
 | TC-ST-02 | 全部完成 | 全部打勾 | 不扣血；沒有 `rollover_penalty` 事件 |
