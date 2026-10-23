@@ -7,7 +7,7 @@
 | Sprint | Sprint 1 |
 | 指派給 | frontend-developer |
 | 優先級 | P0 |
-| 狀態 | in_progress |
+| 狀態 | in_review |
 | 依賴 | T1,T3 |
 | 預估 | 1d |
 | 建立時間 | 2026-10-23T07:23:49.853Z |
@@ -37,3 +37,6 @@ manifest、iOS meta 與 apple-touch-icon、vite-plugin-pwa 離線快取、`regis
 
 ### 2026-10-23T09:27:54.628Z — 狀態變更 → in_progress
 依賴調整：T3 spike S1（iOS 安裝／離線）需要 T4 才能測，T4 先於 T3 進行
+
+### 2026-10-23T09:32:34.617Z — 狀態變更 → in_review
+程式 Review 通過（tech-lead 重跑 lint／typecheck／675 tests／build；serve.mjs 實測 header 正確；commit 81af611）。三項驗收（可安裝、離線重新整理、更新後版本號改變）本機無 Lighthouse，待 T3 iPhone 實機驗證後標 done
