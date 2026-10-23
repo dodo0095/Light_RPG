@@ -51,7 +51,7 @@
 | 資料驗證 | Zod |
 | 測試 | Vitest（＋fake-indexeddb） |
 | 套件管理 | pnpm |
-| 部署 | 老闆自己的 Windows 電腦；老闆的反向代理 `rpg.starklab.tw` → `127.0.0.1:5810`（`deploy/serve.mjs`） |
+| 部署 | 部署機（老闆另一台電腦，非開發機）：GitHub `dodo0095/Light_RPG` clone 後 build，`deploy/serve.mjs` 聽 `127.0.0.1:5810`；同機的反向代理對外提供 `rpg.starklab.tw` |
 
 ## 設計稿合規規則（強制）
 

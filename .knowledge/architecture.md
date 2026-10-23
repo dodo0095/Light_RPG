@@ -57,7 +57,7 @@ iPhone Safari（加入主畫面）
 | 單元測試 | Vitest（IndexedDB 測試用 `fake-indexeddb`） | 時間一律由參數注入 |
 | 程式碼品質 | ESLint＋Prettier | 設定依公司 coding-standards |
 | 套件管理 | pnpm | |
-| 部署 | 老闆自己的 Windows 電腦＋老闆自有的反向代理（`rpg.starklab.tw` → `127.0.0.1:5810`） | 見第 4.1 節 |
+| 部署 | 部署機（老闆另一台電腦，反向代理也在這台）上的 `deploy/serve.mjs`；代理 `rpg.starklab.tw` → `127.0.0.1:5810` | 見第 4.1 節 |
 
 ### 4.1 部署架構
 
@@ -65,19 +65,20 @@ iPhone Safari（加入主畫面）
 iPhone Safari ──HTTPS──> rpg.starklab.tw
                               │ 老闆自有的反向代理（負責 HTTPS 憑證與對外連線）
                               ▼  http://127.0.0.1:5810
-                  老闆的 Windows 電腦
+                  部署機（老闆另一台電腦，與反向代理同一台；不是開發機）
                   └─ 靜態檔伺服器 deploy/serve.mjs（只聽 127.0.0.1）── 提供 dist/
 ```
 
 | 項目 | 規則 |
 |------|------|
 | 網址 | `rpg.starklab.tw`（2026-10-23 老闆定案；DNS 不分大小寫，一律寫小寫）。定了就不要改。iPhone 的 IndexedDB 依網址存放，換網址＝原本的資料讀不到 |
+| 部署機 | 2026-10-23 老闆說明：反向代理與網站在同一台電腦，但**不是開發用的這台**。部署機從 GitHub（`dodo0095/Light_RPG`）`git clone`，在部署機上 `pnpm install`＋`pnpm build`，再啟動 `serve.mjs`；更新＝`git pull`＋重新 build。部署機需要 Git、Node.js、pnpm |
 | 網域 DNS 與 HTTPS | 由老闆的反向代理負責（2026-10-23 老闆決定，取代原 Cloudflare Tunnel 方案；DNS 維持 GoDaddy）。代理需提供有效 HTTPS 憑證，並把 `rpg.starklab.tw` 轉到 `http://127.0.0.1:5810` |
 | 靜態檔伺服器 | `deploy/serve.mjs`（Node 內建模組、無額外套件），只聽 `127.0.0.1`；port 預設 5810，可用環境變數 `RPG_PORT` 覆蓋。開機自動啟動用 Windows 工作排程器 |
 | 快取 header | `sw.js`、`index.html`、`manifest.webmanifest` 一律 `Cache-Control: no-cache`；檔名帶 hash 的 JS／CSS 可長期快取。由 `serve.mjs` 設定；反向代理**不得快取**、要原樣轉送 `Cache-Control`（T2 用 `curl -I https://rpg.starklab.tw/sw.js` 驗證） |
-| 電腦開機需求 | 只有 iPhone 第一次安裝和取得新版本時需要開機；平常 App 離線運作 |
-| 發佈新版本 | `pnpm build` → 更新 `dist/` → iPhone 開 App 時出現更新提示 |
-| 回滾 | git revert → 重新 build → 覆蓋 `dist/` |
+| 電腦開機需求 | 部署機只有在 iPhone 第一次安裝和取得新版本時需要開機；平常 App 離線運作 |
+| 發佈新版本 | 開發機 push 到 GitHub `main` → 部署機 `git pull`＋`pnpm install`＋`pnpm build` → iPhone 開 App 時出現更新提示 |
+| 回滾 | 開發機 git revert 並 push → 部署機 `git pull`＋重新 build |
 | 機密 | 本專案不保管憑證；HTTPS 憑證在老闆的反向代理上 |
 
 ## 5. 目錄結構
