@@ -18,7 +18,7 @@
 
 ## 任務描述
 
-`src/core/check-in/`、`src/core/progression/`：Daily／To-do 打勾與取消、Habit ＋／－、迷你版、主屬性倍率、等級由累計經驗算出、HP 歸零懲罰、兌換獎勵。**決策表定案前不得開始**（阻斷規則）。
+`src/core/check-in/`、`src/core/progression/`：Daily／To-do 打勾與取消、Habit ＋／－、迷你版、主屬性倍率、等級由累計經驗算出、HP 歸零懲罰、兌換獎勵。**決策表定案前不得開始**（阻斷規則）。 開工時先依 decision-tables.md 建立正式 `src/config/balance.json`（T5 只做了 schema）。
 
 對應提案書第 2 節：#6。規範依據：`.knowledge/architecture.md`、`.knowledge/data-model.md`、`.knowledge/day-rollover.md`。
 

@@ -146,7 +146,7 @@
 
 | 欄位 | 型別 | 說明 |
 |------|------|------|
-| `schedule` | `{ kind: 'everyday' \| 'weekdays' \| 'weekends' \| 'custom'; daysOfWeek: number[] }` | 頻率。`daysOfWeek` 只有 `custom` 時才用，`0`＝週日～`6`＝週六（JS `getDay()` 慣例）。「平日」「週末」指的是哪幾天，以遊戲日的星期為準 |
+| `schedule` | `{ kind: 'everyday' \| 'weekdays' \| 'weekends' \| 'custom'; daysOfWeek: number[] }` | 頻率。`daysOfWeek` 只有 `custom` 時才用（至少一天、不重複）；其他三種一律存空陣列 `[]`，讓資料形狀固定。`0`＝週日～`6`＝週六（JS `getDay()` 慣例）。「平日」「週末」指的是哪幾天，以遊戲日的星期為準 |
 | `checklist` | `ChecklistItem[]` | 選用的檢查清單（Daily 也可以有） |
 | `streak` | `number` | 連續完成天數，**只在日結時更新** |
 
@@ -289,7 +289,7 @@
 | `packType` | `string` | `class_sets`／`habit_library`／`reward_library`（S2 起加 `world_event`、`boss`、`companion`） |
 | `formatVersion` | `number` | 資料包格式版本 |
 | `version` | `string` | 內容版本（semver） |
-| `items` | `array` | 內容項目，每項都有 snake_case 的 `id` |
+| `items` | `array` | 內容項目，每項都有 snake_case 的 `id`。**所有資料包之間 item id 不得重複**（`sourceTemplateId` 不帶資料包名稱） |
 
 ### 7.2 任務模板（`habit_library` 的 `items`）
 
@@ -304,7 +304,7 @@
 | `category` | `string` | 預設庫畫面的分類 |
 | `allowUp` / `allowDown` | `boolean` | 只有 habit 有 |
 | `schedule` | 同 tasks | 只有 daily 有 |
-| `checklist` | `string[]` | 只有 to-do 有 |
+| `checklist` | `string[]` | 只有 to-do 模板有。Daily 任務雖然可以有檢查清單（第 4.4 節），但預設庫的 Daily 模板不帶，由使用者在進階編輯自行加入 |
 | `keywords` | `string[]` | 快速新增（#12）用的比對關鍵字 |
 
 ### 7.3 職業套組（`class_sets` 的 `items`）
@@ -412,3 +412,5 @@ migrate_v1_to_v2(backup: BackupV1): BackupV2
 | 5 | 勾檢查清單項目有沒有獎勵？ | S1 沒有 | product-manager（決策表） |
 | 6 | ~~企劃書第 6.4 節資料包範例用 snake_case 欄位，跟 `CLAUDE.md` 衝突~~ | ✅ 已決定（2026-10-23 老闆）：以 `CLAUDE.md` 為準，企劃書範例已改成 `durationDays`、`goldMultiplier` | — |
 | 7 | ~~資料庫名稱 `morning-oath`~~ | ✅ 已決定（2026-10-23 老闆）：沿用 `morning-oath` | — |
+
+> 2026-10-23 補充（T5／T11 實作回報）：設定檔與資料包一律嚴格驗證，出現未知欄位（通常是拼錯）視為錯誤。設定檔中「待決策表定義」的欄位（`levelCurve` formula 型、`hp.max` 依等級的表、`hpDepletion`）目前以暫定結構實作，決策表定案後依表調整 schema。
