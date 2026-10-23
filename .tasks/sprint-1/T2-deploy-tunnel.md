@@ -7,12 +7,12 @@
 | Sprint | Sprint 1 |
 | 指派給 | project-shipper |
 | 優先級 | P0 |
-| 狀態 | in_review |
+| 狀態 | done |
 | 依賴 | — |
 | 預估 | 0.5d |
 | 建立時間 | 2026-10-23T07:23:49.853Z |
 | 開始時間 | 2026-10-23T09:18:32.195Z |
-| 完工時間 | — |
+| 完工時間 | 2026-10-23T12:54:53.377Z |
 
 ---
 
@@ -30,7 +30,7 @@
 - [x] 只綁定 127.0.0.1（從其他介面連不到）
 - [x] `../` 路徑穿越被拒
 - [x] `deploy/README.md` 寫明啟動、開機自動啟動、給老闆設定代理的資訊（目標 `http://127.0.0.1:5810`、代理不得快取）
-- [ ] 老闆設定代理後，iPhone 開得到 `https://rpg.starklab.tw/`（此項於 X6 完成後驗收）
+- [x] 老闆設定代理後，iPhone 開得到 `https://rpg.starklab.tw/`（此項於 X6 完成後驗收）
 
 ---
 
@@ -50,3 +50,6 @@
 
 ### 2026-10-23T09:21:30.257Z — 狀態變更 → in_review
 project-shipper 回報：node --test 11/11 通過；實測 5810 header 正確、路徑穿越 403、區網 IP 連不到。L1 Review：伺服器通過；README 開機啟動範例由 SYSTEM 改為一般使用者（commit 4166d61）。剩最後一項驗收（iPhone 經代理開啟）等老闆設定反向代理（X6）
+
+### 2026-10-23T12:54:53.377Z — 狀態變更 → done
+老闆部署機（Windows）＋Caddy 反向代理上線：tech-lead 從外部 curl https://rpg.starklab.tw 驗證 /、sw.js、manifest、apple-touch-icon 皆 200＋no-cache＋CSP；老闆 iPhone 實測可開啟。Caddy 設定段落由 tech-lead 撰寫（CSP 已於開發機模擬實測）

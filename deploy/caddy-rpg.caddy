@@ -1,0 +1,51 @@
+
+# =========================
+# 晨光之誓 PWA rpg.starklab.tw
+# 後端：同一台電腦的 deploy\serve.mjs（127.0.0.1:5810）
+# 注意（跟其他站不同）：
+#   - 不要把 /apple-touch-icon.png 回 204：那是 iPhone「加入主畫面」的圖示
+#   - 不要加 @dirScan：會誤擋 App 之後的頁面路徑（例如 /new）
+#   - 不要加任何快取：serve.mjs 已設好 Cache-Control，Caddy 預設會原樣轉送
+# =========================
+rpg.starklab.tw {
+    encode zstd gzip
+
+    # 👉 1) 短路掃描
+    @phpProbes path_regexp php (.*\.php.*)|(.*\/wp\/.*)|(^\/wp$)|(.*\/wp-admin\/.*)|(.*\/wp-includes\/.*)
+    handle @phpProbes {
+        respond 403
+    }
+
+    # 擋掉以 "." 開頭的隱藏路徑（保留 ACME 驗證用的 /.well-known/*）
+    @dotProbes {
+        not path /.well-known/*
+        path_regexp dotfiles ^/\..*
+    }
+    handle @dotProbes {
+        respond 403
+    }
+
+    @blocked {
+        path_regexp blocked /\.(git|svn|hg|env)|(\.php)$
+    }
+    respond @blocked 403
+
+    # 👉 2) 這個 App 只需要 GET／HEAD，請求本文用不到
+    request_body {
+        max_size 64KB
+    }
+
+    # 👉 3) 其他全部交給 serve.mjs
+    handle {
+        reverse_proxy 127.0.0.1:5810
+    }
+
+    # 安全標頭（2026-10-23 在開發機實測：畫面正常、Service Worker 可安裝、無 CSP 錯誤）
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Cross-Origin-Opener-Policy "same-origin"
+        Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
+    }
+}

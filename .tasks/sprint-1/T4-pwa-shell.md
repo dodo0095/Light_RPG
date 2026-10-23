@@ -24,8 +24,8 @@ manifest、iOS meta 與 apple-touch-icon、vite-plugin-pwa 離線快取、`regis
 
 ## 驗收標準
 
-- [ ] Lighthouse PWA installable 檢查通過（附報告）
-- [ ] 離線重新整理可開啟
+- [x] Lighthouse PWA installable 檢查通過（附報告）— 以 iPhone 實機「加入主畫面＋全螢幕開啟」取代（本機無 Lighthouse）
+- [x] 離線重新整理可開啟
 - [ ] 部署新版本後出現更新提示，點了之後版本號改變
 
 ---
@@ -40,3 +40,6 @@ manifest、iOS meta 與 apple-touch-icon、vite-plugin-pwa 離線快取、`regis
 
 ### 2026-10-23T09:32:34.617Z — 狀態變更 → in_review
 程式 Review 通過（tech-lead 重跑 lint／typecheck／675 tests／build；serve.mjs 實測 header 正確；commit 81af611）。三項驗收（可安裝、離線重新整理、更新後版本號改變）本機無 Lighthouse，待 T3 iPhone 實機驗證後標 done
+
+### 2026-10-23T12:54:53.377Z — iPhone 實機驗收（老闆）
+通過：Safari 開啟、加入主畫面圖示正確、全螢幕、飛航模式重開可用。剩「部署新版本後出現更新提示」待下一次發版驗證
