@@ -52,3 +52,15 @@
 | 預防 | 批次改檔遇到 Windows 路徑一律用 Edit 工具，不用樣板字串；改完必做 read-back |
 | 狀態 | resolved |
 | 到期日 | — |
+
+### 2026-10-24 — 解合併衝突的腳本未生效，衝突標記被 commit
+
+| 項目 | 內容 |
+|------|------|
+| 分類 | process |
+| 問題 | 合併 product-manager 分支時，tech-lead 用正規表示式替換 `proposal/sprint1-dev-plan.md` 的衝突區塊，但檔案是 CRLF，`\n` 比對不到，替換沒發生；隨後 `git commit --no-edit` 把衝突標記提交進 merge commit（未推送，下一個 commit 修正） |
+| 原因 | 只檢查了 grep 輸出卻沒讓它阻擋 commit；腳本對換行格式有假設 |
+| 解法 | 改用 Edit 工具解衝突；commit 前 `git grep -nE "^(<<<<<<<|=======|>>>>>>>)( |$)"` 必須無結果 |
+| 預防 | 解衝突一律用 Edit 工具；commit 前的衝突標記檢查要用 `&&` 串接，有結果就不 commit |
+| 狀態 | resolved |
+| 到期日 | — |
