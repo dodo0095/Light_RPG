@@ -7,12 +7,12 @@
 | Sprint | Sprint 1 |
 | 指派給 | frontend-developer |
 | 優先級 | P0 |
-| 狀態 | in_progress |
+| 狀態 | done |
 | 依賴 | T1 |
 | 預估 | 0.5d |
 | 建立時間 | 2026-10-23T07:23:49.853Z |
 | 開始時間 | 2026-10-23T07:26:30.792Z |
-| 完工時間 | — |
+| 完工時間 | 2026-10-23T07:49:39.948Z |
 
 ---
 
@@ -24,8 +24,8 @@
 
 ## 驗收標準
 
-- [ ] day-rollover.md 的 TC-DK-01～12 全部有測試且通過（v0.2 新增 08～11，v0.3 新增 12）
-- [ ] 模組內沒有 `new Date()` 取目前時間（grep 證明）
+- [x] day-rollover.md 的 TC-DK-01～12 全部有測試且通過（v0.2 新增 08～11，v0.3 新增 12）
+- [x] 模組內沒有 `new Date()` 取目前時間（grep 證明）
 
 ---
 
@@ -36,3 +36,9 @@
 
 ### 2026-10-23T07:26:30.792Z — 狀態變更 → in_progress
 開始執行任務（老闆同意由 tech-lead 在本 session 直接委派工程師 agent 執行）
+
+### 2026-10-23T07:49:39.948Z — 狀態變更 → in_review
+frontend-developer 回報完成（第三版，依 day-rollover v0.3）：39 tests pass，core/time 行覆蓋率 98.79%；過程中兩次發現規格漏洞，規格已改到 v0.3
+
+### 2026-10-23T07:49:39.948Z — 狀態變更 → done
+L1 Review 通過（tech-lead 重跑 lint／typecheck／test／coverage／build 皆通過、core 無讀取系統時鐘；commit e820822）
