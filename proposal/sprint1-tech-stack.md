@@ -118,14 +118,15 @@ Sprint 1 要做一個裝在 iPhone 主畫面、可離線使用的 PWA，資料�
 | 執行環境 | 結果 |
 |---------|------|
 | Windows Chrome 156（上線網址，經 Caddy＋CSP＋SW） | 10 ✅ |
-| iPhone iOS 18.7，**LINE 內建瀏覽器**（WebKit WKWebView） | 8 ✅、1 ⚠️、1 ❌ |
+| iPhone iOS 18.7，**LINE 內建瀏覽器**（WebKit WKWebView） | 8 ✅、1 ⚠️、1 ❌；不支援 Service Worker |
+| iPhone iOS 18.7，**Safari 26.6.1 分頁** | 8 ✅、1 ⚠️、1 ❌；Service Worker 可用並控制頁面。S2 各項結果與 LINE 內建瀏覽器完全一致（同為 WebKit），確認以下結論適用 Safari |
 | 老闆 iPhone Safari 主畫面 App（手動） | 加入主畫面、全螢幕、飛航模式開啟：通過 |
 
 ### S1：iOS 安裝／離線／儲存
 
 - 主畫面安裝、全螢幕、離線開啟：✅（老闆實測）
 - **LINE 內建瀏覽器不支援 Service Worker**（`serviceWorker in navigator = false`）：從 LINE 點連結開啟，**無法離線、無法正確安裝**。→ 規格新增：偵測到不支援時提示「請用 Safari 開啟」（feature-spec F1）
-- `navigator.storage.persist()` 在 LINE 內建瀏覽器回 `false`；Chrome 回 `true`。主畫面 App 的結果**尚未取得**（診斷頁無法在主畫面 App 內開啟）→ T12 啟動時呼叫 `persist()`，並在設定頁顯示是否已取得持久儲存，試用期間觀察；匯出備份（T18）仍是主要保護
+- `navigator.storage.persist()` 在 LINE 內建瀏覽器與 **Safari 分頁** 都回 `false`（配額約 39 GB）；Chrome 回 `true`。主畫面 App 的結果**尚未取得**（診斷頁無法在主畫面 App 內開啟）→ T12 啟動時呼叫 `persist()`，並在設定頁顯示是否已取得持久儲存，試用期間觀察；匯出備份（T18）仍是主要保護
 - 配額約 9.8 GB，容量不是問題
 
 ### S2：Safari（WebKit）IndexedDB 行為

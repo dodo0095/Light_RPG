@@ -51,3 +51,6 @@
 
 ### 2026-10-23T13:15:44.484Z — 狀態變更 → done
 結果已寫入 tech-stack.md 第 9 節。WebKit（LINE 內建瀏覽器，iOS 18.7）S2：8 項中 7 ✅、1 ❌（版本探測留下空資料庫，評估為 Minor、不影響功能）。新發現：LINE 內建瀏覽器不支援 Service Worker → feature-spec F1 新增「請用 Safari 開啟」提示；persist() 主畫面 App 結果待 T12 觀察。S3 首屏 JS gzip 13.7 KB。未推翻任何設計
+
+### 2026-10-23T13:21:19.128Z — 補充 Safari 實測
+iPhone Safari 26.6.1 分頁結果與 LINE 內建瀏覽器一致（S2-1 留空殼、persist()=false），SW 可用。已補入 tech-stack 第 9 節
