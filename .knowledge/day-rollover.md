@@ -106,7 +106,7 @@ dayKey = (m ≥ R_effective(c)) ? c : c 的前一天
 5. 對每一個要結算的日子 d（由舊到新）：
    a. 該做的 Dailies = 符合下列全部條件的 daily：
       - 頻率包含 d 的星期
-      - createdDayKey 的規則符合（待確認 #1）
+      - createdDayKey < d（新增當天不算，2026-10-23 老闆決定）
       - d 結束時還沒被刪除（deletedAt 為空，或晚於 d 的結束時間）
    b. 完成的 = 在 d 這一天，打勾事件數 − 被反向的事件數 > 0（迷你版也算）
    c. 沒完成的 = 該做的 − 完成的
@@ -117,7 +117,8 @@ dayKey = (m ≥ R_effective(c)) ? c : c 的前一天
         完成的 daily streak + 1；沒完成的 streak 歸零
    e. 寫一筆 daySummary（含 mode、三份 id 清單、configVersion）
    f. 如果 HP 在這一天降到 0：照 balance.hpDepletion 處理，寫一筆 hp_depleted 事件
-      （補算多天時是否每天都可能觸發，見待確認 #3）
+      一次 planSettlement 最多觸發一次；已觸發過後再降到 0 就停在 0、不再懲罰（2026-10-23 老闆決定）
+   g. 觸發懲罰後 HP 依 hpDepletion 回復，剩下的日子照常結算
 6. settings.lastSettledDayKey = today 的前一天
 7. 整理 settings.pendingRolloverTimes：生效日 ≤ today 的項目中，最後一筆的 time 寫進 settings.rolloverTime，這些項目全部移除；生效日 > today 的保留（見 5.7）。
    安全性：遊戲日 today 只可能落在日曆日 today 或 today 的下一天，這兩天的開始時間在整理前後都相同。
@@ -320,8 +321,8 @@ E = today 的下一天
 
 | # | 問題 | 建議 | 由誰決定 |
 |---|------|------|---------|
-| 1 | 今天新增的 Daily 今天要不要算（同 data-model 待確認 #1） | 下一個遊戲日才算 | product-manager |
+| 1 | ~~今天新增的 Daily 今天要不要算~~ | ✅ 已決定（2026-10-23 老闆）：從**下一個遊戲日**才算（createdDayKey < d 才算該做） | — |
 | 2 | ~~換日後要不要讓使用者「補登昨天」~~ | ✅ 已決定（2026-10-23 老闆）：S1 不做 | — |
-| 3 | 補算多天時，HP 歸零懲罰可以觸發幾次？ | 一次補算最多觸發一次 | product-manager（決策表） |
-| 4 | 旅館的日子算不算在補算上限 `K` 裡 | 不算 | product-manager（決策表） |
-| 5 | HP 歸零之後，接下來的日子還會繼續扣血嗎？（HP 已經是 0） | 照 `hpDepletion` 規則先回復 HP，再繼續扣 | product-manager（決策表） |
+| 3 | ~~補算多天時，HP 歸零懲罰可以觸發幾次~~ | ✅ 已決定（2026-10-23 老闆）：一次補算（一次 planSettlement）最多觸發一次；之後再降到 0 就停在 0，不再懲罰 | — |
+| 4 | ~~旅館的日子算不算在補算上限 K 裡~~ | ✅ 已決定（2026-10-23 老闆）：不算，K 只限制扣血的天數 | — |
+| 5 | ~~HP 歸零之後，接下來的日子還會繼續扣血嗎~~ | ✅ 已決定（2026-10-23 老闆）：依 hpDepletion 規則回復 HP 後，剩下的日子照常結算扣血 | — |

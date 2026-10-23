@@ -405,7 +405,7 @@ migrate_v1_to_v2(backup: BackupV1): BackupV2
 
 | # | 問題 | 建議 | 由誰決定 |
 |---|------|------|---------|
-| 1 | 今天新增的 Daily，今天的日結要不要算（沒做會不會扣血）？ | 從**下一個遊戲日**才開始算 | product-manager（決策表） |
+| 1 | ~~今天新增的 Daily，今天的日結要不要算~~ | ✅ 已決定（2026-10-23 老闆）：從下一個遊戲日才算 | — |
 | 2 | 多日沒開 App，補算時扣最近幾天還是最早幾天？（`catchUp.penalizeWhich`） | 最近幾天 | product-manager（決策表） |
 | 3 | 取消打卡讓金幣變成負數時怎麼辦？（`gold.allowNegative`） | 允許變負數，這樣取消一定完全還原 | product-manager（決策表） |
 | 4 | 已完成的 To-do，過了換日還能不能取消完成？ | 只限還沒結算的遊戲日，跟 Daily 一致 | product-manager |
