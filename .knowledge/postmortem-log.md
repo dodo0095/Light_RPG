@@ -28,3 +28,15 @@
 | 預防 | 升級 Vite／Vitest 或新增含原生 binding 的套件前，先在本機實跑一次；`package.json` 這三個套件用 `~` 鎖小版本，不要隨手升大版 |
 | 狀態 | open（暫時解法；之後評估是否把 rolldown binding 加入信任清單） |
 | 到期日 | 2026-11-06 |
+
+### 2026-10-23 — AgentHub 產生的 hook 寫死絕對路徑，被 commit 進 repo
+
+| 項目 | 內容 |
+|------|------|
+| 分類 | process |
+| 問題 | `.claude/hooks/g5-pre-deploy.sh`、`stop-validator.sh` 內含 `cd "<worktree 絕對路徑>"` 與 log 路徑；從 worktree commit 後，主資料夾或其他電腦 checkout 會讓 hook 跑到別的目錄（worktree 刪除後直接失效） |
+| 原因 | AgentHub HookManager 依 checkout 位置產生 hook，產物不可攜 |
+| 解法 | 兩個檔案從版控移除並加入 `.gitignore`，每個位置保留 AgentHub 自己產生的版本 |
+| 預防 | commit 前 `git grep -n "ALL PROJECT"` 檢查有沒有絕對路徑；回報 Agent-hub 改用 `git rev-parse --show-toplevel` 或 `$CLAUDE_PROJECT_DIR` |
+| 狀態 | open（待 Agent-hub 範本修正） |
+| 到期日 | 2026-11-06 |

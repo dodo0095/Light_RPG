@@ -18,3 +18,7 @@ deploy/**/credentials*.json
 # TypeScript 編譯殘留（避免被 Vitest 撿到）
 src/**/*.js
 tests/**/*.js
+
+# AgentHub 依所在位置產生、內含絕對路徑的 hook，不進版控（每個 checkout 各自產生）
+.claude/hooks/g5-pre-deploy.sh
+.claude/hooks/stop-validator.sh
