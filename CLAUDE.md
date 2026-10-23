@@ -40,15 +40,18 @@
 
 ## 技術棧
 
-> ⏳ 待定：由 tech-lead 在 Sprint 1 設計步驟提案，定案後更新本表與 `.knowledge/architecture.md`。
+> ✅ 2026-10-23 老闆定案（方案 A）。詳細見 `proposal/sprint1-tech-stack.md`、`.knowledge/architecture.md` 第 4、5 節。
 
 | 類型 | 技術 |
 |------|------|
-| 前端 | 待定 |
-| 本機儲存 | IndexedDB（封裝方式待定） |
-| 離線 | Service Worker＋Web App Manifest |
-| 測試 | 待定 |
-| 部署 | 靜態站，需 HTTPS（平台待定） |
+| 語言 | TypeScript（strict） |
+| 前端 | Preact＋@preact/signals，Vite 建置 |
+| 本機儲存 | IndexedDB＋idb（外包自寫 Repository 介面） |
+| 離線 | vite-plugin-pwa（Service Worker＋Web App Manifest） |
+| 資料驗證 | Zod |
+| 測試 | Vitest（＋fake-indexeddb） |
+| 套件管理 | pnpm |
+| 部署 | 老闆自己的 Windows 電腦＋Cloudflare Tunnel（自有網域，固定子網域） |
 
 ## 設計稿合規規則（強制）
 
@@ -102,7 +105,9 @@
 | `.knowledge/company-rules.md` | 共用開發規則 |
 | `.knowledge/team-workflow.md` | 共用工作流程 |
 | `.knowledge/project-overview.md` | 專案概述 |
-| `.knowledge/architecture.md` | 架構（🔴 規範，技術棧定案後補齊） |
+| `.knowledge/architecture.md` | 架構（🔴 規範） |
+| `.knowledge/day-rollover.md` | 換日／日結模組設計（🔴 規範） |
+| `proposal/sprint1-tech-stack.md` | 技術棧決策（已定案） |
 | `.knowledge/data-model.md` | 資料模型（🔴 規範，Sprint 1 設計步驟產出） |
 | `.knowledge/decision-tables.md` | 數值決策表（🔴 規範，Sprint 1 設計步驟產出） |
 | `.knowledge/acceptance-criteria.md` | 驗收標準（🟡 規格） |
