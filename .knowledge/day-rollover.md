@@ -1,7 +1,7 @@
 # 晨光之誓 — 換日／日結模組設計
 
 > 層級：🔴 規範
-> 狀態：v0.3（2026-10-23，tech-lead）— 補「已有 pending 時再排程」；v0.2：修正 `R_effective` 定義、換日時間排程、夏令時間結束；來源：T7 實作回報
+> 狀態：v0.4（2026-10-23）— product-manager 依決策表 v1.0 修改 TC-UN-07、新增 TC-UN-08／09；v0.3（tech-lead）— 補「已有 pending 時再排程」；v0.2：修正 `R_effective` 定義、換日時間排程、夏令時間結束；來源：T7 實作回報
 > 相關：`.knowledge/data-model.md`（欄位定義）、`.knowledge/decision-tables.md`（數值，product-manager 產出）
 > **數值**：本文件不寫任何數字。以下符號都對應設定檔或使用者設定：
 >
@@ -310,7 +310,9 @@ E = today 的下一天
 | TC-UN-04 | 取消造成降級 | 打勾剛好升級後取消 | 等級降回去 |
 | TC-UN-05 | 取消時金幣不夠 | 打勾 → 兌換獎勵 → 取消打勾 | 照 `gold.allowNegative` 的兩種設定各測一次 |
 | TC-UN-06 | Habit 取消 | ＋、＋、－，取消一次 | 取消的是最後的「－」 |
-| TC-UN-07 | HP 被扣到 0 的事件取消 | Habit「－」把 HP 扣到 0，然後取消 | HP 補回實際扣掉的量 |
+| TC-UN-07 | HP 被扣到 0 的事件取消 | Habit「－」把 HP 扣到 0，然後取消 | 扣到 0 當下已觸發歸零懲罰（HP 已回復）：取消後 HP 補回實際扣掉的量但不超過 `HPmax`；`hp_depleted` 不退回（決策表 v1.0 第 5 節） |
+| TC-UN-08 | Habit「＋」超過每日獎勵上限 | 同一 Habit 同一遊戲日按到第 `habitUp.maxRewardedPerDay` + 1 次 | 仍寫 `habit_up` 事件，`deltas` 全為 0；取消一次後再按，同樣依有效次數判斷 |
+| TC-UN-09 | 取消時 HP 下限 | 打勾升級補血 → 同日多次「－」→ 取消那次打勾 | HP 停在 1，不觸發歸零懲罰；反向事件 `deltas.hp` 記實際變動量 |
 | TC-AP-01 | App 開著跨過換日時間後打勾 | 畫面在 `R` 前打開，`R` 後打勾 | 先結算，打勾算新的遊戲日 |
 | TC-AP-02 | 第一次使用 | 剛選完職業 | `lastSettledDayKey` = 前一天；不結算更早的日子 |
 

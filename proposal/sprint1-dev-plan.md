@@ -4,7 +4,7 @@
 > **日期**: 2026-10-23
 > **專案**: 晨光之誓
 > **Sprint 提案書**: `proposal/sprint1-proposal.md`
-> **狀態**: G0 通過，執行中（設計步驟完成：技術棧已定案；數值決策表、UI 圖稿進行中）
+> **狀態**: G0、G1 通過，實作中（技術棧、數值決策表、UI 圖稿皆已定案；預設內容 X4 待交）
 > **備註**: 交辦單原定由 project-lead 彙整本計畫書；因跨 Agent 傳訊服務離線、老闆指示繼續執行，由 tech-lead 先產出。project-lead 可直接接手修訂。
 
 ---
@@ -105,7 +105,7 @@
 | 功能規格 | `.knowledge/specs/feature-spec.md` | 使用者流程、邊界條件、驗收標準 |
 | 換日設計 | `.knowledge/day-rollover.md` | 遊戲日、日結演算法、邊界情境、測試案例 |
 | 架構 | `.knowledge/architecture.md` | 分層、技術棧、目錄、依賴方向、部署 |
-| 數值 | `.knowledge/decision-tables.md` | ⏳ product-manager 產出中 |
+| 數值 | `.knowledge/decision-tables.md` | ✅ v1.0 定案（2026-10-23 老闆確認） |
 
 ### 主要模組介面（簽章層級，實作時以此為準）
 
@@ -129,10 +129,15 @@
 | 代號 | 依賴 | 來源 | 狀態 |
 |------|------|------|------|
 | X1 | 技術棧定案 | 老闆 | ✅ 2026-10-23 |
+<<<<<<< HEAD
 | X2 | 數值決策表 `decision-tables.md` | product-manager | ⏳ |
 | X3 | G1 圖稿通過 | design-director → 老闆 | ✅ 2026-10-24 |
+=======
+| X2 | 數值決策表 `decision-tables.md` | product-manager | ✅ 2026-10-23（v1.0） |
+| X3 | G1 圖稿通過 | design-director → 老闆 | ⏳ |
+>>>>>>> agent/product-manager/2026-10-23
 | X4 | 預設內容（職業套組、習慣庫、獎勵、快速新增關鍵字） | product-manager | ⏳ |
-| X5 | data-model／day-rollover 待確認事項答覆 | product-manager | ⏳ |
+| X5 | data-model／day-rollover 待確認事項答覆 | product-manager | ✅ 2026-10-23（決策表 v1.0；data-model 第 11 節已全數答覆） |
 | X6 | 老闆在自己的反向代理設定 `rpg.starklab.tw` → `127.0.0.1:5810`（2026-10-23 改為老闆自有代理，不用 Cloudflare） | 老闆 | ⏳（T2 完成後設定） |
 
 ### 任務清單
