@@ -40,3 +40,15 @@
 | 預防 | commit 前 `git grep -n "ALL PROJECT"` 檢查有沒有絕對路徑；回報 Agent-hub 改用 `git rev-parse --show-toplevel` 或 `$CLAUDE_PROJECT_DIR` |
 | 狀態 | open（待 Agent-hub 範本修正） |
 | 到期日 | 2026-11-06 |
+
+### 2026-10-23 — 用 JS 樣板字串改檔，Windows 路徑的反斜線被吃掉
+
+| 項目 | 內容 |
+|------|------|
+| 分類 | process |
+| 問題 | tech-lead 用 `node -` ＋樣板字串（反引號）批次修改 `deploy/README.md`，`C:\Users\...`、`\nodejs` 變成 `C:Users...` 和換行，錯誤版本已推上 GitHub（commit 4166d61 之後），由 2026-10-23 下一個 commit 修正 |
+| 原因 | JS 樣板字串會解析跳脫字元（`\n`、`\U` 等），反斜線路徑被當成跳脫序列 |
+| 解法 | 含反斜線的內容改用 Edit 工具直接修改；修完 `git grep -nE "C:Users|odejs$"` 確認 |
+| 預防 | 批次改檔遇到 Windows 路徑一律用 Edit 工具，不用樣板字串；改完必做 read-back |
+| 狀態 | resolved |
+| 到期日 | — |

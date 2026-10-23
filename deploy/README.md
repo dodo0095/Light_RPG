@@ -2,9 +2,12 @@
 
 ## 架構一句話
 
-iPhone → `https://rpg.starklab.tw`（老闆的反向代理）→ `http://127.0.0.1:5810`（這台 Windows 電腦上的 `deploy/serve.mjs`，提供 `dist/`）
+iPhone → `https://rpg.starklab.tw`（老闆的反向代理）→ `http://127.0.0.1:5810`（**部署機**上的 `deploy/serve.mjs`，提供 `dist/`）
 
-App 平常離線運作；只有**第一次安裝**和**取得新版本**時，這台電腦需要開機、伺服器在跑。
+- **部署機**：老闆的另一台 Windows 電腦，反向代理也裝在這台。以下步驟都在部署機上做。
+- **開發機**：寫程式的電腦，只負責把程式推到 GitHub（https://github.com/dodo0095/Light_RPG ，公開 repo，clone 不需要登入）。
+
+App 平常離線運作；只有**第一次安裝**和**取得新版本**時，部署機需要開機、伺服器在跑。
 
 ---
 
@@ -26,13 +29,35 @@ App 平常離線運作；只有**第一次安裝**和**取得新版本**時，�
 
 ---
 
-## 二、啟動
+## 二、部署機第一次安裝
 
-在專案目錄：
+### 1. 安裝工具（只做一次）
+
+| 工具 | 下載 | 確認指令 |
+|------|------|---------|
+| Git for Windows | https://git-scm.com/download/win | `git --version` |
+| Node.js（LTS 版，22 以上） | https://nodejs.org/ | `node -v` |
+| pnpm | 裝好 Node.js 後執行 `npm install -g pnpm` | `pnpm -v` |
+
+### 2. 下載程式並建置
+
+建議放在沒有空白的路徑，例如 `C:\Light_RPG`（以下都用這個路徑；放在別處請一起改工作排程器的指令）：
 
 ```bat
+cd /d C:\
+git clone https://github.com/dodo0095/Light_RPG.git
+cd Light_RPG
+pnpm install
 pnpm build
-"C:\Program Files\nodejs\node.exe" deploy\serve.mjs
+```
+
+> 如果 `pnpm install` 或 `pnpm build` 出現「An Application Control policy has blocked this file」：代表這台電腦的 Windows 安全政策擋了建置工具（開發機遇過類似狀況，見 `.knowledge/postmortem-log.md`）。請把錯誤訊息貼給 tech-lead；暫時可以改在開發機 build，再把整個 `dist\` 資料夾複製到部署機的 `C:\Light_RPG\dist\`。
+
+### 3. 啟動
+
+```bat
+cd /d C:\Light_RPG
+node deploy\serve.mjs
 ```
 
 成功時會印出：
@@ -58,12 +83,10 @@ pnpm build
 
 ### 方法 A：一行指令（用一般的「命令提示字元」執行即可，不需要系統管理員）
 
-專案正式位置是 `C:UsersBandaiDesktopALL PROJECTRPG`（若之後搬家，請一起改這行）：
+部署機上的位置是 `C:\Light_RPG`（放在別處請一起改這行）：
 
 ```bat
-schtasks /Create /TN "RPG-serve" /SC ONLOGON /RU "%USERNAME%" /RL LIMITED /TR "\"C:Program Files
-odejs
-ode.exe\" \"C:UsersBandaiDesktopALL PROJECTRPGdeployserve.mjs\"" /F
+schtasks /Create /TN "RPG-serve" /SC ONLOGON /RU "%USERNAME%" /RL LIMITED /TR "\"C:\Program Files\nodejs\node.exe\" \"C:\Light_RPG\deploy\serve.mjs\"" /F
 ```
 
 - `/SC ONLOGON`：你登入 Windows 時自動啟動
@@ -81,7 +104,7 @@ ode.exe\" \"C:UsersBandaiDesktopALL PROJECTRPGdeployserve.mjs\"" /F
 5. 「動作」頁：新增 →「啟動程式」
    - 程式：`C:\Program Files\nodejs\node.exe`
    - 引數：`deploy\serve.mjs`
-   - 開始位置：專案資料夾（例如 `C:\RPG`）
+   - 開始位置：`C:\Light_RPG`
 6. 「設定」頁：取消勾選「如果工作執行超過下列時間，便停止工作」（預設 3 天會被停掉）；勾選「如果工作失敗，重新啟動間隔 1 分鐘」
 7. 按確定（會要求輸入 Windows 密碼）
 
@@ -107,15 +130,22 @@ schtasks /Delete /TN "RPG-serve" /F
 
 ## 四、發佈新版本
 
-1. 拉取最新程式碼
-2. `pnpm build`（會更新 `dist\`）
+1. 開發機把新版推到 GitHub `main`（tech-lead 負責）
+2. 在部署機執行：
+
+   ```bat
+   cd /d C:\Light_RPG
+   git pull
+   pnpm install
+   pnpm build
+   ```
 3. 伺服器**不用重啟**（它每次都直接讀 `dist\` 的檔案）
 4. iPhone 開 App 時會出現「點此更新」提示，點下去即完成
 
 ## 五、回滾（新版本出問題時）
 
-1. `git revert <出問題的 commit>`
-2. `pnpm build`（覆蓋 `dist\`）
+1. 通知 tech-lead：在開發機 `git revert <出問題的 commit>` 並推到 GitHub
+2. 在部署機執行 `git pull`、`pnpm install`、`pnpm build`（覆蓋 `dist\`）
 3. iPhone 開 App 時同樣會出現更新提示，點下去即回到舊版內容
 
 > 存檔在 iPhone 的 IndexedDB 裡，發佈或回滾都不會刪除存檔。
