@@ -129,13 +129,8 @@
 | 代號 | 依賴 | 來源 | 狀態 |
 |------|------|------|------|
 | X1 | 技術棧定案 | 老闆 | ✅ 2026-10-23 |
-<<<<<<< HEAD
-| X2 | 數值決策表 `decision-tables.md` | product-manager | ⏳ |
-| X3 | G1 圖稿通過 | design-director → 老闆 | ✅ 2026-10-24 |
-=======
 | X2 | 數值決策表 `decision-tables.md` | product-manager | ✅ 2026-10-23（v1.0） |
-| X3 | G1 圖稿通過 | design-director → 老闆 | ⏳ |
->>>>>>> agent/product-manager/2026-10-23
+| X3 | G1 圖稿通過 | design-director → 老闆 | ✅ 2026-10-24 |
 | X4 | 預設內容（職業套組、習慣庫、獎勵、快速新增關鍵字） | product-manager | ⏳ |
 | X5 | data-model／day-rollover 待確認事項答覆 | product-manager | ✅ 2026-10-23（決策表 v1.0；data-model 第 11 節已全數答覆） |
 | X6 | 老闆在自己的反向代理設定 `rpg.starklab.tw` → `127.0.0.1:5810`（2026-10-23 改為老闆自有代理，不用 Cloudflare） | 老闆 | ⏳（T2 完成後設定） |
