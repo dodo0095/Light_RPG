@@ -45,8 +45,6 @@ export default defineConfig({
         // manifest.webmanifest 由外掛自動加入 precache，不放進 glob 以免重複
         globPatterns: ['**/*.{js,css,html,svg,png}'],
         navigateFallback: '/index.html',
-        // T3 技術驗證頁（/__spike/，獨立建置）不交給 SPA fallback；移除 spike 時一併刪掉
-        navigateFallbackDenylist: [/^\/__spike\//],
         cleanupOutdatedCaches: true,
         // 不設 runtimeCaching：不快取任何第三方網域
       },
