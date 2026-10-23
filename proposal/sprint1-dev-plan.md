@@ -29,7 +29,7 @@
 
 ### 選定方案
 
-方案 A：TypeScript＋Vite＋Preact＋idb（自寫 Repository）＋Zod＋Vitest＋vite-plugin-pwa；部署在老闆的 Windows 電腦，透過 Cloudflare Tunnel 以 `rpg.starklab.tw` 對外提供 HTTPS。詳見 `proposal/sprint1-tech-stack.md`、`.knowledge/architecture.md` 第 4、5 節。
+方案 A：TypeScript＋Vite＋Preact＋idb（自寫 Repository）＋Zod＋Vitest＋vite-plugin-pwa；部署在老闆的 Windows 電腦，由老闆自有的反向代理以 `rpg.starklab.tw` 對外提供 HTTPS，轉到本機 `127.0.0.1:5810`。詳見 `proposal/sprint1-tech-stack.md`、`.knowledge/architecture.md` 第 4、5 節。
 
 ### 替代方案比較
 
@@ -79,7 +79,7 @@
 | `public/` 圖示、manifest | PWA（T4） |
 | `tests/**` | 整合測試、測試用設定檔（T21） |
 | `spike/**` | 技術驗證（T3，不併入正式程式） |
-| `deploy/**` | 靜態檔伺服器與 Tunnel 設定範例、發佈／回滾步驟（T2、T22） |
+| `deploy/**` | 靜態檔伺服器 serve.mjs、發佈／回滾步驟（T2、T22） |
 
 ### 修改
 
@@ -133,14 +133,14 @@
 | X3 | G1 圖稿通過 | design-director → 老闆 | ⏳ |
 | X4 | 預設內容（職業套組、習慣庫、獎勵、快速新增關鍵字） | product-manager | ⏳ |
 | X5 | data-model／day-rollover 待確認事項答覆 | product-manager | ⏳ |
-| X6 | Cloudflare 帳號、GoDaddy 的 `starklab.tw` nameserver 改 Cloudflare、登入授權（網址已定 `rpg.starklab.tw`） | 老闆 | ⏳ |
+| X6 | 老闆在自己的反向代理設定 `rpg.starklab.tw` → `127.0.0.1:5810`（2026-10-23 改為老闆自有代理，不用 Cloudflare） | 老闆 | ⏳（T2 完成後設定） |
 
 ### 任務清單
 
 | # | 任務名稱 | 說明 | 負責 Agent | 依賴 | 對應步驟 | 驗收標準 |
 |---|---------|------|-----------|------|---------|---------|
 | T1 | 專案腳手架 | 建立 Vite＋TypeScript strict＋Preact＋ESLint/Prettier＋Vitest＋pnpm 專案；依 architecture.md 第 5 節建立目錄；ESLint `no-restricted-imports` 擋住 core 反向依賴；`.gitignore` 排除 Tunnel 憑證。 | frontend-developer | 無 | 實作 | `pnpm install`、`pnpm lint`、`pnpm typecheck`、`pnpm test` 在 Windows Git Bash 全部通過（附輸出） |
-| T2 | 部署通道（Cloudflare Tunnel） | 在老闆電腦安裝 `cloudflared`（Windows 服務）、建立具名 Tunnel、綁定 `rpg.starklab.tw`；架設只聽 localhost、可設 header 的靜態檔伺服器；`sw.js`、`index.html`、`manifest.webmanifest` 設 `Cache-Control: no-cache`。 | project-shipper | 無（外部：X6） | 部署 | iPhone 用 HTTPS 開得到 `https://rpg.starklab.tw/` 的測試頁 |
+| T2 | 部署：本機靜態檔伺服器 | 寫 `deploy/serve.mjs`（只聽 127.0.0.1:5810，可用 RPG_PORT 覆蓋），設定快取 header 與開機自動啟動；老闆的反向代理轉到這個 port。 | project-shipper | 無 | 部署 | `curl -I http://127.0.0.1:5810/sw.js` 顯示 `Cache-Control: no-cache` |
 | T3 | Spike S1～S3 | 放在 `spike/`：S1 iOS 實機（加入主畫面、飛航模式、`navigator.storage.persist()`、SW 更新提示）；S2 Safari 上「舊版開 DB → 匯出 → 新版升級」流程；S3 空殼 bundle gzip 量測。 | frontend-developer | T1, T2 | 實作 | 三個 spike 結果都寫進 tech-stack.md 第 9 節，含截圖或指令輸出 |
 | T4 | PWA 外殼 | manifest、iOS meta 與 apple-touch-icon、vite-plugin-pwa 離線快取、`registerType: prompt` 的「有新版本，點此更新」提示（先最簡樣式，G1 後套版）、畫面顯示版本號。 | frontend-developer | T1, T3 | 實作 | Lighthouse PWA installable 檢查通過（附報告） |
 | T5 | 數值設定檔 | 依 data-model.md 第 5 節建立 `balance.schema.ts`（Zod）與讀取模組；建立測試用 `tests/balance.test.json`。 | frontend-developer | T1（外部：X2） | 實作 | schema 欄位與 data-model.md 第 5 節一一對應 |
@@ -160,7 +160,7 @@
 | T19 | 設定頁 | 換日時間（下一個遊戲日生效）、旅館開關、財務屬性開關、最近事件紀錄（筆數讀設定檔）、匯出／匯入入口、版本號。 | frontend-developer | T10, T12（外部：X3） | 實作 | 改換日時間不立即觸發日結 |
 | T20 | 快速新增（P2） | 輸入文字，以內容資料包的 `keywords` 規則判斷類型與屬性；時間不夠就砍。 | frontend-developer | T11, T16（外部：X4） | 實作 | 關鍵字規則來自資料檔，不寫在程式碼 |
 | T21 | 整合測試 | 儲存層遷移、匯出→清除→匯入來回一致、日結 transaction 防重複與失敗回滾、多日未開端到端。 | test-writer-fixer | T12, T18 | 測試 | 整合測試全綠（附輸出） |
-| T22 | 正式部署 | build 產物發佈到老闆電腦、確認 Cloudflare 未快取 `sw.js`、iPhone 安裝與版本更新驗證、寫發佈／回滾步驟到 `deploy/README.md`。 | project-shipper | T2, T4 | 部署 | iPhone 加入主畫面後全螢幕開啟 |
+| T22 | 正式部署 | build 產物發佈到老闆電腦、確認反向代理未快取 `sw.js`、iPhone 安裝與版本更新驗證、寫發佈／回滾步驟到 `deploy/README.md`。 | project-shipper | T2, T4 | 部署 | iPhone 加入主畫面後全螢幕開啟 |
 | T23 | iPhone 實機驗收 | 依提案書第 9 節驗收：飛航模式打卡、60 秒上手、四職業套組、打勾／取消數值、日結與旅館、預設庫與編輯、匯出→清除→匯入還原。 | qa-lead | T13, T14, T15, T16, T17, T18, T19, T21, T22 | 測試 | 提案書第 9 節驗收項目逐項附截圖或紀錄 |
 
 詳細描述與完整驗收標準見 `.tasks/sprint-1/TN-*.md`。合計：必做（不含 T20）約 24.5 人日；含 T20 約 25.5 人日。
@@ -173,7 +173,7 @@ T1 ─┬→ T7 ─┬→ T8 → T10 ──────────────�
     ├→ T5 ───────────────┤→ T12 ──┬→ T13～T17、T19（等 X3）─┐
     ├→ T11（等 X4）───────┘        │                        │
     │                    T6 ──────┤→ T18 → T21 ────────────┤→ T23
-X6 → T2 → T3 ─┬→ T4 ─────────────────────────→ T22 ────────┘
+T2 → X6 → T3 ─┬→ T4 ─────────────────────────→ T22 ────────┘
               └→ T6
 ```
 
@@ -193,7 +193,7 @@ X6 → T2 → T3 ─┬→ T4 ────────────────�
 
 ⚠️ 阻斷規則：T9 等數值決策表；UI 任務等 G1；T23 等換日測試全綠。
 
-可立即開工：T1 → T7、T5（結構）、T11（格式）；T2 等老闆完成 X6。
+可立即開工：T1 → T7、T5（結構）、T11（格式）；T2 可立即開工，完成後老闆設定反向代理。
 ```
 
 ### 共用檔案（需協調）
@@ -235,8 +235,7 @@ X6 → T2 → T3 ─┬→ T4 ────────────────�
 |------|------|---------|
 | 數值決策表延遲（X2） | 關鍵路徑卡住 | T5／T8 先做結構並用測試設定檔；決策表最晚在 T8 完成前定案 |
 | 換網址導致 iPhone 資料讀不到 | 試用資料遺失 | 子網域固定 `rpg`；匯出／匯入（T18）；架構文件明訂不得更改 |
-| GoDaddy 改 nameserver 時漏掉既有 DNS 紀錄 | 該網域的 email 等服務中斷 | T2 改 nameserver 前逐筆核對 MX 等紀錄 |
-| Cloudflare 快取 `sw.js` | 更新不生效 | 來源設 no-cache，T2／T22 驗證 `cf-cache-status` |
+| 反向代理快取 `sw.js` | 更新不生效 | 來源設 no-cache，T2／T22 以 `curl -I` 驗證代理後的 header |
 | iOS 清除 IndexedDB | 資料遺失 | 加入主畫面＋`persist()`（T3 驗證）＋匯出備份 |
 | 老闆電腦關機 | 無法安裝或更新 | 只影響安裝和更新，日常離線可用；發佈前確認電腦開機 |
 | Git Bash 找不到 node | slash command 失敗 | 已補 `~/.bashrc`（postmortem-log），重開 Claude Code 後驗證 |

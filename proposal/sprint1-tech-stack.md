@@ -4,6 +4,7 @@
 > **日期**: 2026-10-23
 > **狀態**: ✅ 已定案（2026-10-23 老闆）：方案 A＋自己的電腦＋Cloudflare Tunnel（自有網域）
 > **補充**（2026-10-23）：網域在 GoDaddy。老闆授權 tech-lead 決定，採「網域保留在 GoDaddy，只把 nameserver 指向 Cloudflare（免費方案）」，Tunnel 照原計畫。另兩個選項（家用電腦直接對外＋路由器轉 port、改用靜態代管）不採用，理由：不開放家用電腦對外 port、維持老闆選的「自己的電腦」。
+> **再補充**（2026-10-23）：老闆改用自己的反向代理處理 HTTPS 與對外連線，**不使用 Cloudflare**。本專案只提供本機靜態檔伺服器 `127.0.0.1:5810`（`deploy/serve.mjs`），代理把 `rpg.starklab.tw` 轉過來。
 > **依據**: `proposal/sprint1-handoff-tech-lead.md` 第 3 節、`CLAUDE.md` 本專案特有規則、企劃書第 1、7、8 節
 > **spike**: 本提案**未執行** spike。第 6 節列出建議在定案後第一天做的 spike，結果會補回本文件。
 

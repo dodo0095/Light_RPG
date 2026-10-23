@@ -51,7 +51,7 @@
 | 資料驗證 | Zod |
 | 測試 | Vitest（＋fake-indexeddb） |
 | 套件管理 | pnpm |
-| 部署 | 老闆自己的 Windows 電腦＋Cloudflare Tunnel（自有網域，固定子網域） |
+| 部署 | 老闆自己的 Windows 電腦；老闆的反向代理 `rpg.starklab.tw` → `127.0.0.1:5810`（`deploy/serve.mjs`） |
 
 ## 設計稿合規規則（強制）
 

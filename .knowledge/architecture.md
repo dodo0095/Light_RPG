@@ -57,29 +57,28 @@ iPhone Safari（加入主畫面）
 | 單元測試 | Vitest（IndexedDB 測試用 `fake-indexeddb`） | 時間一律由參數注入 |
 | 程式碼品質 | ESLint＋Prettier | 設定依公司 coding-standards |
 | 套件管理 | pnpm | |
-| 部署 | 老闆自己的 Windows 電腦＋Cloudflare Tunnel（自有網域） | 見第 4.1 節 |
+| 部署 | 老闆自己的 Windows 電腦＋老闆自有的反向代理（`rpg.starklab.tw` → `127.0.0.1:5810`） | 見第 4.1 節 |
 
 ### 4.1 部署架構
 
 ```
-iPhone Safari ──HTTPS──> Cloudflare（自有網域的固定子網域）
-                              │ Cloudflare Tunnel（cloudflared，對外不開任何 port）
-                              ▼
+iPhone Safari ──HTTPS──> rpg.starklab.tw
+                              │ 老闆自有的反向代理（負責 HTTPS 憑證與對外連線）
+                              ▼  http://127.0.0.1:5810
                   老闆的 Windows 電腦
-                  └─ 靜態檔伺服器（只聽 localhost）── 提供 dist/
+                  └─ 靜態檔伺服器 deploy/serve.mjs（只聽 127.0.0.1）── 提供 dist/
 ```
 
 | 項目 | 規則 |
 |------|------|
 | 網址 | `rpg.starklab.tw`（2026-10-23 老闆定案；DNS 不分大小寫，一律寫小寫）。定了就不要改。iPhone 的 IndexedDB 依網址存放，換網址＝原本的資料讀不到 |
-| 網域 DNS | 網域註冊商維持 GoDaddy；在 GoDaddy 把 nameserver 改成 Cloudflare 指定的兩筆，DNS 改由 Cloudflare（免費方案）管理，才能建立具名 Tunnel。**改 nameserver 前**要先在 Cloudflare 匯入並核對既有 DNS 紀錄（尤其是 email 的 MX），避免其他服務中斷 |
-| `cloudflared` | 安裝成 Windows 服務，開機自動執行 |
-| 靜態檔伺服器 | 只聽 `localhost`；工具在 T19 選定（必須能設定 HTTP header） |
-| 快取 header | `sw.js`、`index.html`、`manifest.webmanifest` 一律 `Cache-Control: no-cache`；檔名帶 hash 的 JS／CSS 可長期快取。Cloudflare 預設會快取 `.js`，所以要在來源伺服器設定，並確認 Cloudflare 沒有覆蓋 |
+| 網域 DNS 與 HTTPS | 由老闆的反向代理負責（2026-10-23 老闆決定，取代原 Cloudflare Tunnel 方案；DNS 維持 GoDaddy）。代理需提供有效 HTTPS 憑證，並把 `rpg.starklab.tw` 轉到 `http://127.0.0.1:5810` |
+| 靜態檔伺服器 | `deploy/serve.mjs`（Node 內建模組、無額外套件），只聽 `127.0.0.1`；port 預設 5810，可用環境變數 `RPG_PORT` 覆蓋。開機自動啟動用 Windows 工作排程器 |
+| 快取 header | `sw.js`、`index.html`、`manifest.webmanifest` 一律 `Cache-Control: no-cache`；檔名帶 hash 的 JS／CSS 可長期快取。由 `serve.mjs` 設定；反向代理**不得快取**、要原樣轉送 `Cache-Control`（T2 用 `curl -I https://rpg.starklab.tw/sw.js` 驗證） |
 | 電腦開機需求 | 只有 iPhone 第一次安裝和取得新版本時需要開機；平常 App 離線運作 |
 | 發佈新版本 | `pnpm build` → 更新 `dist/` → iPhone 開 App 時出現更新提示 |
 | 回滾 | git revert → 重新 build → 覆蓋 `dist/` |
-| 機密 | Tunnel 憑證檔放在 repo 外，`.gitignore` 也要排除 |
+| 機密 | 本專案不保管憑證；HTTPS 憑證在老闆的反向代理上 |
 
 ## 5. 目錄結構
 
@@ -108,7 +107,7 @@ RPG/
 ├─ public/                  # 圖示、apple-touch-icon
 ├─ tests/                   # 整合測試、測試用設定檔（balance.test.json）
 ├─ spike/                   # 技術驗證，不併入正式程式碼
-├─ deploy/                  # 靜態檔伺服器設定、cloudflared 設定範例（不含憑證）
+├─ deploy/                  # 靜態檔伺服器 serve.mjs、發佈／回滾步驟
 ├─ vite.config.ts
 ├─ vitest.config.ts
 └─ tsconfig.json
