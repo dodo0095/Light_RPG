@@ -2,7 +2,7 @@
  * 匯出／匯入（data-model.md 第 8 節）。
  *
  * 匯入流程：Zod 驗外框 → 版本較新就拒絕 → 自動備份目前資料到 `morning-oath-backup`
- * → 舊版本先跑遷移 → 換成本機 installId → 驗證記錄必要欄位 → 在**單一 transaction** 裡清空所有 store 再寫入。
+ * → 舊版本先跑遷移 → 換成本機 installId／lastBackupAt → 驗證記錄必要欄位 → 在**單一 transaction** 裡清空所有 store 再寫入。
  * 任何一步失敗，目前資料保持不變。
  */
 import { unwrap } from 'idb';
@@ -81,6 +81,25 @@ export function withLocalInstallId(backup: BackupFile, localInstallId: string | 
   const meta = (backup.data.meta ?? []).filter((r) => r.key !== 'installId');
   if (localInstallId !== null) meta.push({ key: 'installId', value: localInstallId });
   return { ...backup, installId: localInstallId, data: { ...backup.data, meta } };
+}
+
+/** 匯入時保留本機值、不採用備份檔的 meta key（data-model 4.1）。 */
+export const LOCAL_ONLY_META_KEYS = ['lastBackupAt'] as const;
+
+/**
+ * 把匯入資料的 `meta.lastBackupAt` 換成本機的記錄（「這台裝置最後一次匯出成功的時間」，
+ * 2026-10-24 tech-lead 決定）。本機沒有記錄時拿掉備份檔的值（讀取時視為 null）。不修改輸入。
+ */
+export function withLocalOnlyMeta(
+  backup: BackupFile,
+  localMeta: readonly Record<string, unknown>[],
+): BackupFile {
+  const keys = new Set<unknown>(LOCAL_ONLY_META_KEYS);
+  const meta = [
+    ...(backup.data.meta ?? []).filter((r) => !keys.has(r.key)),
+    ...localMeta.filter((r) => keys.has(r.key)),
+  ];
+  return { ...backup, data: { ...backup.data, meta } };
 }
 
 /**
@@ -180,6 +199,7 @@ export async function importAll(
     migrated = runMigrations(incoming, currentVersion, options.migrations ?? MIGRATIONS);
     migrated = withSchemaVersion(migrated, currentVersion);
     migrated = withLocalInstallId(migrated, current.installId);
+    migrated = withLocalOnlyMeta(migrated, current.data.meta ?? []);
     (options.validateData ?? assertBackupV1)(migrated);
   } catch (error) {
     if (error instanceof StorageError) {
