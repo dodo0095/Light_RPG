@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>預設庫・圖稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  .lib-top { display: grid; gap: 8px; }
+  .lib-sub { font-family: var(--font-pixel); font-size: 13px; color: var(--c-ink-dim); margin: 14px 2px 6px; text-shadow: var(--ts); }
+  .lib-sub:first-child { margin-top: 0; }
+  .lib-item .task__title { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .lib-add { flex: none; align-self: center; }
+  .lib-add.is-added { background: transparent; border-color: var(--c-ok); color: var(--c-ok); box-shadow: none; }
+</style>
+</head>
+<body>
+<div class="mk-page">
+
+<header class="mk-head">
+  <h1>預設庫</h1>
+  <p>依屬性／依類型兩種分類切換，點「＋」一鍵加入（複製模板欄位到使用者任務、記 <code>sourceTemplateId</code>）。已加入的顯示「已加入」標記，但仍可再加一次（feature-spec F6）。對應 T15。</p>
+  <p>項目來自企劃書第 3 節；類型歸屬、難度、迷你版中標「示意」者為圖稿假設，正式內容待 X4。</p>
+</header>
+<nav class="mk-nav">
+  <a href="index.html">← 索引</a>
+  <a href="mockup-class-select.html">選職業</a>
+  <a href="mockup-today.html">今天</a>
+  <a href="mockup-library.html" class="is-on">預設庫</a>
+  <a href="mockup-editor.html">進階編輯</a>
+</nav>
+<div class="mk-legend"><span><i></i>安全區域示意</span><span>所有數字皆為示意值</span></div>
+
+<div class="mk-row">
+
+<!-- ① 依屬性 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">① 依屬性・體能</h2>
+  <p class="mk-frame__desc">預設分類。屬性晶片可橫向捲動；同屬性內依類型分組。選職業帶入的項目已顯示「已加入」。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+    <div class="app">
+      <div class="app__top lib-top">
+        <div class="topbar"><span style="width:44px"></span><span class="topbar__title">預設庫</span><span style="width:44px"></span></div>
+        <div class="seg" role="group" aria-label="分類方式"><button aria-pressed="true">依屬性</button><button aria-pressed="false">依類型</button></div>
+        <div class="chips chips--scroll">
+          <button class="chip chip--fitness is-on">體能</button><button class="chip">智慧</button><button class="chip">心靈</button><button class="chip">連結</button><button class="chip">財務</button>
+        </div>
+      </div>
+      <main class="app__main">
+        <h3 class="lib-sub">每日討伐</h3>
+        <div class="win">
+          <div class="task lib-item"><div class="task__body"><div class="task__title">喝 2000cc 水 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="tag">普通</span><span>迷你：喝一杯</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">走 6000 步</div><div class="task__meta"><span class="tag">普通</span><span class="mute">迷你：走 2000 步（示意）</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">23:30 前上床</div><div class="task__meta"><span class="tag">普通</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">伸展 5 分鐘 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="tag">簡單</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">早上 7 點前起床 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="tag">普通</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">運動 30 分鐘 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="tag">困難</span><span class="mute">迷你：運動 5 分鐘（示意）</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+        </div>
+        <h3 class="lib-sub">修行</h3>
+        <div class="win">
+          <div class="task lib-item"><div class="task__body"><div class="task__title">＋ 喝一杯水 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="tag">簡單</span><span>只有＋</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">＋ 爬樓梯 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="tag">簡單</span><span>只有＋</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">－ 吃宵夜 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="tag">普通</span><span>只有－</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+        </div>
+        <h3 class="lib-sub">公會委託</h3>
+        <div class="win">
+          <div class="task lib-item"><div class="task__body"><div class="task__title">預約健檢 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="tag">普通</span><span>附檢查清單</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+        </div>
+      </main>
+      <nav class="tabbar"><a><span class="ico">☀</span>今天</a><a class="is-on"><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ② 依類型・每日討伐 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">② 依類型・每日討伐（財務已開啟・節錄）</h2>
+  <p class="mk-frame__desc">情境：使用者已在設定開啟財務屬性，所以列出「財務」分組；財務關閉時，依屬性與依類型都不列財務項目（見 ⑥）。同類型內依屬性分組，每組為節錄。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+    <div class="app">
+      <div class="app__top lib-top">
+        <div class="topbar"><span style="width:44px"></span><span class="topbar__title">預設庫</span><span style="width:44px"></span></div>
+        <div class="seg" role="group" aria-label="分類方式"><button aria-pressed="false">依屬性</button><button aria-pressed="true">依類型</button></div>
+        <div class="chips chips--scroll">
+          <button class="chip">修行</button><button class="chip is-on">每日討伐</button><button class="chip">公會委託</button><button class="chip">獎勵</button>
+        </div>
+      </div>
+      <main class="app__main">
+        <p class="mk-hot" style="font-size:12px;color:var(--c-gold);margin:0 0 10px;padding:4px 6px;border-radius:4px">圖稿標註：財務屬性已開啟的情境</p>
+        <h3 class="lib-sub">體能</h3>
+        <div class="win">
+          <div class="task lib-item"><div class="task__body"><div class="task__title">早起 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="tag tag--fitness">體能</span><span class="tag">普通</span><span>每天</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">運動</div><div class="task__meta"><span class="tag tag--fitness">體能</span><span class="tag">困難</span><span>平日</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+          <p class="mute" style="font-size:12px;margin:4px 8px">…節錄，其餘項目略</p>
+        </div>
+        <h3 class="lib-sub">智慧</h3>
+        <div class="win">
+          <div class="task lib-item"><div class="task__body"><div class="task__title">閱讀 20 分鐘</div><div class="task__meta"><span class="tag tag--wisdom">智慧</span><span class="tag">普通</span><span>每天</span><span>迷你：讀 1 頁</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">學一個新單字／概念</div><div class="task__meta"><span class="tag tag--wisdom">智慧</span><span class="tag">簡單</span><span>每天</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+          <p class="mute" style="font-size:12px;margin:4px 8px">…節錄，其餘項目略</p>
+        </div>
+        <h3 class="lib-sub">心靈</h3>
+        <div class="win">
+          <div class="task lib-item"><div class="task__body"><div class="task__title">感恩日記</div><div class="task__meta"><span class="tag tag--spirit">心靈</span><span class="tag">簡單</span><span>每天</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">冥想 5 分鐘</div><div class="task__meta"><span class="tag tag--spirit">心靈</span><span class="tag">簡單</span><span>每天</span><span>迷你：深呼吸 3 次</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+          <p class="mute" style="font-size:12px;margin:4px 8px">…節錄，其餘項目略</p>
+        </div>
+        <h3 class="lib-sub">財務</h3>
+        <div class="win">
+          <div class="task lib-item"><div class="task__body"><div class="task__title">記帳</div><div class="task__meta"><span class="tag tag--finance">財務</span><span class="tag">簡單</span><span>平日</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+        </div>
+        <p class="mute" style="font-size:12px;margin:8px 2px 0">…連結分組節錄未畫。</p>
+      </main>
+      <nav class="tabbar"><a><span class="ico">☀</span>今天</a><a class="is-on"><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ③ 依類型・獎勵 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">③ 依類型・獎勵</h2>
+  <p class="mk-frame__desc">獎勵沒有屬性，只出現在「依類型」。加入後到「獎勵」分頁兌換（獎勵頁沿用本頁列表元件）。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+    <div class="app">
+      <div class="app__top lib-top">
+        <div class="topbar"><span style="width:44px"></span><span class="topbar__title">預設庫</span><span style="width:44px"></span></div>
+        <div class="seg" role="group" aria-label="分類方式"><button aria-pressed="false">依屬性</button><button aria-pressed="true">依類型</button></div>
+        <div class="chips chips--scroll">
+          <button class="chip">修行</button><button class="chip">每日討伐</button><button class="chip">公會委託</button><button class="chip is-on">獎勵</button>
+        </div>
+      </div>
+      <main class="app__main">
+        <h3 class="lib-sub">花金幣兌換的現實獎勵</h3>
+        <div class="win">
+          <div class="task lib-item"><div class="task__body"><div class="task__title">看一集劇 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="reward-line">◆30</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">喝手搖飲 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="reward-line">◆50</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">週末睡到自然醒</div><div class="task__meta"><span class="reward-line">◆100</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+        </div>
+        <p class="mute" style="font-size:12px;margin-top:12px">想要清單上沒有的獎勵？到「獎勵」分頁自己新增。</p>
+      </main>
+      <nav class="tabbar"><a><span class="ico">☀</span>今天</a><a class="is-on"><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ④ 剛加入 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">④ 剛加入（一鍵加入後）</h2>
+  <p class="mk-frame__desc">按「＋」立即加入、不跳表單；該列變成「已加入」，底部提示可「去編輯」。新加入的每日討伐從下一個遊戲日才計入結算（老闆 2026-10-23 決定）。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:42</div>
+    <div class="app">
+      <div class="app__top lib-top">
+        <div class="topbar"><span style="width:44px"></span><span class="topbar__title">預設庫</span><span style="width:44px"></span></div>
+        <div class="seg" role="group" aria-label="分類方式"><button aria-pressed="true">依屬性</button><button aria-pressed="false">依類型</button></div>
+        <div class="chips chips--scroll">
+          <button class="chip">體能</button><button class="chip chip--wisdom is-on">智慧</button><button class="chip">心靈</button><button class="chip">連結</button><button class="chip">財務</button>
+        </div>
+      </div>
+      <main class="app__main">
+        <h3 class="lib-sub">每日討伐</h3>
+        <div class="win">
+          <div class="task lib-item mk-hot"><div class="task__body"><div class="task__title">閱讀 20 分鐘 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="tag">普通</span><span>迷你：讀 1 頁</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">學一個新單字／概念</div><div class="task__meta"><span class="tag">簡單</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">寫 100 字筆記</div><div class="task__meta"><span class="tag">普通</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+        </div>
+        <h3 class="lib-sub">修行</h3>
+        <div class="win">
+          <div class="task lib-item"><div class="task__body"><div class="task__title">＋ 專注 25 分鐘</div><div class="task__meta"><span class="tag">普通</span><span>只有＋</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">－ 拖延</div><div class="task__meta"><span class="tag">普通</span><span>只有－</span></div></div><button class="btn btn--icon lib-add" aria-label="加入">＋</button></div>
+        </div>
+      </main>
+      <div class="toast" role="status"><span style="color:var(--c-ok)">✓</span><div style="flex:1">已加入「閱讀 20 分鐘」到今天。<br><span class="dim">每日討伐從明天（10/24）起計入換日結算。</span></div><button class="btn btn--sm btn--ghost">去編輯</button></div>
+      <nav class="tabbar"><a><span class="ico">☀</span>今天</a><a class="is-on"><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ⑤ 已完成＝整類都已加入 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">⑤ 已完成（整類都已加入）</h2>
+  <p class="mk-frame__desc">預設庫沒有「完成」的概念，對應狀態是「全部已加入」。分類仍照常列出，「＋」保留可重複加入（名稱相同不阻擋）。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:45</div>
+    <div class="app">
+      <div class="app__top lib-top">
+        <div class="topbar"><span style="width:44px"></span><span class="topbar__title">預設庫</span><span style="width:44px"></span></div>
+        <div class="seg" role="group" aria-label="分類方式"><button aria-pressed="true">依屬性</button><button aria-pressed="false">依類型</button></div>
+        <div class="chips chips--scroll">
+          <button class="chip">體能</button><button class="chip">智慧</button><button class="chip">心靈</button><button class="chip chip--bond is-on">連結</button><button class="chip">財務</button>
+        </div>
+      </div>
+      <main class="app__main">
+        <div class="banner banner--ok" style="margin-bottom:12px"><span class="banner__icon">✓</span><div class="banner__body"><span class="banner__title">連結類 3/3 都已加入</span>想再加一份（例如不同對象），仍可以按「＋」。</div></div>
+        <h3 class="lib-sub">每日討伐</h3>
+        <div class="win">
+          <div class="task lib-item"><div class="task__body"><div class="task__title">主動問候一個人 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="tag">簡單</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">陪家人吃一頓沒手機的飯 <span class="tag tag--solid">已加入</span></div><div class="task__meta"><span class="tag">普通</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+          <div class="task lib-item"><div class="task__body"><div class="task__title">對別人說一句具體的稱讚 <span class="tag tag--solid">已加入 ×2</span></div><div class="task__meta"><span class="tag">簡單</span></div></div><button class="btn btn--icon lib-add is-added" aria-label="再加入一次">＋</button></div>
+        </div>
+      </main>
+      <nav class="tabbar"><a><span class="ico">☀</span>今天</a><a class="is-on"><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ⑥ 空狀態 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">⑥ 空狀態（財務屬性未開啟）</h2>
+  <p class="mk-frame__desc">財務是選用屬性（<code>settings.enabledAttributes</code>）。未開啟時晶片顯示為虛線，點進去顯示說明與前往設定的按鈕，不列出項目。「依類型」各分頁也一樣不列財務項目（例如 ② 的「財務」分組不出現）。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:46</div>
+    <div class="app">
+      <div class="app__top lib-top">
+        <div class="topbar"><span style="width:44px"></span><span class="topbar__title">預設庫</span><span style="width:44px"></span></div>
+        <div class="seg" role="group" aria-label="分類方式"><button aria-pressed="true">依屬性</button><button aria-pressed="false">依類型</button></div>
+        <div class="chips chips--scroll">
+          <button class="chip">體能</button><button class="chip">智慧</button><button class="chip">心靈</button><button class="chip">連結</button><button class="chip is-on is-off" style="opacity:1">財務 · 未開啟</button>
+        </div>
+      </div>
+      <main class="app__main">
+        <div class="win win--inset"><div class="empty">
+          <span class="empty__mark">財務屬性尚未開啟</span>
+          開啟後才會顯示「記帳」「檢視一筆訂閱是否還需要」等財務項目，狀態列也會多一格財務經驗。
+          <div style="margin-top:14px"><button class="btn btn--sm">⚙ 到設定開啟</button></div>
+        </div></div>
+      </main>
+      <nav class="tabbar"><a><span class="ico">☀</span>今天</a><a class="is-on"><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- 不適用 -->
+<aside class="mk-na">
+  <h3>本頁不適用的狀態</h3>
+  <ul>
+    <li><b>已結算不可取消</b>：不適用。預設庫只做「加入」，不產生打卡事件，沒有可取消的東西；要移除已加入的項目請到進階編輯刪除（軟刪除）。</li>
+    <li><b>旅館中</b>：不適用。旅館只影響換日結算（不扣 HP、每日討伐不計），不影響加入；本頁不顯示旅館標記。</li>
+    <li><b>HP 低</b>：不適用。HP 只影響「今天」頁的警示，預設庫內容與操作不變。</li>
+  </ul>
+</aside>
+
+</div><!-- /mk-row -->
+
+<section class="mk-notes">
+  <h2>元件與互動規則</h2>
+  <div class="mk-table-wrap"><table>
+    <tr><th>元素</th><th>規則</th><th>依據</th></tr>
+    <tr><td>分類切換</td><td>分段切換「依屬性／依類型」，進入時預設「依屬性・體能」（圖稿假設）。</td><td>dev-plan T15；feature-spec F6</td></tr>
+    <tr><td>晶片</td><td>依屬性：體能／智慧／心靈／連結／財務；依類型：修行／每日討伐／公會委託／獎勵。可橫向捲動，每個 ≥44px。財務屬性關閉時，兩種分類都不列財務項目（依屬性顯示 ⑥ 的空狀態；依類型不出現「財務」分組）。</td><td>企劃書 3.1、3.2</td></tr>
+    <tr><td>項目列</td><td>名稱、難度、迷你版、類型或屬性、預設頻率（Daily）；To-do 顯示「附檢查清單」。</td><td>feature-spec F6；data-model 7.2</td></tr>
+    <tr><td>＋ 加入</td><td>一鍵加入，不跳表單；複製模板欄位並記 <code>sourceTemplateId</code>。已加入的改成綠框「＋」並在名稱旁顯示「已加入」，可重複加入時顯示次數（×2）。</td><td>data-model 1 規則 1；feature-spec F6</td></tr>
+    <tr><td>加入提示</td><td>底部提示 4 秒後自動消失；「去編輯」開啟該任務的進階編輯。</td><td>企劃書 2「自由編輯（進階）」</td></tr>
+  </table></div>
+  <h2>假設與待 G1 確認</h2>
+  <ul>
+    <li><b>企劃書 3.1 的項目屬於哪一類型</b>沒寫；圖稿假設 3.1 列的都是每日討伐，Habit 的屬性（例如「－吃宵夜」算體能）也是假設。</li>
+    <li><b>3.1 與 3.2 有重疊</b>（「早上 7 點前起床」vs「早起」、「運動 30 分鐘」vs「運動」）：是同一個模板還是兩個，待 product-manager 整理 X4 時決定。</li>
+    <li><b>模板 <code>category</code> 欄位</b>（data-model 7.2「預設庫畫面的分類」）與「依屬性／依類型」的關係沒寫清楚；圖稿把屬性、類型當主分類，組內小標用類型或屬性，沒有用到 <code>category</code>。</li>
+    <li><b>「已加入」怎麼判斷</b>：圖稿假設＝存在未刪除、<code>sourceTemplateId</code> 等於此模板的任務。</li>
+    <li>迷你版標「示意」者：企劃書只給了 3 個迷你版（喝一杯、讀 1 頁、深呼吸 3 次）。</li>
+  </ul>
+</section>
+
+<p class="mk-foot">⚠ 難度與獎勵價格以外的數字皆為示意值；獎勵價格取自企劃書 3.2。正式數值以 <code>.knowledge/decision-tables.md</code> 為準（尚未定案），正式內容待 X4。</p>
+</div>
+</body>
+</html>

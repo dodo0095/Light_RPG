@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>晨光之誓圖稿索引</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  .ix-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin: 8px 0 32px; }
+  .ix-card { display: block; text-decoration: none; color: var(--c-ink); padding: 16px; }
+  .ix-card h2 { font-family: var(--font-pixel); font-size: 20px; margin: 0 0 6px; text-shadow: var(--ts-strong); }
+  .ix-card p { margin: 0 0 10px; font-size: 13px; color: var(--c-ink-dim); text-shadow: none; }
+  .ix-card ul { margin: 0; padding-left: 18px; font-size: 13px; text-shadow: none; }
+  .ix-swatches { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0; }
+  .ix-sw { width: 120px; font-size: 11px; color: var(--c-ink-dim); }
+  .ix-sw i { display: block; height: 32px; border: 1px solid rgba(255,255,255,.3); border-radius: 4px; margin-bottom: 4px; }
+  .ix-demo { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="mk-page">
+
+<header class="mk-head">
+  <h1>晨光之誓・Sprint 1 圖稿</h1>
+  <p>G1 送審稿 v0.1（2026-10-23，ui-designer，受 design-director 委派）。四頁 HTML mockup，以 iPhone 直式 390px 為基準，每頁以並排手機框靜態呈現所有狀態。</p>
+  <p>本 Sprint 不做 RPG 視覺包裝（提案書第 1、2 節）：沒有戰鬥畫面、角色像素圖、Boss；只沿用企劃書 7.1 的「藍色漸層視窗＋白色邊框＋深藍文字陰影」當介面外框，做成 <code>tokens.css</code> 的共用變數與元件，供 Sprint 2 延續。</p>
+</header>
+
+<div class="ix-grid">
+  <a class="win ix-card" href="mockup-class-select.html"><h2>① 選職業</h2><p>T13・feature-spec F2</p>
+    <ul><li>未選</li><li>已選某職業（可互動切換四職業）</li><li>確認中（確認面板）</li><li>建立中</li><li>四職業套組對照表</li><li>不適用：空狀態、已完成、已結算、旅館、HP 低（附原因）</li></ul></a>
+  <a class="win ix-card" href="mockup-today.html"><h2>② 今天</h2><p>T14・feature-spec F3</p>
+    <ul><li>一般（打勾、Daily／To-do 迷你版、Habit ＋／－、Daily／To-do 檢查清單）</li><li>空狀態</li><li>已完成（全勤）</li><li>換日提示</li><li>已結算不可取消</li><li>旅館中</li><li>HP 低</li><li>多日未開，補算換日（含略過天數）</li></ul></a>
+  <a class="win ix-card" href="mockup-library.html"><h2>③ 預設庫</h2><p>T15・feature-spec F6</p>
+    <ul><li>依屬性</li><li>依類型・每日討伐（財務已開啟・節錄）</li><li>依類型・獎勵</li><li>剛加入（提示）</li><li>已完成＝整類都已加入</li><li>空狀態（財務未開啟）</li><li>不適用：已結算、旅館、HP 低（附原因）</li></ul></a>
+  <a class="win ix-card" href="mockup-editor.html"><h2>④ 進階編輯</h2><p>T16・feature-spec F7</p>
+    <ul><li>新增（空白＝空狀態）</li><li>編輯既有：每日討伐／修行／公會委託</li><li>驗證錯誤</li><li>刪除確認（軟刪除）</li><li>已完成（編輯今天已完成的項目）</li><li>不適用：已結算、旅館、HP 低（附原因）</li></ul></a>
+</div>
+
+<section class="mk-notes" style="margin-top:0">
+  <h2>待 G1 決定：獎勵頁、設定頁是否補圖</h2>
+  <p>依 dev-plan 第 3 節，獎勵（T17）與設定（T19）不在四頁圖稿內，沿用「今天」的樣式元件。下表是建議的沿用方式，<b style="color:var(--c-warn)">是否需要補圖由 G1 決定</b>。</p>
+  <div class="mk-table-wrap"><table>
+    <tr><th>頁面</th><th>需要的畫面</th><th>可直接沿用的元件</th><th>沒有現成樣子、建議補圖的部分</th></tr>
+    <tr><td>獎勵（T17）</td><td>獎勵清單、新增／編輯、兌換、取消兌換（只限未結算日）、金幣不足時停用</td><td>狀態列（金幣）、<code>.win</code> 列表＋<code>.task</code> 列、<code>.btn--primary</code>、停用按鈕、<code>.sheet</code> 確認、<code>.tag--lock</code>「已結算」、<code>.toast</code>；新增／編輯用進階編輯的 <code>.field</code></td><td>兌換後的「今天已兌換」區塊與取消入口（類似今天頁 To-do 的「今天完成」，但規則未畫）</td></tr>
+    <tr><td>設定（T19）</td><td>換日時間（下一個遊戲日生效）、旅館開關、財務屬性開關、最近事件紀錄、匯出／匯入、版本號、持久儲存狀態</td><td><code>.switch</code>、<code>.field</code>、<code>.banner--inn</code>、<code>.sheet</code>（匯入確認）、<code>.win--inset</code> 列表</td><td>換日時間「已排程，明天起生效」的提示樣式；事件紀錄列格式；匯入失敗／版本太新的錯誤畫面；入住旅館的確認文案</td></tr>
+    <tr><td>其他（未列在四頁內）</td><td>「有新版本，點此更新」（T4）、「請用 Safari 開啟」（feature-spec F1）、HP 歸零當下</td><td><code>.toast</code>、<code>.banner</code></td><td>HP 歸零懲罰畫面要等 <code>hpDepletion</code> 規則定案</td></tr>
+  </table></div>
+
+  <h2>共用設計語言（tokens.css）</h2>
+  <div class="ix-swatches">
+    <div class="ix-sw"><i style="background:linear-gradient(180deg,var(--c-win-top),var(--c-win-bot))"></i>視窗漸層 --c-win-top／bot</div>
+    <div class="ix-sw"><i style="background:var(--c-bg)"></i>底色 --c-bg</div>
+    <div class="ix-sw"><i style="background:var(--c-hp)"></i>HP --c-hp</div>
+    <div class="ix-sw"><i style="background:var(--c-hp-low)"></i>HP 低 --c-hp-low</div>
+    <div class="ix-sw"><i style="background:var(--c-exp)"></i>EXP／迷你版 --c-exp</div>
+    <div class="ix-sw"><i style="background:var(--c-gold)"></i>金幣 --c-gold</div>
+    <div class="ix-sw"><i style="background:var(--c-inn)"></i>旅館 --c-inn</div>
+    <div class="ix-sw"><i style="background:var(--attr-fitness)"></i>體能</div>
+    <div class="ix-sw"><i style="background:var(--attr-wisdom)"></i>智慧</div>
+    <div class="ix-sw"><i style="background:var(--attr-spirit)"></i>心靈</div>
+    <div class="ix-sw"><i style="background:var(--attr-bond)"></i>連結</div>
+    <div class="ix-sw"><i style="background:var(--attr-finance)"></i>財務</div>
+  </div>
+  <div class="ix-demo">
+    <div class="win" style="width:220px"><h3 class="win__title">視窗 .win</h3><span style="font-size:13px">白框 2px、圓角 4px、深藍字影</span></div>
+    <button class="btn">按鈕 .btn</button><button class="btn btn--primary">主要 .btn--primary</button><button class="btn btn--ghost">次要 .btn--ghost</button><button class="btn btn--danger">危險 .btn--danger</button>
+    <span class="tag tag--fitness">體能</span><span class="tag tag--lock">🔒 已結算</span><span class="tag tag--inn">🛏 旅館中</span><span class="tag tag--solid">已加入</span>
+    <div style="width:240px"><div class="bar"><span class="bar__label">HP</span><span class="bar__track"><span class="bar__fill" style="width:76%"></span></span><span class="bar__value">38/50</span></div><div class="bar bar--low"><span class="bar__label">HP</span><span class="bar__track"><span class="bar__fill" style="width:18%"></span></span><span class="bar__value">9/50</span></div></div>
+  </div>
+  <ul style="margin-top:16px">
+    <li>字型：標題／數值 <code>DotGothic16</code>（Google Fonts），內文系統字型 <code>-apple-system, "PingFang TC", "Noto Sans TC"</code>。DotGothic16 缺的繁體字會自動退回系統字型；正式版改用俐方體 11 號（企劃書 7.1）時只需改 <code>--font-pixel</code>。</li>
+    <li>安全區域：<code>--safe-top／bottom／left／right</code> 預設取 <code>env(safe-area-inset-*)</code>；圖稿手機框內覆寫成 47px／34px 並以粉紅虛線示意。實作需在 <code>index.html</code> 的 viewport 保留 <code>viewport-fit=cover</code>（目前已有）。</li>
+    <li>觸控目標：所有按鈕、勾選框、晶片、分頁最小 44×44px（<code>--touch</code>）。檢查清單子項的小勾選框是整列可點（列高 44px）。</li>
+    <li>建議 <code>theme-color</code> 改為 <code>#0a1030</code>（<code>--c-bg</code>）；目前 <code>index.html</code> 暫定 <code>#1a2b4c</code>，改不改由實作決定，需同步 <code>vite.config.ts</code>。</li>
+    <li><code>tokens.css</code> 最後一節 <code>.mk-*</code> 只給圖稿用（手機框、標註），實作時不要搬進 <code>src/</code>。</li>
+  </ul>
+
+  <h2>跨頁假設與待確認（彙整）</h2>
+  <div class="mk-table-wrap"><table>
+    <tr><th>#</th><th>議題</th><th>圖稿做法</th><th>依據／衝突</th><th>建議由誰決定</th></tr>
+    <tr><td>1</td><td>已完成 To-do 在今天頁怎麼顯示、能否跨日取消</td><td>當天完成留在「今天完成」區可取消；已結算顯示鎖頭、無取消</td><td>feature-spec F3 只列「未完成的 To-dos」；data-model 11 待確認 #4</td><td>product-manager</td></tr>
+    <tr><td>2</td><td>旅館中能否打勾、Habit「－」是否扣 HP</td><td>保留可打勾、可按</td><td>文件只寫日結不扣血、Dailies 不計（day-rollover 5.5）</td><td>product-manager</td></tr>
+    <tr><td>3</td><td>遊俠主屬性含財務，但財務是選用屬性</td><td>假設選遊俠自動開啟財務</td><td>data-model 2.2、4.2、7.3</td><td>product-manager</td></tr>
+    <tr><td>4</td><td>區段命名用 RPG 名稱或一般名稱</td><td>每日討伐／修行／公會委託＋英文小字</td><td>企劃書 4.2 vs 提案書「不做 RPG 包裝」</td><td>老闆（G1）</td></tr>
+    <tr><td>5</td><td>難度級數與名稱</td><td>示意「簡單／普通／困難」</td><td>data-model 2.2 DifficultyKey 由決策表決定</td><td>product-manager（決策表）</td></tr>
+    <tr><td>6</td><td>HP 低門檻</td><td>30%</td><td>借用企劃書 7.3 的姿勢門檻</td><td>product-manager</td></tr>
+    <tr><td>7</td><td>企劃書 3.1 項目的類型、與 3.2 的重疊</td><td>3.1 全視為每日討伐</td><td>企劃書 3.1、3.2</td><td>product-manager（X4）</td></tr>
+    <tr><td>8</td><td>模板 <code>category</code> 欄位用途</td><td>未使用</td><td>data-model 7.2</td><td>tech-lead／product-manager</td></tr>
+    <tr><td>9</td><td>建立後能否改類型；Habit 至少開一個按鈕；刪除是否收回已得獎勵</td><td>不能改；至少一個；文案不承諾</td><td>文件未寫</td><td>product-manager</td></tr>
+    <tr><td>10</td><td>換日提示要不要顯示結算明細（完成數、扣血）</td><td>顯示一行摘要</td><td>day-rollover 5.3 只寫「提示已經換日」</td><td>老闆（G1）</td></tr>
+  </table></div>
+</section>
+
+<p class="mk-foot">⚠ 所有圖稿中的數字（金幣、經驗、HP、等級門檻、扣血量、倍率）皆為示意值。數值決策表 <code>.knowledge/decision-tables.md</code> 尚未定案，正式數字以該表為準；預設內容以 X4 為準。</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>選職業・圖稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  .cs-hero { text-align: center; }
+  .cs-hero h1 { font-family: var(--font-pixel); font-size: var(--fs-2xl); margin: 0; text-shadow: var(--ts-strong); letter-spacing: 0.08em; }
+  .cs-hero p { margin: 2px 0 0; font-size: var(--fs-sm); color: var(--c-ink-dim); }
+  .cs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .cs-card { position: relative; text-align: left; min-height: 118px; padding: 10px 10px 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .cs-card .ico { font-size: 26px; line-height: 1; }
+  .cs-card .name { font-family: var(--font-pixel); font-size: var(--fs-xl); text-shadow: var(--ts-strong); }
+  .cs-card .dir { font-size: var(--fs-xs); color: var(--c-ink-dim); text-shadow: none; }
+  .cs-card .cursor { position: absolute; left: -14px; top: 40px; font-size: 16px; }
+  .cs-card[disabled] { opacity: 0.5; }
+  .cs-card.is-dim { opacity: 0.6; }
+  .cs-pack h3 { font-family: var(--font-pixel); font-size: var(--fs-md); margin: 0 0 6px; text-shadow: var(--ts); }
+  .cs-pack dl { margin: 0; display: grid; grid-template-columns: 74px 1fr; gap: 6px 8px; font-size: var(--fs-sm); }
+  .cs-pack dt { font-family: var(--font-pixel); color: var(--c-ink-dim); }
+  .cs-pack dd { margin: 0; text-shadow: none; }
+  .cs-pack .n { font-family: var(--font-pixel); color: var(--c-gold); margin-left: 6px; }
+  .cs-intro { font-size: var(--fs-sm); color: var(--c-ink-dim); text-shadow: none; margin: 10px 0; }
+  .cs-table td:first-child { white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="mk-page">
+
+<header class="mk-head">
+  <h1>選職業</h1>
+  <p>開場四選一（戰士／法師／僧侶／遊俠）。選定後立刻看到會帶入的套組（每日討伐、修行、公會委託、獎勵），按確認後建立角色並直接進入「今天」。對應 T13、feature-spec F2。</p>
+  <p>職業只影響「開場帶入哪套預設」與「主屬性經驗加成」（企劃書 5.1）；畫面文案照這個原則寫，避免玩家以為選錯職業會被限制。</p>
+</header>
+<nav class="mk-nav">
+  <a href="index.html">← 索引</a>
+  <a href="mockup-class-select.html" class="is-on">選職業</a>
+  <a href="mockup-today.html">今天</a>
+  <a href="mockup-library.html">預設庫</a>
+  <a href="mockup-editor.html">進階編輯</a>
+</nav>
+<div class="mk-legend"><span><i></i>安全區域示意</span><span>套組內容為示意（正式內容待 X4）</span><span>② 號框可以點職業卡片切換（其餘為靜態）</span></div>
+
+<div class="mk-row">
+
+<!-- ① 未選 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">① 未選</h2>
+  <p class="mk-frame__desc">第一次開啟（<code>onboardingCompletedAt</code> 為空）。四張卡片等權重，確認按鈕停用並提示先選一個。</p>
+  <div class="mk-phone">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+    <div class="app">
+      <div class="app__top cs-hero"><h1>晨光之誓</h1><p>選擇你的職業，馬上開始第一個任務</p></div>
+      <main class="app__main">
+        <p class="cs-intro">職業決定開場帶入哪一套習慣，以及哪個屬性成長比較快。不管選什麼，所有習慣都會讓對應的屬性成長，之後也能自由增減。</p>
+        <div class="cs-grid">
+          <button class="win cs-card"><span class="ico">⚔️</span><span class="name">戰士</span><span class="tag tag--fitness" style="align-self:flex-start">主屬性 體能</span><span class="dir">運動、早起、喝水</span></button>
+          <button class="win cs-card"><span class="ico">🔮</span><span class="name">法師</span><span class="tag tag--wisdom" style="align-self:flex-start">主屬性 智慧</span><span class="dir">閱讀、學習、寫筆記</span></button>
+          <button class="win cs-card"><span class="ico">✨</span><span class="name">僧侶</span><span class="tag tag--spirit" style="align-self:flex-start">主屬性 心靈</span><span class="dir">冥想、感恩、早睡</span></button>
+          <button class="win cs-card"><span class="ico">🏹</span><span class="name">遊俠</span><span style="display:flex;gap:4px;flex-wrap:wrap"><span class="tag tag--bond">連結</span><span class="tag tag--finance">財務</span></span><span class="dir">問候朋友、記帳</span></button>
+        </div>
+        <div class="win win--inset" style="margin-top:14px"><div class="empty" style="padding:16px 8px">點一個職業，這裡會列出<br>會自動加入的習慣與獎勵</div></div>
+      </main>
+      <div class="app__bottom"><button class="btn btn--primary btn--block" disabled>請先選一個職業</button></div>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ② 已選 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">② 已選某職業（法師）</h2>
+  <p class="mk-frame__desc">選中的卡片金框＋閃爍「▶」，其他卡片變淡但仍可改選。下方列出這個職業會帶入的全部項目與數量。<b>此框可點卡片切換。</b></p>
+  <div class="mk-phone">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+    <div class="app">
+      <div class="app__top cs-hero"><h1>晨光之誓</h1><p>選擇你的職業，馬上開始第一個任務</p></div>
+      <main class="app__main" style="padding-left:24px">
+        <div class="cs-grid" id="demoGrid">
+          <button class="win cs-card is-dim" data-k="warrior" aria-pressed="false"><span class="ico">⚔️</span><span class="name">戰士</span><span class="tag tag--fitness" style="align-self:flex-start">主屬性 體能</span><span class="dir">運動、早起、喝水</span></button>
+          <button class="win cs-card win--selected" data-k="mage" aria-pressed="true"><span class="cursor">▶</span><span class="ico">🔮</span><span class="name">法師</span><span class="tag tag--wisdom" style="align-self:flex-start">主屬性 智慧</span><span class="dir">閱讀、學習、寫筆記</span></button>
+          <button class="win cs-card is-dim" data-k="monk" aria-pressed="false"><span class="ico">✨</span><span class="name">僧侶</span><span class="tag tag--spirit" style="align-self:flex-start">主屬性 心靈</span><span class="dir">冥想、感恩、早睡</span></button>
+          <button class="win cs-card is-dim" data-k="ranger" aria-pressed="false"><span class="ico">🏹</span><span class="name">遊俠</span><span style="display:flex;gap:4px;flex-wrap:wrap"><span class="tag tag--bond">連結</span><span class="tag tag--finance">財務</span></span><span class="dir">問候朋友、記帳</span></button>
+        </div>
+        <div class="win cs-pack" style="margin-top:14px" id="demoPack">
+          <h3>🔮 法師會帶入</h3>
+          <dl>
+            <dt>每日討伐<span class="n">3</span></dt><dd>閱讀 20 分鐘（迷你：讀 1 頁）、學一個新單字／概念、寫 100 字筆記</dd>
+            <dt>修行<span class="n">2</span></dt><dd>＋專注 25 分鐘、－拖延</dd>
+            <dt>公會委託<span class="n">1</span></dt><dd>讀完一本書（附檢查清單）</dd>
+            <dt>獎勵<span class="n">3</span></dt><dd>看一集劇 ◆30、喝手搖飲 ◆50、週末睡到自然醒 ◆100</dd>
+            <dt>成長加成</dt><dd><span class="tag tag--wisdom">智慧</span> 經驗 ×1.2</dd>
+          </dl>
+        </div>
+      </main>
+      <div class="app__bottom"><button class="btn btn--primary btn--block" id="demoBtn">以 法師 出發</button></div>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ③ 確認中 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">③ 確認中</h2>
+  <p class="mk-frame__desc">按「出發」後跳出確認面板：說明會建立什麼、選定後本版本不能更換職業（feature-spec F2）、第一天不會因沒完成而扣 HP。</p>
+  <div class="mk-phone">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:42</div>
+    <div class="app">
+      <div class="app__top cs-hero"><h1>晨光之誓</h1><p>選擇你的職業，馬上開始第一個任務</p></div>
+      <main class="app__main" style="padding-left:24px">
+        <div class="cs-grid">
+          <button class="win cs-card is-dim"><span class="ico">⚔️</span><span class="name">戰士</span><span class="tag tag--fitness" style="align-self:flex-start">主屬性 體能</span><span class="dir">運動、早起、喝水</span></button>
+          <button class="win cs-card win--selected"><span class="cursor">▶</span><span class="ico">🔮</span><span class="name">法師</span><span class="tag tag--wisdom" style="align-self:flex-start">主屬性 智慧</span><span class="dir">閱讀、學習、寫筆記</span></button>
+          <button class="win cs-card is-dim"><span class="ico">✨</span><span class="name">僧侶</span><span class="tag tag--spirit" style="align-self:flex-start">主屬性 心靈</span><span class="dir">冥想、感恩、早睡</span></button>
+          <button class="win cs-card is-dim"><span class="ico">🏹</span><span class="name">遊俠</span><span style="display:flex;gap:4px;flex-wrap:wrap"><span class="tag tag--bond">連結</span><span class="tag tag--finance">財務</span></span><span class="dir">問候朋友、記帳</span></button>
+        </div>
+      </main>
+      <div class="app__bottom"><button class="btn btn--primary btn--block">以 法師 出發</button></div>
+      <div class="scrim"></div>
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cfmT">
+        <div class="win win--strong">
+          <h3 class="win__title" id="cfmT">以 🔮 法師 開始？</h3>
+          <p style="margin:0 0 8px;font-size:14px">會建立 <b class="num">3</b> 項每日討伐、<b class="num">2</b> 項修行、<b class="num">1</b> 項公會委託、<b class="num">3</b> 項獎勵。之後都能在預設庫增加、在進階編輯修改或刪除。</p>
+          <ul style="margin:0;padding-left:18px;font-size:13px;color:var(--c-ink-dim);text-shadow:none">
+            <li>今天是第一天：可以先打勾，今天沒完成的每日討伐不會扣 HP。</li>
+            <li>職業選定後，這個版本不能更換（轉職之後開放）。</li>
+          </ul>
+          <div class="sheet__actions"><button class="btn btn--ghost">再想想</button><button class="btn btn--primary">確定建立</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ④ 建立中 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">④ 建立中（確認後）</h2>
+  <p class="mk-frame__desc">寫入角色與套組期間按鈕顯示讀取中、卡片停用，防止連點重複建立。成功後直接換到「今天」（見 mockup-today ①）。</p>
+  <div class="mk-phone">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:42</div>
+    <div class="app">
+      <div class="app__top cs-hero"><h1>晨光之誓</h1><p>選擇你的職業，馬上開始第一個任務</p></div>
+      <main class="app__main" style="padding-left:24px">
+        <div class="cs-grid">
+          <button class="win cs-card" disabled><span class="ico">⚔️</span><span class="name">戰士</span><span class="tag tag--fitness" style="align-self:flex-start">主屬性 體能</span><span class="dir">運動、早起、喝水</span></button>
+          <button class="win cs-card win--selected" disabled style="opacity:1"><span class="ico">🔮</span><span class="name">法師</span><span class="tag tag--wisdom" style="align-self:flex-start">主屬性 智慧</span><span class="dir">閱讀、學習、寫筆記</span></button>
+          <button class="win cs-card" disabled><span class="ico">✨</span><span class="name">僧侶</span><span class="tag tag--spirit" style="align-self:flex-start">主屬性 心靈</span><span class="dir">冥想、感恩、早睡</span></button>
+          <button class="win cs-card" disabled><span class="ico">🏹</span><span class="name">遊俠</span><span style="display:flex;gap:4px;flex-wrap:wrap"><span class="tag tag--bond">連結</span><span class="tag tag--finance">財務</span></span><span class="dir">問候朋友、記帳</span></button>
+        </div>
+        <div class="banner" style="margin-top:14px"><span class="banner__icon">…</span><div class="banner__body"><span class="banner__title">正在準備你的冒險</span>建立角色、加入 9 個項目</div></div>
+      </main>
+      <div class="app__bottom"><button class="btn btn--primary btn--block is-loading" disabled style="opacity:.8">建立中…</button></div>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<aside class="mk-na">
+  <h3>本頁不適用的狀態</h3>
+  <ul>
+    <li><b>空狀態</b>：不適用。四個職業固定來自內容資料包 <code>class_sets</code>；資料包讀不到屬於 App 啟動錯誤（data-model 5：設定檔讀不到就顯示錯誤），不是本頁的空狀態。「未選」時套組區塊的提示即本頁的空白樣子（①）。</li>
+    <li><b>已完成</b>：不適用。建立成功後直接進入「今天」，本頁不再出現（feature-spec F2）。</li>
+    <li><b>已結算不可取消</b>：不適用。選職業前沒有任何打卡紀錄；選職業時 <code>lastSettledDayKey</code> 設為前一天（day-rollover 5.11）。</li>
+    <li><b>旅館中</b>：不適用。角色還沒建立，沒有旅館狀態。</li>
+    <li><b>HP 低</b>：不適用。角色建立時 HP 為上限，本頁不顯示 HP。</li>
+  </ul>
+</aside>
+
+</div><!-- /mk-row -->
+
+<section class="mk-notes">
+  <h2>四職業會帶入的套組（示意，正式內容待 X4）</h2>
+  <div class="mk-table-wrap"><table class="cs-table">
+    <tr><th>職業</th><th>主屬性</th><th>每日討伐</th><th>修行</th><th>公會委託</th><th>獎勵</th></tr>
+    <tr><td>⚔️ 戰士</td><td>體能</td><td>早上 7 點前起床、運動 30 分鐘、喝 2000cc 水（迷你：喝一杯）、伸展 5 分鐘</td><td>＋喝一杯水、＋爬樓梯、－吃宵夜</td><td>預約健檢</td><td rowspan="4">四職業共用預設三項：看一集劇 ◆30、喝手搖飲 ◆50、週末睡到自然醒 ◆100（企劃書 3.2）</td></tr>
+    <tr><td>🔮 法師</td><td>智慧</td><td>閱讀 20 分鐘（迷你：讀 1 頁）、學一個新單字／概念、寫 100 字筆記</td><td>＋專注 25 分鐘、－拖延</td><td>讀完一本書</td></tr>
+    <tr><td>✨ 僧侶</td><td>心靈</td><td>冥想 5 分鐘（迷你：深呼吸 3 次）、寫 3 件感恩的事、23:30 前上床、睡前不滑手機 30 分鐘</td><td>－睡前滑手機</td><td>整理桌面</td></tr>
+    <tr><td>🏹 遊俠</td><td>連結＋財務</td><td>主動問候一個人、記帳、對別人說一句具體的稱讚、陪家人吃一頓沒手機的飯</td><td>（企劃書沒有連結類 Habit，示意留空）</td><td>檢視一筆訂閱是否還需要</td></tr>
+  </table></div>
+
+  <h2>元件與互動規則</h2>
+  <div class="mk-table-wrap"><table>
+    <tr><th>元素</th><th>規則</th><th>依據</th></tr>
+    <tr><td>職業卡片</td><td>2×2 網格，每張 ≥118px 高；圖示用企劃書 5.2 的符號，不畫角色圖。選中：金色 3px 邊框＋閃爍 ▶（減少動態設定時不閃）。</td><td>企劃書 5.2、7.1</td></tr>
+    <tr><td>套組區塊</td><td>依類型列出名稱與數量，資料直接讀 <code>class_sets.taskTemplateIds</code>／<code>rewardTemplateIds</code>。</td><td>data-model 7.3</td></tr>
+    <tr><td>確認按鈕</td><td>固定在底部、避開 Home 條；文字帶職業名。</td><td>CLAUDE.md 設計稿合規 3</td></tr>
+    <tr><td>確認面板</td><td>「再想想」關閉面板回到②；「確定建立」進入④。</td><td>feature-spec F2</td></tr>
+  </table></div>
+
+  <h2>假設與待 G1 確認</h2>
+  <ul>
+    <li><b>遊俠的主屬性包含財務，但財務是選用屬性</b>（data-model 2.2、4.2 <code>enabledAttributes</code>）。選遊俠時要不要自動開啟財務？圖稿假設：選遊俠即開啟財務，其他職業預設關閉。待 product-manager 決定。</li>
+    <li><b>「主屬性經驗 ×1.2」</b>取自企劃書 5.1，正式倍率以決策表 <code>primaryAttributeMultiplier</code> 為準。</li>
+    <li><b>冒險者名稱</b>：data-model 4.3 說 S1 可先用預設值，所以本頁不放名字輸入框。</li>
+    <li>「確認中」解讀成確認面板（③）＋寫入中（④）兩個框。</li>
+  </ul>
+</section>
+
+<p class="mk-foot">⚠ 畫面上的倍率、價格與項目數量皆為示意值；正式數值以 <code>.knowledge/decision-tables.md</code> 為準（尚未定案），正式套組待 X4。</p>
+</div>
+
+<script>
+// 只給 ② 號框做互動示範：點卡片切換套組；不影響其他靜態框
+(function () {
+  var packs = {
+    warrior: { ico: '⚔️', name: '戰士', attr: ['fitness', '體能'], daily: ['早上 7 點前起床', '運動 30 分鐘', '喝 2000cc 水（迷你：喝一杯）', '伸展 5 分鐘'], habit: ['＋喝一杯水', '＋爬樓梯', '－吃宵夜'], todo: ['預約健檢'] },
+    mage: { ico: '🔮', name: '法師', attr: ['wisdom', '智慧'], daily: ['閱讀 20 分鐘（迷你：讀 1 頁）', '學一個新單字／概念', '寫 100 字筆記'], habit: ['＋專注 25 分鐘', '－拖延'], todo: ['讀完一本書（附檢查清單）'] },
+    monk: { ico: '✨', name: '僧侶', attr: ['spirit', '心靈'], daily: ['冥想 5 分鐘（迷你：深呼吸 3 次）', '寫 3 件感恩的事', '23:30 前上床', '睡前不滑手機 30 分鐘'], habit: ['－睡前滑手機'], todo: ['整理桌面'] },
+    ranger: { ico: '🏹', name: '遊俠', attr: ['bond', '連結＋財務'], daily: ['主動問候一個人', '記帳', '對別人說一句具體的稱讚', '陪家人吃一頓沒手機的飯'], habit: [], todo: ['檢視一筆訂閱是否還需要'] }
+  };
+  var grid = document.getElementById('demoGrid');
+  var pack = document.getElementById('demoPack');
+  var btn = document.getElementById('demoBtn');
+  function row(label, list) {
+    return '<dt>' + label + '<span class="n">' + list.length + '</span></dt><dd>' + (list.length ? list.join('、') : '<span class="mute">無</span>') + '</dd>';
+  }
+  function render(k) {
+    var p = packs[k];
+    grid.querySelectorAll('.cs-card').forEach(function (c) {
+      var on = c.getAttribute('data-k') === k;
+      c.classList.toggle('win--selected', on);
+      c.classList.toggle('is-dim', !on);
+      c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      var cur = c.querySelector('.cursor');
+      if (on && !cur) { c.insertAdjacentHTML('afterbegin', '<span class="cursor">▶</span>'); }
+      if (!on && cur) { cur.remove(); }
+    });
+    pack.innerHTML = '<h3>' + p.ico + ' ' + p.name + '會帶入</h3><dl>' +
+      row('每日討伐', p.daily) + row('修行', p.habit) + row('公會委託', p.todo) +
+      row('獎勵', ['看一集劇 ◆30', '喝手搖飲 ◆50', '週末睡到自然醒 ◆100']) +
+      '<dt>成長加成</dt><dd><span class="tag tag--' + p.attr[0] + '">' + p.attr[1] + '</span> 經驗 ×1.2</dd></dl>';
+    btn.textContent = '以 ' + p.name + ' 出發';
+  }
+  grid.addEventListener('click', function (e) {
+    var c = e.target.closest('.cs-card');
+    if (c) { render(c.getAttribute('data-k')); }
+  });
+})();
+</script>
+</body>
+</html>

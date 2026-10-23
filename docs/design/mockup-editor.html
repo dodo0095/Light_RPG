@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>進階編輯・圖稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  .ed-top { border-bottom: var(--bw) solid var(--c-border-dim); background: rgba(10, 16, 48, 0.92); }
+  .ed-src { font-size: var(--fs-xs); color: var(--c-ink-mute); margin: -8px 0 14px; }
+  .ed-list { list-style: none; margin: 0 0 8px; padding: 0; }
+  .ed-list li { display: flex; align-items: center; gap: 8px; min-height: 44px; border-bottom: 1px solid rgba(255,255,255,.14); font-size: 14px; }
+  .ed-list li span { flex: 1; }
+  .ed-list .x { width: 44px; height: 44px; background: none; border: 0; color: var(--c-ink-mute); font-size: 18px; }
+  .ed-add { width: 100%; justify-content: flex-start; border-style: dashed; }
+  .ed-del { margin-top: 8px; }
+  .ed-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
+  .ed-days .chip { min-width: 0; padding: 0; }
+  .ed-group { padding: 12px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="mk-page">
+
+<header class="mk-head">
+  <h1>進階編輯</h1>
+  <p>改名稱、備註、迷你版、難度、屬性、標籤、頻率（每天／平日／週末／自訂）、檢查清單；刪除＝軟刪除（只填 <code>deletedAt</code>）。對應 T16、feature-spec F7。從「今天」的「⋯」或右下「＋」、預設庫提示的「去編輯」進入。</p>
+  <p>表單頁框為<b>整頁展開</b>（實機是固定高度、中間捲動、頂部列固定），審稿時不需捲動即可看到全部欄位。</p>
+</header>
+<nav class="mk-nav">
+  <a href="index.html">← 索引</a>
+  <a href="mockup-class-select.html">選職業</a>
+  <a href="mockup-today.html">今天</a>
+  <a href="mockup-library.html">預設庫</a>
+  <a href="mockup-editor.html" class="is-on">進階編輯</a>
+</nav>
+<div class="mk-legend"><span><i></i>安全區域示意</span><span>難度級數為示意（由決策表決定）</span></div>
+
+<div class="mk-row">
+
+<!-- ① 新增 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">① 新增（空白表單）</h2>
+  <p class="mk-frame__desc">從「今天」右下「＋」進入。先選類型，欄位隨類型變化（此為每日討伐）。檢查清單、標籤為空時只顯示新增按鈕＝本頁的空狀態。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+    <div class="app">
+      <div class="app__top ed-top"><div class="topbar"><button class="link-btn" style="text-decoration:none">取消</button><span class="topbar__title">新增項目</span><button class="btn btn--sm btn--primary">儲存</button></div></div>
+      <main class="app__main app__main--bare" style="padding-top:16px">
+        <div class="field"><span class="field__label">類型</span>
+          <div class="seg"><button aria-pressed="false">修行</button><button aria-pressed="true">每日討伐</button><button aria-pressed="false">公會委託</button></div></div>
+        <label class="field"><span class="field__label">名稱 <span class="req">必填</span></span><input class="input" placeholder="例如：每天背 10 個單字"></label>
+        <div class="field"><div class="switch"><span class="field__label" style="margin:0">迷你版 <span class="opt">狀態不好時做這個也算完成</span></span><span class="switch__ui"></span></div></div>
+        <div class="field"><span class="field__label">難度</span>
+          <div class="seg"><button aria-pressed="false">簡單</button><button aria-pressed="true">普通</button><button aria-pressed="false">困難</button></div>
+          <p class="field__hint">難度越高，完成拿得越多；沒完成扣的 HP 也越多。</p></div>
+        <div class="field"><span class="field__label">屬性</span>
+          <div class="chips"><button class="chip chip--fitness is-on">體能</button><button class="chip">智慧</button><button class="chip">心靈</button><button class="chip">連結</button></div>
+          <p class="field__hint">預設為職業主屬性。財務屬性在設定開啟後才會出現。</p></div>
+        <div class="field"><span class="field__label">頻率</span>
+          <div class="seg"><button aria-pressed="true">每天</button><button aria-pressed="false">平日</button><button aria-pressed="false">週末</button><button aria-pressed="false">自訂</button></div>
+          <p class="field__hint">新增的每日討伐從明天起才計入換日結算。</p></div>
+        <div class="field"><span class="field__label">檢查清單 <span class="opt">選填</span></span>
+          <button class="btn btn--ghost ed-add">＋ 新增檢查項目</button></div>
+        <div class="field"><span class="field__label">標籤 <span class="opt">選填</span></span>
+          <button class="btn btn--ghost ed-add">＋ 新增標籤</button></div>
+        <label class="field"><span class="field__label">備註 <span class="opt">選填</span></span><textarea class="textarea" placeholder="給自己的提醒"></textarea></label>
+      </main>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ② 編輯既有・每日討伐 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">② 編輯既有（每日討伐）</h2>
+  <p class="mk-frame__desc">類型不可改（只顯示）。自訂頻率時出現星期選擇；顯示來源模板。最底部是刪除。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+    <div class="app">
+      <div class="app__top ed-top"><div class="topbar"><button class="link-btn" style="text-decoration:none">取消</button><span class="topbar__title">編輯每日討伐</span><button class="btn btn--sm btn--primary">儲存</button></div></div>
+      <main class="app__main app__main--bare" style="padding-top:16px">
+        <label class="field"><span class="field__label">名稱 <span class="req">必填</span></span><input class="input" value="運動 30 分鐘"></label>
+        <p class="ed-src">來自預設庫：運動 30 分鐘・建立於 10/21</p>
+        <div class="field"><div class="switch"><span class="field__label" style="margin:0">迷你版</span><span class="switch__ui is-on"></span></div>
+          <input class="input" value="運動 5 分鐘" style="margin-top:6px"></div>
+        <div class="field"><span class="field__label">難度</span>
+          <div class="seg"><button aria-pressed="false">簡單</button><button aria-pressed="false">普通</button><button aria-pressed="true">困難</button></div></div>
+        <div class="field"><span class="field__label">屬性</span>
+          <div class="chips"><button class="chip chip--fitness is-on">體能</button><button class="chip">智慧</button><button class="chip">心靈</button><button class="chip">連結</button></div></div>
+        <div class="field"><span class="field__label">頻率</span>
+          <div class="seg"><button aria-pressed="false">每天</button><button aria-pressed="false">平日</button><button aria-pressed="false">週末</button><button aria-pressed="true">自訂</button></div>
+          <div class="ed-days"><button class="chip">日</button><button class="chip is-on">一</button><button class="chip">二</button><button class="chip is-on">三</button><button class="chip">四</button><button class="chip is-on">五</button><button class="chip">六</button></div>
+          <p class="field__hint">改了頻率，今天的換日結算就會用新的頻率判斷要不要做。</p></div>
+        <div class="field"><span class="field__label">檢查清單 <span class="opt">勾選不另給獎勵</span></span>
+          <ul class="ed-list"><li><span>熱身 5 分鐘</span><button class="x" aria-label="移除">✕</button></li><li><span>主訓練 20 分鐘</span><button class="x" aria-label="移除">✕</button></li></ul>
+          <button class="btn btn--ghost ed-add">＋ 新增檢查項目</button></div>
+        <div class="field"><span class="field__label">標籤</span>
+          <div class="chips"><span class="chip is-on">健身房<span class="chip__x">✕</span></span><button class="chip" style="border-style:dashed">＋ 標籤</button></div></div>
+        <label class="field"><span class="field__label">備註</span><textarea class="textarea">下雨天改在家做</textarea></label>
+        <button class="btn btn--ghost btn--block ed-del" style="color:var(--c-danger);border-color:var(--c-danger)">刪除這個項目</button>
+      </main>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ③ 編輯既有・修行 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">③ 編輯既有（修行）</h2>
+  <p class="mk-frame__desc">修行沒有頻率與檢查清單，改成「＋／－ 按鈕」兩個開關（<code>allowUp</code>／<code>allowDown</code>），至少開一個。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+    <div class="app">
+      <div class="app__top ed-top"><div class="topbar"><button class="link-btn" style="text-decoration:none">取消</button><span class="topbar__title">編輯修行</span><button class="btn btn--sm btn--primary">儲存</button></div></div>
+      <main class="app__main app__main--bare" style="padding-top:16px">
+        <label class="field"><span class="field__label">名稱 <span class="req">必填</span></span><input class="input" value="吃宵夜"></label>
+        <p class="ed-src">來自職業套組：⚔️ 戰士</p>
+        <div class="field win win--inset ed-group">
+          <div class="switch"><span>＋ 按鈕 <span class="mute" style="font-size:12px">好習慣，按了得獎勵</span></span><span class="switch__ui"></span></div>
+          <div class="switch"><span>－ 按鈕 <span class="mute" style="font-size:12px">壞習慣，按了扣 HP</span></span><span class="switch__ui is-on"></span></div>
+        </div>
+        <div class="field"><div class="switch"><span class="field__label" style="margin:0">迷你版</span><span class="switch__ui"></span></div></div>
+        <div class="field"><span class="field__label">難度</span>
+          <div class="seg"><button aria-pressed="false">簡單</button><button aria-pressed="true">普通</button><button aria-pressed="false">困難</button></div></div>
+        <div class="field"><span class="field__label">屬性</span>
+          <div class="chips"><button class="chip chip--fitness is-on">體能</button><button class="chip">智慧</button><button class="chip">心靈</button><button class="chip">連結</button></div></div>
+        <div class="field"><span class="field__label">標籤 <span class="opt">選填</span></span>
+          <button class="btn btn--ghost ed-add">＋ 新增標籤</button></div>
+        <label class="field"><span class="field__label">備註 <span class="opt">選填</span></span><textarea class="textarea"></textarea></label>
+        <button class="btn btn--ghost btn--block ed-del" style="color:var(--c-danger);border-color:var(--c-danger)">刪除這個項目</button>
+      </main>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ④ 編輯既有・公會委託 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">④ 編輯既有（公會委託）</h2>
+  <p class="mk-frame__desc">委託有檢查清單與選填期限（S1 只顯示，不影響數值），沒有頻率。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+    <div class="app">
+      <div class="app__top ed-top"><div class="topbar"><button class="link-btn" style="text-decoration:none">取消</button><span class="topbar__title">編輯公會委託</span><button class="btn btn--sm btn--primary">儲存</button></div></div>
+      <main class="app__main app__main--bare" style="padding-top:16px">
+        <label class="field"><span class="field__label">名稱 <span class="req">必填</span></span><input class="input" value="整理桌面"></label>
+        <p class="ed-src">來自預設庫：整理桌面</p>
+        <div class="field"><div class="switch"><span class="field__label" style="margin:0">迷你版</span><span class="switch__ui is-on"></span></div>
+          <input class="input" value="清空桌面雜物" style="margin-top:6px"></div>
+        <div class="field"><span class="field__label">難度</span>
+          <div class="seg"><button aria-pressed="true">簡單</button><button aria-pressed="false">普通</button><button aria-pressed="false">困難</button></div></div>
+        <div class="field"><span class="field__label">屬性</span>
+          <div class="chips"><button class="chip">體能</button><button class="chip">智慧</button><button class="chip chip--spirit is-on">心靈</button><button class="chip">連結</button></div></div>
+        <div class="field"><span class="field__label">檢查清單 <span class="opt">勾選不另給獎勵</span></span>
+          <ul class="ed-list"><li><span>清空桌面雜物</span><button class="x" aria-label="移除">✕</button></li><li><span>擦桌子</span><button class="x" aria-label="移除">✕</button></li><li><span>整理抽屜</span><button class="x" aria-label="移除">✕</button></li></ul>
+          <button class="btn btn--ghost ed-add">＋ 新增檢查項目</button></div>
+        <label class="field"><span class="field__label">期限 <span class="opt">選填，只提醒不扣分</span></span><input class="input" value="2026/10/31（六）"></label>
+        <div class="field"><span class="field__label">標籤</span>
+          <div class="chips"><span class="chip is-on">居家<span class="chip__x">✕</span></span><button class="chip" style="border-style:dashed">＋ 標籤</button></div></div>
+        <button class="btn btn--ghost btn--block ed-del" style="color:var(--c-danger);border-color:var(--c-danger)">刪除這個項目</button>
+      </main>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ⑤ 驗證錯誤 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">⑤ 驗證錯誤</h2>
+  <p class="mk-frame__desc">按「儲存」時才檢查：名稱空白、自訂頻率一天都沒選（data-model 4.4：至少一天）。頂部列出錯誤數，欄位紅框＋文字說明（不只靠顏色）。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:43</div>
+    <div class="app">
+      <div class="app__top ed-top"><div class="topbar"><button class="link-btn" style="text-decoration:none">取消</button><span class="topbar__title">新增項目</span><button class="btn btn--sm btn--primary">儲存</button></div></div>
+      <main class="app__main app__main--bare" style="padding-top:16px">
+        <div class="banner banner--error" role="alert" style="margin-bottom:16px"><span class="banner__icon">!</span><div class="banner__body"><span class="banner__title">還有 2 個地方要修正</span>修正後再按一次「儲存」。</div></div>
+        <div class="field"><span class="field__label">類型</span>
+          <div class="seg"><button aria-pressed="false">修行</button><button aria-pressed="true">每日討伐</button><button aria-pressed="false">公會委託</button></div></div>
+        <label class="field"><span class="field__label">名稱 <span class="req">必填</span></span><input class="input is-error" value="" placeholder="例如：每天背 10 個單字" aria-invalid="true"><p class="field__error">✕ 請輸入名稱</p></label>
+        <div class="field"><div class="switch"><span class="field__label" style="margin:0">迷你版</span><span class="switch__ui"></span></div></div>
+        <div class="field"><span class="field__label">難度</span>
+          <div class="seg"><button aria-pressed="false">簡單</button><button aria-pressed="true">普通</button><button aria-pressed="false">困難</button></div></div>
+        <div class="field"><span class="field__label">屬性</span>
+          <div class="chips"><button class="chip">體能</button><button class="chip chip--wisdom is-on">智慧</button><button class="chip">心靈</button><button class="chip">連結</button></div></div>
+        <div class="field"><span class="field__label">頻率</span>
+          <div class="seg"><button aria-pressed="false">每天</button><button aria-pressed="false">平日</button><button aria-pressed="false">週末</button><button aria-pressed="true">自訂</button></div>
+          <div class="ed-days" style="outline:2px solid var(--c-danger);outline-offset:3px;border-radius:4px"><button class="chip">日</button><button class="chip">一</button><button class="chip">二</button><button class="chip">三</button><button class="chip">四</button><button class="chip">五</button><button class="chip">六</button></div>
+          <p class="field__error">✕ 自訂頻率至少選一天</p></div>
+        <div class="field"><span class="field__label">檢查清單 <span class="opt">選填</span></span><button class="btn btn--ghost ed-add">＋ 新增檢查項目</button></div>
+      </main>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ⑥ 刪除確認 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">⑥ 刪除確認（軟刪除）</h2>
+  <p class="mk-frame__desc">按「刪除這個項目」後跳出確認。只把 <code>deletedAt</code> 填上，紀錄保留。「刪除」用紅色、放右側，取消放左側。</p>
+  <div class="mk-phone">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:44</div>
+    <div class="app">
+      <div class="app__top ed-top"><div class="topbar"><button class="link-btn" style="text-decoration:none">取消</button><span class="topbar__title">編輯每日討伐</span><button class="btn btn--sm btn--primary">儲存</button></div></div>
+      <main class="app__main app__main--bare" style="padding-top:16px">
+        <label class="field"><span class="field__label">名稱</span><input class="input" value="運動 30 分鐘"></label>
+        <div class="field"><span class="field__label">難度</span><div class="seg"><button>簡單</button><button>普通</button><button aria-pressed="true">困難</button></div></div>
+        <div class="field"><span class="field__label">屬性</span><div class="chips"><button class="chip chip--fitness is-on">體能</button><button class="chip">智慧</button><button class="chip">心靈</button><button class="chip">連結</button></div></div>
+      </main>
+      <div class="scrim"></div>
+      <div class="sheet" role="alertdialog" aria-modal="true" aria-labelledby="delT">
+        <div class="win win--strong" style="border-color:var(--c-danger)">
+          <h3 class="win__title" id="delT">刪除「運動 30 分鐘」？</h3>
+          <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.6">
+            <li>刪除後不會再出現在「今天」。</li>
+            <li>今天刪除的每日討伐，今天的換日結算不會算它，也不會因此扣 HP。</li>
+            <li>過去的打卡紀錄會保留。這個版本沒有復原功能。</li>
+          </ul>
+          <div class="sheet__actions"><button class="btn btn--ghost">取消</button><button class="btn btn--danger">刪除</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ⑦ 已完成 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">⑦ 已完成（編輯今天已完成的項目）</h2>
+  <p class="mk-frame__desc">可以照常編輯；頂部說明「改難度不會改變今天已拿到的獎勵」，因為取消時退回的是原事件記錄的量（data-model 6.1 第 2 條）。</p>
+  <div class="mk-phone">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">20:10</div>
+    <div class="app">
+      <div class="app__top ed-top"><div class="topbar"><button class="link-btn" style="text-decoration:none">取消</button><span class="topbar__title">編輯每日討伐</span><button class="btn btn--sm btn--primary">儲存</button></div></div>
+      <main class="app__main app__main--bare" style="padding-top:16px">
+        <div class="banner banner--ok" style="margin-bottom:16px"><span class="banner__icon">✓</span><div class="banner__body"><span class="banner__title">今天已完成</span>修改難度或屬性，不會改變今天已拿到的金幣與經驗；之後取消打勾時，退回的也是當時拿到的量。</div></div>
+        <label class="field"><span class="field__label">名稱 <span class="req">必填</span></span><input class="input" value="早上 7 點前起床"></label>
+        <div class="field"><div class="switch"><span class="field__label" style="margin:0">迷你版</span><span class="switch__ui is-on"></span></div><input class="input" value="7:30 前起床" style="margin-top:6px"></div>
+        <div class="field"><span class="field__label">難度</span>
+          <div class="seg"><button aria-pressed="false">簡單</button><button aria-pressed="false">普通</button><button aria-pressed="true">困難</button></div>
+          <p class="field__hint" style="color:var(--c-warn)">已從「普通」改成「困難」：之後的新打勾才用新難度。</p></div>
+        <div class="field"><span class="field__label">屬性</span>
+          <div class="chips"><button class="chip chip--fitness is-on">體能</button><button class="chip">智慧</button><button class="chip">心靈</button><button class="chip">連結</button></div></div>
+        <div class="field"><span class="field__label">頻率</span>
+          <div class="seg"><button aria-pressed="true">每天</button><button aria-pressed="false">平日</button><button aria-pressed="false">週末</button><button aria-pressed="false">自訂</button></div></div>
+      </main>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<aside class="mk-na">
+  <h3>本頁不適用的狀態</h3>
+  <ul>
+    <li><b>空狀態</b>：已涵蓋於 ①（新增空白表單；檢查清單、標籤沒有項目時只顯示新增按鈕）。</li>
+    <li><b>已結算不可取消</b>：不適用。編輯不取消任何打卡，也不改寫過去的事件或日結紀錄；改頻率以結算當下為準（day-rollover 5.12，提示寫在 ②）。</li>
+    <li><b>旅館中</b>：不適用。旅館只影響換日結算，編輯欄位與操作相同。</li>
+    <li><b>HP 低</b>：不適用。HP 不影響編輯。</li>
+  </ul>
+</aside>
+
+</div><!-- /mk-row -->
+
+<section class="mk-notes">
+  <h2>欄位對照（data-model 4.4）</h2>
+  <div class="mk-table-wrap"><table>
+    <tr><th>畫面欄位</th><th>資料欄位</th><th>修行</th><th>每日討伐</th><th>公會委託</th><th>驗證</th></tr>
+    <tr><td>類型</td><td><code>type</code></td><td colspan="3">新增時可選；編輯時只顯示</td><td>—</td></tr>
+    <tr><td>名稱</td><td><code>title</code></td><td>✓</td><td>✓</td><td>✓</td><td>去掉前後空白後不可空白</td></tr>
+    <tr><td>迷你版</td><td><code>mini.title</code>（關閉＝<code>null</code>）</td><td>✓</td><td>✓</td><td>✓</td><td>開啟時名稱不可空白</td></tr>
+    <tr><td>難度</td><td><code>difficulty</code></td><td>✓</td><td>✓</td><td>✓</td><td>必須是設定檔裡有的 key</td></tr>
+    <tr><td>屬性</td><td><code>attribute</code></td><td>✓</td><td>✓</td><td>✓</td><td>單選；財務需設定開啟</td></tr>
+    <tr><td>＋／－ 按鈕</td><td><code>allowUp</code>／<code>allowDown</code></td><td>✓</td><td>—</td><td>—</td><td>至少開一個（圖稿假設）</td></tr>
+    <tr><td>頻率</td><td><code>schedule.kind</code>／<code>daysOfWeek</code></td><td>—</td><td>✓</td><td>—</td><td>自訂至少一天</td></tr>
+    <tr><td>檢查清單</td><td><code>checklist[]</code></td><td>—</td><td>✓</td><td>✓</td><td>空白項目不儲存</td></tr>
+    <tr><td>期限</td><td><code>dueDayKey</code></td><td>—</td><td>—</td><td>✓</td><td>選填</td></tr>
+    <tr><td>標籤</td><td><code>tags[]</code></td><td>✓</td><td>✓</td><td>✓</td><td>選填</td></tr>
+    <tr><td>備註</td><td><code>notes</code></td><td>✓</td><td>✓</td><td>✓</td><td>可空字串</td></tr>
+    <tr><td>刪除</td><td><code>deletedAt</code></td><td>✓</td><td>✓</td><td>✓</td><td>確認後才寫入</td></tr>
+  </table></div>
+  <h2>假設與待 G1 確認</h2>
+  <ul>
+    <li><b>建立後能不能改類型</b>：文件沒寫；圖稿假設不行（Habit 與 Daily 的欄位、事件類型不同）。</li>
+    <li><b>Habit 至少開一個按鈕</b>：data-model 沒規定，圖稿假設兩個都關不能儲存。</li>
+    <li><b>刪除後已拿到的金幣／經驗要不要收回</b>：文件沒寫；確認文案刻意只寫「紀錄會保留」，不承諾收不收回，待 product-manager 決定後補一句。</li>
+    <li><b>⑦ 的「之後的新打勾才用新難度」</b>：依 data-model 6.1 推論（取消退回原事件的量）；今天若取消再重新打勾，是否用新難度，待 T9 實作確認。</li>
+    <li>「頻率」多了「每天」選項：data-model 4.4 的 <code>schedule.kind</code> 有 <code>everyday</code>，提案書只列平日／週末／自訂。</li>
+    <li>迷你版「7:30 前起床」為示意內容。</li>
+  </ul>
+</section>
+
+<p class="mk-foot">⚠ 難度級數與名稱為示意（data-model 2.2：有幾級由決策表決定）；正式數值以 <code>.knowledge/decision-tables.md</code> 為準（尚未定案）。</p>
+</div>
+</body>
+</html>

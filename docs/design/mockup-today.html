@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>今天・圖稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+</head>
+<body>
+<div class="mk-page">
+
+<header class="mk-head">
+  <h1>今天</h1>
+  <p>「今天」單一畫面：狀態列（等級／HP／經驗／金幣／各屬性經驗）＋ 每日討伐（Dailies）、修行（Habits）、公會委託（To-dos）同一頁。對應 T14、feature-spec F3。</p>
+  <p>以下 8 個手機框為靜態並排、整頁展開（實機為固定高度、中間捲動，頂部狀態列與分頁列固定），不需操作即可看到全部狀態。粉紅虛線＝安全區域（瀏海 47px、Home 條 34px），實作時由 <code>env(safe-area-inset-*)</code> 提供。</p>
+</header>
+<nav class="mk-nav">
+  <a href="index.html">← 索引</a>
+  <a href="mockup-class-select.html">選職業</a>
+  <a href="mockup-today.html" class="is-on">今天</a>
+  <a href="mockup-library.html">預設庫</a>
+  <a href="mockup-editor.html">進階編輯</a>
+</nav>
+<div class="mk-legend">
+  <span><i></i>安全區域示意</span>
+  <span>示意內容：戰士套組（正式內容待 X4）</span>
+  <span>所有數字皆為示意值</span>
+</div>
+
+<div class="mk-row">
+
+<!-- ① 一般 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">① 一般（進行中）</h2>
+  <p class="mk-frame__desc">打勾完成、迷你版完成、未完成（含「只做迷你版」按鈕）、Habit ＋／－ 計數與取消、To-do 檢查清單。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+    <div class="app">
+      <div class="app__top">
+        <div class="win status">
+          <div class="row"><span class="who">見習冒險者 <span class="tag">⚔️ 戰士</span></span><span class="lv">Lv 3</span></div>
+          <div class="bars">
+            <div class="bar"><span class="bar__label">HP</span><span class="bar__track"><span class="bar__fill" style="width:76%"></span></span><span class="bar__value">38/50</span></div>
+            <div class="bar bar--exp"><span class="bar__label">EXP</span><span class="bar__track"><span class="bar__fill" style="width:60%"></span></span><span class="bar__value">120/200</span></div>
+          </div>
+          <div class="row" style="margin-top:6px"><span class="attrs" style="flex:1;margin:0">
+            <span><em style="color:var(--attr-fitness);font-style:normal">體能</em><b>46</b></span>
+            <span><em style="color:var(--attr-wisdom);font-style:normal">智慧</em><b>12</b></span>
+            <span><em style="color:var(--attr-spirit);font-style:normal">心靈</em><b>8</b></span>
+            <span><em style="color:var(--attr-bond);font-style:normal">連結</em><b>5</b></span>
+          </span><span class="gold" style="margin-left:8px">◆128</span></div>
+        </div>
+        <div class="daybar"><span>遊戲日 10/23（五）</span><span>換日 04:00</span></div>
+      </div>
+      <main class="app__main">
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">每日討伐<small>Dailies</small></h3><span class="section__count">2/4</span></div>
+          <div class="win">
+            <div class="task is-done">
+              <button class="check is-done" aria-label="已完成"></button>
+              <div class="task__body"><div class="task__title">早上 7 點前起床</div>
+                <div class="task__meta"><span class="tag tag--fitness">體能</span><span class="tag">普通</span><span class="reward-line">+8金 +10EXP</span></div>
+                <div class="task__actions"><button class="link-btn">↶ 取消</button></div></div>
+              <button class="task__more" aria-label="編輯">⋯</button>
+            </div>
+            <div class="task is-done">
+              <button class="check is-mini" aria-label="迷你版完成"></button>
+              <div class="task__body"><div class="task__title">喝 2000cc 水</div>
+                <div class="task__meta"><span class="tag tag--ok" style="color:var(--c-exp);border-color:var(--c-exp)">迷你版完成：喝一杯</span><span class="reward-line">+4金 +5EXP</span></div>
+                <div class="task__actions"><button class="link-btn">↶ 取消</button></div></div>
+              <button class="task__more" aria-label="編輯">⋯</button>
+            </div>
+            <div class="task">
+              <button class="check" aria-label="打勾"></button>
+              <div class="task__body"><div class="task__title">運動 30 分鐘</div>
+                <div class="task__meta"><span class="tag tag--fitness">體能</span><span class="tag">困難</span><span>連續 4 天</span><span>檢查清單 1/2</span></div>
+                <ul class="subcheck">
+                  <li class="is-done"><button class="check check--sm is-done" aria-label="已勾"></button><span>熱身 5 分鐘</span></li>
+                  <li><button class="check check--sm" aria-label="勾選"></button><span>主訓練 20 分鐘</span></li>
+                </ul>
+                <div class="task__actions"><button class="mini-btn">只做迷你版：運動 5 分鐘</button></div></div>
+              <button class="task__more" aria-label="編輯">⋯</button>
+            </div>
+            <div class="task">
+              <button class="check" aria-label="打勾"></button>
+              <div class="task__body"><div class="task__title">伸展 5 分鐘</div>
+                <div class="task__meta"><span class="tag tag--fitness">體能</span><span class="tag">簡單</span></div></div>
+              <button class="task__more" aria-label="編輯">⋯</button>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">修行<small>Habits</small></h3></div>
+          <div class="win">
+            <div class="task" style="align-items:center">
+              <button class="hbtn hbtn--none" tabindex="-1" aria-hidden="true">－</button>
+              <div class="task__body"><div class="task__title">喝一杯水</div>
+                <div class="task__meta"><span class="tag tag--fitness">體能</span><span class="num">今天 ＋3</span><button class="link-btn">↶ 取消上一次</button></div></div>
+              <button class="hbtn hbtn--up" aria-label="＋">＋</button>
+            </div>
+            <div class="task" style="align-items:center">
+              <button class="hbtn hbtn--none" tabindex="-1" aria-hidden="true">－</button>
+              <div class="task__body"><div class="task__title">爬樓梯</div>
+                <div class="task__meta"><span class="tag tag--fitness">體能</span><span class="num">今天 ＋0</span></div></div>
+              <button class="hbtn hbtn--up" aria-label="＋">＋</button>
+            </div>
+            <div class="task" style="align-items:center">
+              <button class="hbtn hbtn--down" aria-label="－">－</button>
+              <div class="task__body"><div class="task__title">吃宵夜</div>
+                <div class="task__meta"><span class="tag tag--fitness">體能</span><span class="num" style="color:var(--c-danger)">今天 －1</span><button class="link-btn">↶ 取消上一次</button></div></div>
+              <button class="hbtn hbtn--none" tabindex="-1" aria-hidden="true">＋</button>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">公會委託<small>To-dos</small></h3><span class="section__count">2</span></div>
+          <div class="win">
+            <div class="task">
+              <button class="check" aria-label="打勾"></button>
+              <div class="task__body"><div class="task__title">預約健檢</div>
+                <div class="task__meta"><span class="tag tag--fitness">體能</span><span class="tag">普通</span><span>期限 10/31</span></div></div>
+              <button class="task__more" aria-label="編輯">⋯</button>
+            </div>
+            <div class="task">
+              <button class="check" aria-label="打勾"></button>
+              <div class="task__body"><div class="task__title">整理桌面</div>
+                <div class="task__meta"><span class="tag tag--spirit">心靈</span><span class="tag">簡單</span><span>檢查清單 1/3</span></div>
+                <ul class="subcheck">
+                  <li class="is-done"><button class="check check--sm is-done" aria-label="已勾"></button><span>清空桌面雜物</span></li>
+                  <li><button class="check check--sm" aria-label="勾選"></button><span>擦桌子</span></li>
+                  <li><button class="check check--sm" aria-label="勾選"></button><span>整理抽屜</span></li>
+                </ul>
+                <div class="task__actions"><button class="mini-btn">只做迷你版：清空桌面雜物</button></div></div>
+              <button class="task__more" aria-label="編輯">⋯</button>
+            </div>
+          </div>
+        </div>
+      </main>
+      <button class="fab" aria-label="新增">＋</button>
+      <nav class="tabbar"><a class="is-on"><span class="ico">☀</span>今天</a><a><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ② 空狀態 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">② 空狀態</h2>
+  <p class="mk-frame__desc">三區都沒有項目（例如週末且每日討伐都設成平日、修行與委託都刪光）。只有某一區空時，該區顯示同一段空狀態文案。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+    <div class="app">
+      <div class="app__top">
+        <div class="win status">
+          <div class="row"><span class="who">見習冒險者 <span class="tag">⚔️ 戰士</span></span><span class="lv">Lv 3</span></div>
+          <div class="bars">
+            <div class="bar"><span class="bar__label">HP</span><span class="bar__track"><span class="bar__fill" style="width:100%"></span></span><span class="bar__value">50/50</span></div>
+            <div class="bar bar--exp"><span class="bar__label">EXP</span><span class="bar__track"><span class="bar__fill" style="width:60%"></span></span><span class="bar__value">120/200</span></div>
+          </div>
+          <div class="row" style="margin-top:6px"><span class="attrs" style="flex:1;margin:0">
+            <span><em style="color:var(--attr-fitness);font-style:normal">體能</em><b>46</b></span>
+            <span><em style="color:var(--attr-wisdom);font-style:normal">智慧</em><b>12</b></span>
+            <span><em style="color:var(--attr-spirit);font-style:normal">心靈</em><b>8</b></span>
+            <span><em style="color:var(--attr-bond);font-style:normal">連結</em><b>5</b></span>
+          </span><span class="gold" style="margin-left:8px">◆128</span></div>
+        </div>
+        <div class="daybar"><span>遊戲日 10/24（六）</span><span>換日 04:00</span></div>
+      </div>
+      <main class="app__main">
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">每日討伐<small>Dailies</small></h3><span class="section__count">0</span></div>
+          <div class="win win--inset"><div class="empty"><span class="empty__mark">今天沒有排定的每日討伐</span>休息日也算數。想多做一點，可以按修行的「＋」。</div></div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">修行<small>Habits</small></h3></div>
+          <div class="win win--inset"><div class="empty"><span class="empty__mark">還沒有修行項目</span>修行可以一天按很多次，例如「＋喝一杯水」。</div></div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">公會委託<small>To-dos</small></h3><span class="section__count">0</span></div>
+          <div class="win win--inset"><div class="empty"><span class="empty__mark">沒有進行中的委託</span>到預設庫挑一個，或按右下角「＋」自己新增。<div style="margin-top:12px"><button class="btn btn--sm">▤ 前往預設庫</button></div></div></div>
+        </div>
+      </main>
+      <button class="fab" aria-label="新增">＋</button>
+      <nav class="tabbar"><a class="is-on"><span class="ico">☀</span>今天</a><a><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ③ 已完成 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">③ 已完成（今日全勤）</h2>
+  <p class="mk-frame__desc">今天該做的每日討伐全部完成。今天還沒結算，所以每一項都保留「取消」；完成的委託（含迷你版完成的「整理桌面」）留在「今天完成」區，換日結算後才收起。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">21:30</div>
+    <div class="app">
+      <div class="app__top">
+        <div class="win status">
+          <div class="row"><span class="who">見習冒險者 <span class="tag">⚔️ 戰士</span></span><span class="lv">Lv 4</span></div>
+          <div class="bars">
+            <div class="bar"><span class="bar__label">HP</span><span class="bar__track"><span class="bar__fill" style="width:76%"></span></span><span class="bar__value">38/50</span></div>
+            <div class="bar bar--exp"><span class="bar__label">EXP</span><span class="bar__track"><span class="bar__fill" style="width:8%"></span></span><span class="bar__value">12/250</span></div>
+          </div>
+          <div class="row" style="margin-top:6px"><span class="attrs" style="flex:1;margin:0">
+            <span><em style="color:var(--attr-fitness);font-style:normal">體能</em><b>82</b></span>
+            <span><em style="color:var(--attr-wisdom);font-style:normal">智慧</em><b>12</b></span>
+            <span><em style="color:var(--attr-spirit);font-style:normal">心靈</em><b>14</b></span>
+            <span><em style="color:var(--attr-bond);font-style:normal">連結</em><b>5</b></span>
+          </span><span class="gold" style="margin-left:8px">◆171</span></div>
+        </div>
+        <div class="daybar"><span>遊戲日 10/23（五）</span><span>換日 04:00</span></div>
+      </div>
+      <main class="app__main">
+        <div class="banner banner--ok" style="margin-bottom:12px"><span class="banner__icon">★</span><div class="banner__body"><span class="banner__title">每日討伐全部完成 4/4</span>今天的換日結算不會扣 HP。還沒換日前都可以取消。</div></div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">每日討伐<small>Dailies</small></h3><span class="section__count">4/4</span></div>
+          <div class="win">
+            <div class="task is-done"><button class="check is-done" aria-label="已完成"></button><div class="task__body"><div class="task__title">早上 7 點前起床</div><div class="task__meta"><span class="reward-line">+8金 +10EXP</span><button class="link-btn">↶ 取消</button></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task is-done"><button class="check is-mini" aria-label="迷你版完成"></button><div class="task__body"><div class="task__title">喝 2000cc 水</div><div class="task__meta"><span style="color:var(--c-exp)">迷你版</span><span class="reward-line">+4金 +5EXP</span><button class="link-btn">↶ 取消</button></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task is-done"><button class="check is-done" aria-label="已完成"></button><div class="task__body"><div class="task__title">運動 30 分鐘</div><div class="task__meta"><span class="reward-line">+12金 +15EXP</span><button class="link-btn">↶ 取消</button></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task is-done"><button class="check is-done" aria-label="已完成"></button><div class="task__body"><div class="task__title">伸展 5 分鐘</div><div class="task__meta"><span class="reward-line">+5金 +5EXP</span><button class="link-btn">↶ 取消</button></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">修行<small>Habits</small></h3></div>
+          <div class="win">
+            <div class="task" style="align-items:center"><button class="hbtn hbtn--none" tabindex="-1" aria-hidden="true">－</button><div class="task__body"><div class="task__title">喝一杯水</div><div class="task__meta"><span class="num">今天 ＋6</span><button class="link-btn">↶ 取消上一次</button></div></div><button class="hbtn hbtn--up" aria-label="＋">＋</button></div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">公會委託<small>To-dos</small></h3><span class="section__count">0</span></div>
+          <div class="win win--inset"><div class="empty" style="padding:12px">進行中的委託都完成了</div></div>
+          <p class="mute" style="font-size:12px;margin:10px 0 4px">今天完成</p>
+          <div class="win win--inset">
+            <div class="task is-done"><button class="check is-done" aria-label="已完成"></button><div class="task__body"><div class="task__title">預約健檢</div><div class="task__meta"><span class="reward-line">+8金 +10EXP</span><button class="link-btn">↶ 取消</button></div></div></div>
+            <div class="task is-done"><button class="check is-mini" aria-label="迷你版完成"></button><div class="task__body"><div class="task__title">整理桌面</div><div class="task__meta"><span class="tag" style="color:var(--c-exp);border-color:var(--c-exp)">迷你版完成：清空桌面雜物</span><span class="reward-line">+3金 +3EXP</span><button class="link-btn">↶ 取消</button></div></div></div>
+          </div>
+        </div>
+      </main>
+      <button class="fab" aria-label="新增">＋</button>
+      <nav class="tabbar"><a class="is-on"><span class="ico">☀</span>今天</a><a><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ④ 換日提示 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">④ 換日提示</h2>
+  <p class="mk-frame__desc">App 開著跨過換日時間（day-rollover 5.3）或啟動時補算後：先結算、畫面換成新的遊戲日、頂部提示「已經換日」。每日討伐全部回到未打勾。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">4:02</div>
+    <div class="app">
+      <div class="app__top">
+        <div class="win status">
+          <div class="row"><span class="who">見習冒險者 <span class="tag">⚔️ 戰士</span></span><span class="lv">Lv 3</span></div>
+          <div class="bars">
+            <div class="bar"><span class="bar__label">HP</span><span class="bar__track"><span class="bar__fill" style="width:66%"></span></span><span class="bar__value">33/50</span></div>
+            <div class="bar bar--exp"><span class="bar__label">EXP</span><span class="bar__track"><span class="bar__fill" style="width:72%"></span></span><span class="bar__value">145/200</span></div>
+          </div>
+          <div class="row" style="margin-top:6px"><span class="attrs" style="flex:1;margin:0">
+            <span><em style="color:var(--attr-fitness);font-style:normal">體能</em><b>64</b></span>
+            <span><em style="color:var(--attr-wisdom);font-style:normal">智慧</em><b>12</b></span>
+            <span><em style="color:var(--attr-spirit);font-style:normal">心靈</em><b>8</b></span>
+            <span><em style="color:var(--attr-bond);font-style:normal">連結</em><b>5</b></span>
+          </span><span class="gold" style="margin-left:8px">◆153</span></div>
+        </div>
+        <div class="daybar"><span>遊戲日 10/24（六）<span class="tag tag--ok" style="margin-left:4px">新的一天</span></span><span>換日 04:00</span></div>
+      </div>
+      <main class="app__main">
+        <div class="banner banner--rollover" role="status" style="margin-bottom:12px">
+          <span class="banner__icon">☀</span>
+          <div class="banner__body"><span class="banner__title">已經換日</span>
+            10/23 已結算：每日討伐完成 3/4，未完成 1 項，HP −5。<br><span class="dim">10/23 的打勾從現在起不能再取消。</span>
+            <div style="margin-top:8px"><button class="btn btn--sm">知道了</button></div></div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">每日討伐<small>Dailies</small></h3><span class="section__count">0/4</span></div>
+          <div class="win">
+            <div class="task"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">早上 7 點前起床</div><div class="task__meta"><span class="tag tag--fitness">體能</span><span>連續 5 天</span></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">喝 2000cc 水</div><div class="task__meta"><span class="tag tag--fitness">體能</span><span>連續 5 天</span></div><div class="task__actions"><button class="mini-btn">只做迷你版：喝一杯</button></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">運動 30 分鐘</div><div class="task__meta"><span class="tag tag--fitness">體能</span><span class="mute">連續中斷</span></div><div class="task__actions"><button class="mini-btn">只做迷你版：運動 5 分鐘</button></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">伸展 5 分鐘</div><div class="task__meta"><span class="tag tag--fitness">體能</span><span>連續 2 天</span></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">修行<small>Habits</small></h3></div>
+          <div class="win">
+            <div class="task" style="align-items:center"><button class="hbtn hbtn--none" tabindex="-1" aria-hidden="true">－</button><div class="task__body"><div class="task__title">喝一杯水</div><div class="task__meta"><span class="num">今天 ＋0</span></div></div><button class="hbtn hbtn--up" aria-label="＋">＋</button></div>
+          </div>
+        </div>
+      </main>
+      <button class="fab" aria-label="新增">＋</button>
+      <nav class="tabbar"><a class="is-on"><span class="ico">☀</span>今天</a><a><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ⑤ 已結算不可取消 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">⑤ 已結算不可取消</h2>
+  <p class="mk-frame__desc">已結算日的完成紀錄只顯示鎖頭「已結算」，<b>沒有取消按鈕</b>；今天的完成仍可取消。下方提示是「舊畫面按取消時剛好跨過換日」的回應（5.3）。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">8:15</div>
+    <div class="app">
+      <div class="app__top">
+        <div class="win status">
+          <div class="row"><span class="who">見習冒險者 <span class="tag">⚔️ 戰士</span></span><span class="lv">Lv 3</span></div>
+          <div class="bars">
+            <div class="bar"><span class="bar__label">HP</span><span class="bar__track"><span class="bar__fill" style="width:66%"></span></span><span class="bar__value">33/50</span></div>
+            <div class="bar bar--exp"><span class="bar__label">EXP</span><span class="bar__track"><span class="bar__fill" style="width:77%"></span></span><span class="bar__value">155/200</span></div>
+          </div>
+          <div class="row" style="margin-top:6px"><span class="attrs" style="flex:1;margin:0">
+            <span><em style="color:var(--attr-fitness);font-style:normal">體能</em><b>74</b></span>
+            <span><em style="color:var(--attr-wisdom);font-style:normal">智慧</em><b>12</b></span>
+            <span><em style="color:var(--attr-spirit);font-style:normal">心靈</em><b>8</b></span>
+            <span><em style="color:var(--attr-bond);font-style:normal">連結</em><b>5</b></span>
+          </span><span class="gold" style="margin-left:8px">◆161</span></div>
+        </div>
+        <div class="daybar"><span>遊戲日 10/24（六）</span><span>換日 04:00</span></div>
+      </div>
+      <main class="app__main">
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">每日討伐<small>Dailies</small></h3><span class="section__count">1/4</span></div>
+          <div class="win">
+            <div class="task is-done"><button class="check is-done" aria-label="已完成"></button><div class="task__body"><div class="task__title">早上 7 點前起床</div><div class="task__meta"><span class="tag">今天</span><span class="reward-line">+8金 +10EXP</span><button class="link-btn">↶ 取消</button></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">喝 2000cc 水</div><div class="task__meta"><span class="tag tag--fitness">體能</span></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <p class="mute" style="font-size:12px;margin:4px 8px">…其餘 2 項</p>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">公會委託<small>To-dos</small></h3><span class="section__count">0</span></div>
+          <p class="mute" style="font-size:12px;margin:4px 0">已完成</p>
+          <div class="win win--inset">
+            <div class="task is-done"><button class="check is-done" aria-label="已完成"></button><div class="task__body"><div class="task__title">預約健檢</div><div class="task__meta"><span class="tag">今天完成</span><button class="link-btn">↶ 取消</button></div></div></div>
+            <div class="task is-done"><span class="check is-locked" aria-hidden="true"></span><div class="task__body"><div class="task__title">整理桌面</div><div class="task__meta"><span class="tag tag--lock">🔒 10/23 已結算</span><span class="mute">不能取消</span></div></div></div>
+          </div>
+        </div>
+      </main>
+      <div class="toast" role="status"><span>🔒</span><div><b class="px">已經換日</b><br>10/23 已結算，這筆打勾不能取消。畫面已更新為 10/24。</div></div>
+      <nav class="tabbar"><a class="is-on"><span class="ico">☀</span>今天</a><a><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ⑥ 旅館中 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">⑥ 旅館中</h2>
+  <p class="mk-frame__desc">入住期間：日結不扣 HP、每日討伐不計、連續天數不變（day-rollover 5.5）。今天頁只顯示入住狀態；入住／退房在設定頁（T19）。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">10:20</div>
+    <div class="app">
+      <div class="app__top">
+        <div class="win status">
+          <div class="row"><span class="who">見習冒險者 <span class="tag tag--inn">🛏 旅館中</span></span><span class="lv">Lv 3</span></div>
+          <div class="bars">
+            <div class="bar"><span class="bar__label">HP</span><span class="bar__track"><span class="bar__fill" style="width:66%"></span></span><span class="bar__value">33/50</span></div>
+            <div class="bar bar--exp"><span class="bar__label">EXP</span><span class="bar__track"><span class="bar__fill" style="width:72%"></span></span><span class="bar__value">145/200</span></div>
+          </div>
+          <div class="row" style="margin-top:6px"><span class="attrs" style="flex:1;margin:0">
+            <span><em style="color:var(--attr-fitness);font-style:normal">體能</em><b>64</b></span>
+            <span><em style="color:var(--attr-wisdom);font-style:normal">智慧</em><b>12</b></span>
+            <span><em style="color:var(--attr-spirit);font-style:normal">心靈</em><b>8</b></span>
+            <span><em style="color:var(--attr-bond);font-style:normal">連結</em><b>5</b></span>
+          </span><span class="gold" style="margin-left:8px">◆153</span></div>
+        </div>
+        <div class="daybar"><span>遊戲日 10/25（日）</span><span>換日 04:00</span></div>
+      </div>
+      <main class="app__main">
+        <div class="banner banner--inn" style="margin-bottom:12px">
+          <span class="banner__icon">🛏</span>
+          <div class="banner__body"><span class="banner__title">入住旅館中（10/24 起）</span>
+            換日結算不扣 HP，每日討伐不計，連續天數保留。<br><span class="dim">要退房請到「設定」。</span></div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">每日討伐<small>旅館中不計</small></h3><span class="section__count">—</span></div>
+          <div class="win">
+            <div class="task is-muted"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">早上 7 點前起床</div><div class="task__meta"><span class="tag tag--inn">不計</span><span>連續 5 天（保留）</span></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task is-muted"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">喝 2000cc 水</div><div class="task__meta"><span class="tag tag--inn">不計</span><span>連續 5 天（保留）</span></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task is-muted"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">運動 30 分鐘</div><div class="task__meta"><span class="tag tag--inn">不計</span></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">修行<small>Habits</small></h3></div>
+          <div class="win">
+            <div class="task" style="align-items:center"><button class="hbtn hbtn--none" tabindex="-1" aria-hidden="true">－</button><div class="task__body"><div class="task__title">喝一杯水</div><div class="task__meta"><span class="num">今天 ＋1</span><button class="link-btn">↶ 取消上一次</button></div></div><button class="hbtn hbtn--up" aria-label="＋">＋</button></div>
+            <div class="task" style="align-items:center"><button class="hbtn hbtn--down" aria-label="－">－</button><div class="task__body"><div class="task__title">吃宵夜</div><div class="task__meta"><span class="num">今天 －0</span></div></div><button class="hbtn hbtn--none" tabindex="-1" aria-hidden="true">＋</button></div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">公會委託<small>To-dos</small></h3><span class="section__count">2</span></div>
+          <div class="win">
+            <div class="task"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">預約健檢</div><div class="task__meta"><span class="tag tag--fitness">體能</span><span class="tag">普通</span><span>期限 10/31</span></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">整理桌面</div><div class="task__meta"><span class="tag tag--spirit">心靈</span><span class="tag">簡單</span><span>檢查清單 0/3</span></div><div class="task__actions"><button class="mini-btn">只做迷你版：清空桌面雜物</button></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+          </div>
+          <p class="mute" style="font-size:12px;margin:6px 2px 0">委託沒有每日結算，旅館不影響它，照常顯示。</p>
+        </div>
+      </main>
+      <button class="fab" aria-label="新增">＋</button>
+      <nav class="tabbar"><a class="is-on"><span class="ico">☀</span>今天</a><a><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ⑦ HP 低 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">⑦ HP 低</h2>
+  <p class="mk-frame__desc">HP 低於上限 30%（門檻沿用企劃書 7.3，正式值待決策表）：HP 條轉紅、頂部警示。只提示後果，不在此頁做補血動作（S1 沒有補血機制）。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">19:05</div>
+    <div class="app">
+      <div class="app__top">
+        <div class="win status" style="border-color:var(--c-hp-low)">
+          <div class="row"><span class="who">見習冒險者 <span class="tag">⚔️ 戰士</span></span><span class="lv">Lv 3</span></div>
+          <div class="bars">
+            <div class="bar bar--low"><span class="bar__label">HP</span><span class="bar__track"><span class="bar__fill" style="width:18%"></span></span><span class="bar__value">9/50</span></div>
+            <div class="bar bar--exp"><span class="bar__label">EXP</span><span class="bar__track"><span class="bar__fill" style="width:72%"></span></span><span class="bar__value">145/200</span></div>
+          </div>
+          <div class="row" style="margin-top:6px"><span class="attrs" style="flex:1;margin:0">
+            <span><em style="color:var(--attr-fitness);font-style:normal">體能</em><b>64</b></span>
+            <span><em style="color:var(--attr-wisdom);font-style:normal">智慧</em><b>12</b></span>
+            <span><em style="color:var(--attr-spirit);font-style:normal">心靈</em><b>8</b></span>
+            <span><em style="color:var(--attr-bond);font-style:normal">連結</em><b>5</b></span>
+          </span><span class="gold" style="margin-left:8px">◆153</span></div>
+        </div>
+        <div class="daybar"><span>遊戲日 10/27（二）</span><span>換日 04:00</span></div>
+      </div>
+      <main class="app__main">
+        <div class="banner banner--danger" role="alert" style="margin-bottom:12px">
+          <span class="banner__icon">♥</span>
+          <div class="banner__body"><span class="banner__title">HP 剩 9／50</span>
+            換日時，沒完成的每日討伐會再扣 HP。HP 歸零會套用懲罰。<br><span class="dim">做迷你版也算完成。</span></div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">每日討伐<small>Dailies</small></h3><span class="section__count" style="color:var(--c-hp-low)">1/4</span></div>
+          <div class="win">
+            <div class="task is-done"><button class="check is-done" aria-label="已完成"></button><div class="task__body"><div class="task__title">早上 7 點前起床</div><div class="task__meta"><span class="reward-line">+8金 +10EXP</span><button class="link-btn">↶ 取消</button></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">喝 2000cc 水</div><div class="task__meta"><span class="tag tag--warn">未完成 −3HP</span></div><div class="task__actions"><button class="mini-btn">只做迷你版：喝一杯</button></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">運動 30 分鐘</div><div class="task__meta"><span class="tag tag--warn">未完成 −5HP</span></div><div class="task__actions"><button class="mini-btn">只做迷你版：運動 5 分鐘</button></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">伸展 5 分鐘</div><div class="task__meta"><span class="tag tag--warn">未完成 −2HP</span></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">修行<small>Habits</small></h3></div>
+          <div class="win">
+            <div class="task" style="align-items:center"><button class="hbtn hbtn--down" aria-label="－">－</button><div class="task__body"><div class="task__title">吃宵夜</div><div class="task__meta"><span class="tag tag--warn">按一次 −4HP</span></div></div><button class="hbtn hbtn--none" tabindex="-1" aria-hidden="true">＋</button></div>
+          </div>
+        </div>
+      </main>
+      <button class="fab" aria-label="新增">＋</button>
+      <nav class="tabbar"><a class="is-on"><span class="ico">☀</span>今天</a><a><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+<!-- ⑧ 多日未開・補算換日 -->
+<section class="mk-frame">
+  <h2 class="mk-frame__label">⑧ 多日未開，補算換日</h2>
+  <p class="mk-frame__desc">多天沒開 App，啟動時一次補算（day-rollover 5.4）。超過補算上限 K 的天數記成「略過」：不扣 HP、連續天數不變。每天都會留下結算紀錄。示意：9 天沒開、K＝3、扣最近 3 天。</p>
+  <div class="mk-phone is-tall">
+    <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">7:50</div>
+    <div class="app">
+      <div class="app__top">
+        <div class="win status">
+          <div class="row"><span class="who">見習冒險者 <span class="tag">⚔️ 戰士</span></span><span class="lv">Lv 3</span></div>
+          <div class="bars">
+            <div class="bar"><span class="bar__label">HP</span><span class="bar__track"><span class="bar__fill" style="width:42%"></span></span><span class="bar__value">21/50</span></div>
+            <div class="bar bar--exp"><span class="bar__label">EXP</span><span class="bar__track"><span class="bar__fill" style="width:72%"></span></span><span class="bar__value">145/200</span></div>
+          </div>
+          <div class="row" style="margin-top:6px"><span class="attrs" style="flex:1;margin:0">
+            <span><em style="color:var(--attr-fitness);font-style:normal">體能</em><b>64</b></span>
+            <span><em style="color:var(--attr-wisdom);font-style:normal">智慧</em><b>12</b></span>
+            <span><em style="color:var(--attr-spirit);font-style:normal">心靈</em><b>8</b></span>
+            <span><em style="color:var(--attr-bond);font-style:normal">連結</em><b>5</b></span>
+          </span><span class="gold" style="margin-left:8px">◆153</span></div>
+        </div>
+        <div class="daybar"><span>遊戲日 11/02（一）<span class="tag tag--ok" style="margin-left:4px">新的一天</span></span><span>換日 04:00</span></div>
+      </div>
+      <main class="app__main">
+        <div class="banner banner--rollover" role="status" style="margin-bottom:12px">
+          <span class="banner__icon">☀</span>
+          <div class="banner__body"><span class="banner__title">歡迎回來，補算了 9 天</span>
+            <ul style="margin:4px 0 0;padding-left:16px">
+              <li><b class="num">10/30～11/01</b>（最近 3 天）照常結算：未完成的每日討伐共 HP −12。</li>
+              <li><b class="num">10/24～10/29</b>（6 天）超過補算上限，<b>略過</b>：不扣 HP，連續天數不變。</li>
+            </ul>
+            <span class="dim">每一天都留有結算紀錄，可在設定頁的事件紀錄查看。這 9 天的打勾不能再補登或取消。</span>
+            <div style="margin-top:8px"><button class="btn btn--sm">知道了</button></div></div>
+        </div>
+        <div class="section">
+          <div class="section__head"><h3 class="section__title">每日討伐<small>Dailies</small></h3><span class="section__count">0/4</span></div>
+          <div class="win">
+            <div class="task"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">早上 7 點前起床</div><div class="task__meta"><span class="tag tag--fitness">體能</span><span class="mute">連續中斷</span></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <div class="task"><button class="check" aria-label="打勾"></button><div class="task__body"><div class="task__title">喝 2000cc 水</div><div class="task__meta"><span class="tag tag--fitness">體能</span></div><div class="task__actions"><button class="mini-btn">只做迷你版：喝一杯</button></div></div><button class="task__more" aria-label="編輯">⋯</button></div>
+            <p class="mute" style="font-size:12px;margin:4px 8px">…其餘 2 項</p>
+          </div>
+        </div>
+      </main>
+      <button class="fab" aria-label="新增">＋</button>
+      <nav class="tabbar"><a class="is-on"><span class="ico">☀</span>今天</a><a><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a><span class="ico">⚙</span>設定</a></nav>
+    </div>
+    <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+  </div>
+</section>
+
+</div><!-- /mk-row -->
+
+<section class="mk-notes">
+  <h2>元件與互動規則</h2>
+  <div class="mk-table-wrap"><table>
+    <tr><th>元素</th><th>規則</th><th>依據</th></tr>
+    <tr><td>狀態列</td><td>等級、HP 條、EXP 條（目前等級內進度）、金幣、四屬性經驗；財務屬性只在設定開啟時多顯示一格（排成 5 格）。旅館中在名稱旁顯示「🛏 旅館中」標籤。</td><td>feature-spec F3；data-model 4.2 <code>enabledAttributes</code>、4.3</td></tr>
+    <tr><td>遊戲日列</td><td>顯示遊戲日（非日曆日）與換日時間；00:00～換日時間之間仍顯示前一天。</td><td>day-rollover 2.1、5.1</td></tr>
+    <tr><td>Daily 打勾</td><td>點 44px 勾選框＝完整版；有迷你版才出現「只做迷你版」按鈕。完成後顯示實際獲得的金幣／經驗與「取消」。</td><td>data-model 4.4 <code>mini</code>、6.2 <code>variant</code></td></tr>
+    <tr><td>取消</td><td>只有未結算的遊戲日出現「↶ 取消」；已結算顯示「🔒 已結算」且不出現按鈕。</td><td>day-rollover 5.9；T14 驗收</td></tr>
+    <tr><td>Habit</td><td><code>allowUp</code>／<code>allowDown</code> 為 false 的那一側按鈕隱藏但保留位置，名稱對齊不跳動。今天次數從事件算；「取消上一次」從最後一次開始。</td><td>data-model 4.4 Habit 專屬；day-rollover 5.9</td></tr>
+    <tr><td>檢查清單（Daily／To-do 共用）</td><td>未完成的項目在名稱下方列出子項與「檢查清單 n/m」；子項可勾（整列 44px 可點），只改狀態、不給獎勵；主項勾選才算完成。完成後收起子項。Daily 與 To-do 呈現方式相同。</td><td>data-model 4.4 checklist、ChecklistItem（待確認 #5）</td></tr>
+    <tr><td>迷你版（Daily／To-do 共用）</td><td>有 <code>mini</code> 才出現「只做迷你版：…」按鈕；完成後勾選框改藍色，標籤寫「迷你版完成：…」，同樣可取消。</td><td>feature-spec F3；data-model 4.4 <code>mini</code></td></tr>
+    <tr><td>補算換日</td><td>多日未開時橫幅分兩行：照常結算的天數（含扣血）與略過的天數（不扣 HP、連續天數不變）。K 與扣最近／最早幾天依設定檔 <code>catchUp.*</code>；圖稿用 K＝3（示意值，待 decision-tables 定案）、扣最近幾天（data-model 待確認 #2 的建議）。</td><td>day-rollover 3.2 第 4 步、5.4</td></tr>
+    <tr><td>⋯（編輯）</td><td>進入進階編輯（mockup-editor）。新增按右下角「＋」。</td><td>企劃書 2「自由編輯藏在進階」</td></tr>
+    <tr><td>換日提示</td><td>頂部橫幅，按「知道了」收起；結算內容為示意，是否顯示扣血明細待 G1。</td><td>day-rollover 5.3 第 4 步；feature-spec F3</td></tr>
+  </table></div>
+
+  <h2>假設與待 G1 確認</h2>
+  <ul>
+    <li><b>已完成的 To-do 顯示方式</b>：feature-spec F3 寫「未完成的 To-dos」，但取消完成需要入口。圖稿假設：當天完成的委託留在「今天完成」小區塊（可取消），已結算的顯示鎖頭、不可取消；收起時機待定。To-do 能否跨日取消仍是 data-model 待確認 #4。</li>
+    <li><b>旅館中能不能打勾、Habit「－」還扣不扣 HP</b>：文件只寫「日結不扣血、Dailies 不計」。圖稿保留可打勾、Habit 照常可按，待 product-manager 決定。</li>
+    <li><b>HP 低門檻 30%</b>：借用企劃書 7.3 的姿勢門檻；未完成會扣多少 HP 的標籤是示意值。</li>
+    <li><b>區段名稱</b>：採企劃書 4.2 的「每日討伐／修行／公會委託」並附英文小字；若 S1 要完全去 RPG 化可改成「每日／習慣／待辦」。</li>
+    <li><b>難度名稱</b>「簡單／普通／困難」是示意；有幾級由決策表決定（data-model 2.2 DifficultyKey）。</li>
+    <li>HP 歸零當下的畫面未畫：懲罰規則（<code>hpDepletion</code>）尚未定案。</li>
+  </ul>
+</section>
+
+<p class="mk-foot">⚠ 畫面上所有數字（金幣、經驗、HP、等級門檻、扣血量）皆為示意值。正式數值以 <code>.knowledge/decision-tables.md</code> 為準（尚未定案）。項目內容為示意，正式套組待 X4。</p>
+</div>
+</body>
+</html>
