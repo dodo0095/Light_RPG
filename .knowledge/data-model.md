@@ -212,10 +212,13 @@
 | `difficulties.<key>.habitDownHpPenalty` | `number` | 按 Habit「－」扣的 HP |
 | `miniVariantRatio` | `number` | 做迷你版時，獎勵是完整版的幾倍 |
 | `primaryAttributeMultiplier` | `number` | 職業主屬性的經驗倍率 |
-| `levelCurve` | `{ type: 'table'; thresholds: number[] }` 或 `{ type: 'formula'; ... }` | 等級曲線；用哪一種表示法由決策表決定 |
-| `hp.max` | `number` 或依等級的表 | HP 上限 |
+| `levelCurve` | `{ type: 'table'; thresholds: number[] }` | 等級曲線（決策表 v1.0：採表格型；formula 型不採用） |
+| `hp.max` | `number` | HP 上限（決策表 v1.0：固定數字；依等級的表不採用） |
 | `hp.restoreOnLevelUp` | `boolean` | 升級時要不要補滿 HP |
-| `hpDepletion.*` | 由決策表定義（例如扣多少金幣、要不要降級、HP 回到多少） | HP 歸零時的懲罰 |
+| `hp.lowRatio` | `number`（0～1） | HP ≤ `hp.max × lowRatio` 時畫面顯示「HP 低」（決策表 v1.0 新增） |
+| `hpDepletion.goldLossRatio` | `number`（0～1） | HP 歸零時失去目前金幣的比例（無條件捨去；金幣 ≤ 0 不扣） |
+| `hpDepletion.restoreHpRatio` | `number`（大於 0、≤ 1） | HP 歸零後回到 `hp.max` 的幾成 |
+| `habitUp.maxRewardedPerDay` | `number`（非負整數） | 同一 Habit 同一遊戲日前幾次「＋」有獎勵，之後的事件 deltas 為 0（決策表 v1.0 新增） |
 | `catchUp.maxPenalizedDays` | `number` | 多日沒開 App 時，最多補算扣血幾天 |
 | `catchUp.penalizeWhich` | `'most_recent' \| 'oldest'` | 補算時，扣的是最近那幾天還是最早那幾天 |
 | `gold.allowNegative` | `boolean` | 取消打卡時金幣能不能變成負數 |
@@ -230,6 +233,7 @@
 
 1. **只新增**：事件寫入後不修改、不刪除。
 2. **取消＝反向事件**：取消打卡時，新增一筆 `type` 不同的事件，`reversesEventId` 指向原事件，`deltas` 是原事件 `deltas` 的**相反數**（直接取原事件記錄的數字，不照目前設定檔重算）。所以就算試用期間改了數值，取消也一定退回原本拿到的量。
+   **HP 例外**（決策表 v1.0 第 5 節）：取消後的 HP 夾在 1～`hp.max`，反向事件的 `deltas.hp` 記實際變動量；取消不會觸發 HP 歸零懲罰，已觸發的 `hp_depleted` 也不退回。
 3. **事件記的是「實際生效」的數值**：例如 HP 被扣到 0 就停住，事件只記實際扣掉的量，取消時才會剛好補回。
 4. `character` 存的是目前狀態（快照）。事件是用來回滾、查紀錄、做統計，**不是**每次開 App 都重播所有事件來算狀態。
 
@@ -406,11 +410,12 @@ migrate_v1_to_v2(backup: BackupV1): BackupV2
 | # | 問題 | 建議 | 由誰決定 |
 |---|------|------|---------|
 | 1 | ~~今天新增的 Daily，今天的日結要不要算~~ | ✅ 已決定（2026-10-23 老闆）：從下一個遊戲日才算 | — |
-| 2 | 多日沒開 App，補算時扣最近幾天還是最早幾天？（`catchUp.penalizeWhich`） | 最近幾天 | product-manager（決策表） |
-| 3 | 取消打卡讓金幣變成負數時怎麼辦？（`gold.allowNegative`） | 允許變負數，這樣取消一定完全還原 | product-manager（決策表） |
-| 4 | 已完成的 To-do，過了換日還能不能取消完成？ | 只限還沒結算的遊戲日，跟 Daily 一致 | product-manager |
-| 5 | 勾檢查清單項目有沒有獎勵？ | S1 沒有 | product-manager（決策表） |
+| 2 | ~~多日沒開 App，補算時扣最近幾天還是最早幾天？~~ | ✅ 已決定（決策表 v1.0）：`most_recent` | — |
+| 3 | ~~取消打卡讓金幣變成負數時怎麼辦？~~ | ✅ 已決定（決策表 v1.0）：允許負數；金幣 < 價格時不能兌換 | — |
+| 4 | ~~已完成的 To-do，過了換日還能不能取消完成？~~ | ✅ 已決定（決策表 v1.0）：只限還沒結算的遊戲日 | — |
+| 5 | ~~勾檢查清單項目有沒有獎勵？~~ | ✅ 已決定（決策表 v1.0）：S1 沒有 | — |
 | 6 | ~~企劃書第 6.4 節資料包範例用 snake_case 欄位，跟 `CLAUDE.md` 衝突~~ | ✅ 已決定（2026-10-23 老闆）：以 `CLAUDE.md` 為準，企劃書範例已改成 `durationDays`、`goldMultiplier` | — |
 | 7 | ~~資料庫名稱 `morning-oath`~~ | ✅ 已決定（2026-10-23 老闆）：沿用 `morning-oath` | — |
 
 > 2026-10-23 補充（T5／T11 實作回報）：設定檔與資料包一律嚴格驗證，出現未知欄位（通常是拼錯）視為錯誤。設定檔中「待決策表定義」的欄位（`levelCurve` formula 型、`hp.max` 依等級的表、`hpDepletion`）目前以暫定結構實作，決策表定案後依表調整 schema。
+> 2026-10-23 決策表 v1.0 定案：上述三個欄位的結構已於第 5 節更新，另新增 `habitUp.maxRewardedPerDay`、`hp.lowRatio`；schema 調整由 T9 開工時一併處理（決策表第 11 節）。
