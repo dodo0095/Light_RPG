@@ -7,11 +7,11 @@
 | Sprint | Sprint 1 |
 | 指派給 | frontend-developer |
 | 優先級 | P0 |
-| 狀態 | assigned |
+| 狀態 | in_progress |
 | 依賴 | T1,T3 |
 | 預估 | 1d |
 | 建立時間 | 2026-10-23T07:23:49.853Z |
-| 開始時間 | — |
+| 開始時間 | 2026-10-23T09:27:54.628Z |
 | 完工時間 | — |
 
 ---
@@ -34,3 +34,6 @@ manifest、iOS meta 與 apple-touch-icon、vite-plugin-pwa 離線快取、`regis
 
 ### 2026-10-23T07:23:49.853Z — 建立任務（assigned）
 由 tech-lead 依 `proposal/sprint1-dev-plan.md` 第 6 節派工（老闆 2026-10-23 指示繼續執行）
+
+### 2026-10-23T09:27:54.628Z — 狀態變更 → in_progress
+依賴調整：T3 spike S1（iOS 安裝／離線）需要 T4 才能測，T4 先於 T3 進行
