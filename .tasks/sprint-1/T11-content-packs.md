@@ -45,3 +45,6 @@ frontend-developer 回報：164 tests pass，src/config、src/content 覆蓋率 
 
 ### 2026-10-23T07:57:01.791Z — 狀態變更 → done
 L1 Review 通過（tech-lead 重跑檢查；commit 1597eb2）。範圍：結構與驗證。🟡 Minor：ESLint 尚未擋 src/core import zod（排入 T8 一併補）
+
+### 2026-10-23T20:50:16.523Z — 備註
+X4 完成：product-manager 放入正式內容 src/content/class_sets.json、habit_library.json、reward_library.json（v1.0.0，29 個任務模板、4 職業、3 獎勵），已通過 validateContentPacks、checkDifficultiesExist（easy/normal/hard）與 camelCase 檢查。建議補一個正式測試驗證正式內容，之後改內容自動把關。

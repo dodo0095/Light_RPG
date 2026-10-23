@@ -1,0 +1,23 @@
+{
+  "id": "reward_library",
+  "packType": "reward_library",
+  "formatVersion": 1,
+  "version": "1.0.0",
+  "items": [
+    {
+      "id": "reward_watch_episode",
+      "title": "看一集劇",
+      "cost": 30
+    },
+    {
+      "id": "reward_bubble_tea",
+      "title": "喝一杯手搖飲",
+      "cost": 50
+    },
+    {
+      "id": "reward_sleep_in",
+      "title": "週末睡到自然醒",
+      "cost": 100
+    }
+  ]
+}

@@ -1,0 +1,423 @@
+{
+  "id": "habit_library",
+  "packType": "habit_library",
+  "formatVersion": 1,
+  "version": "1.0.0",
+  "items": [
+    {
+      "id": "daily_drink_water",
+      "type": "daily",
+      "title": "喝 2000cc 水",
+      "mini": {
+        "title": "喝一杯水"
+      },
+      "attribute": "fitness",
+      "difficulty": "easy",
+      "category": "飲食",
+      "keywords": ["喝水", "2000cc", "水量"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_walk_6000",
+      "type": "daily",
+      "title": "走 6000 步",
+      "mini": {
+        "title": "走 1000 步"
+      },
+      "attribute": "fitness",
+      "difficulty": "normal",
+      "category": "運動",
+      "keywords": ["走路", "步數", "散步"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_sleep_before_2330",
+      "type": "daily",
+      "title": "23:30 前上床",
+      "mini": {
+        "title": "24:00 前上床"
+      },
+      "attribute": "fitness",
+      "difficulty": "normal",
+      "category": "睡眠",
+      "keywords": ["早睡", "上床", "睡覺"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_stretch",
+      "type": "daily",
+      "title": "伸展 5 分鐘",
+      "mini": {
+        "title": "做一個伸展動作"
+      },
+      "attribute": "fitness",
+      "difficulty": "easy",
+      "category": "運動",
+      "keywords": ["伸展", "拉筋"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_wake_before_7",
+      "type": "daily",
+      "title": "早上 7 點前起床",
+      "mini": {
+        "title": "7:30 前起床"
+      },
+      "attribute": "fitness",
+      "difficulty": "normal",
+      "category": "睡眠",
+      "keywords": ["早起", "起床"],
+      "schedule": {
+        "kind": "weekdays",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_exercise_30",
+      "type": "daily",
+      "title": "運動 30 分鐘",
+      "mini": {
+        "title": "運動 10 分鐘"
+      },
+      "attribute": "fitness",
+      "difficulty": "hard",
+      "category": "運動",
+      "keywords": ["運動", "健身", "跑步", "重訓", "游泳"],
+      "schedule": {
+        "kind": "custom",
+        "daysOfWeek": [1, 3, 5]
+      }
+    },
+    {
+      "id": "daily_read_20",
+      "type": "daily",
+      "title": "閱讀 20 分鐘",
+      "mini": {
+        "title": "讀 1 頁"
+      },
+      "attribute": "wisdom",
+      "difficulty": "normal",
+      "category": "閱讀",
+      "keywords": ["閱讀", "讀書", "看書"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_learn_one",
+      "type": "daily",
+      "title": "學一個新單字／概念",
+      "mini": {
+        "title": "複習一個學過的單字"
+      },
+      "attribute": "wisdom",
+      "difficulty": "easy",
+      "category": "學習",
+      "keywords": ["背單字", "單字", "學習", "新知"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_write_notes",
+      "type": "daily",
+      "title": "寫 100 字筆記",
+      "mini": {
+        "title": "寫一句話"
+      },
+      "attribute": "wisdom",
+      "difficulty": "normal",
+      "category": "寫作",
+      "keywords": ["筆記", "寫作", "日記"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_meditate",
+      "type": "daily",
+      "title": "冥想 5 分鐘",
+      "mini": {
+        "title": "深呼吸 3 次"
+      },
+      "attribute": "spirit",
+      "difficulty": "easy",
+      "category": "冥想",
+      "keywords": ["冥想", "靜坐", "深呼吸"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_gratitude",
+      "type": "daily",
+      "title": "寫 3 件感恩的事",
+      "mini": {
+        "title": "寫 1 件感恩的事"
+      },
+      "attribute": "spirit",
+      "difficulty": "easy",
+      "category": "感恩",
+      "keywords": ["感恩", "感謝"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_no_phone_before_bed",
+      "type": "daily",
+      "title": "睡前不滑手機 30 分鐘",
+      "mini": {
+        "title": "睡前不滑手機 10 分鐘"
+      },
+      "attribute": "spirit",
+      "difficulty": "normal",
+      "category": "睡眠",
+      "keywords": ["不滑手機", "放下手機"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_greet_someone",
+      "type": "daily",
+      "title": "主動問候一個人",
+      "mini": {
+        "title": "傳一個貼圖給朋友"
+      },
+      "attribute": "bond",
+      "difficulty": "easy",
+      "category": "人際",
+      "keywords": ["問候", "打招呼", "聯絡"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_family_meal",
+      "type": "daily",
+      "title": "陪家人吃一頓沒手機的飯",
+      "mini": {
+        "title": "吃飯時放下手機 10 分鐘"
+      },
+      "attribute": "bond",
+      "difficulty": "normal",
+      "category": "家人",
+      "keywords": ["家人", "陪伴"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_compliment",
+      "type": "daily",
+      "title": "對別人說一句具體的稱讚",
+      "mini": {
+        "title": "對別人說一聲謝謝"
+      },
+      "attribute": "bond",
+      "difficulty": "easy",
+      "category": "人際",
+      "keywords": ["稱讚", "讚美", "謝謝"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "daily_bookkeeping",
+      "type": "daily",
+      "title": "記帳",
+      "mini": {
+        "title": "記下今天最大的一筆"
+      },
+      "attribute": "finance",
+      "difficulty": "easy",
+      "category": "記帳",
+      "keywords": ["記帳", "花費", "帳本"],
+      "schedule": {
+        "kind": "everyday",
+        "daysOfWeek": []
+      }
+    },
+    {
+      "id": "habit_drink_cup",
+      "type": "habit",
+      "title": "喝一杯水",
+      "mini": null,
+      "attribute": "fitness",
+      "difficulty": "easy",
+      "category": "飲食",
+      "keywords": ["一杯水", "喝杯水"],
+      "allowUp": true,
+      "allowDown": false
+    },
+    {
+      "id": "habit_take_stairs",
+      "type": "habit",
+      "title": "爬樓梯",
+      "mini": null,
+      "attribute": "fitness",
+      "difficulty": "easy",
+      "category": "運動",
+      "keywords": ["爬樓梯", "走樓梯"],
+      "allowUp": true,
+      "allowDown": false
+    },
+    {
+      "id": "habit_focus_25",
+      "type": "habit",
+      "title": "專注 25 分鐘",
+      "mini": null,
+      "attribute": "wisdom",
+      "difficulty": "easy",
+      "category": "學習",
+      "keywords": ["專注", "番茄鐘"],
+      "allowUp": true,
+      "allowDown": false
+    },
+    {
+      "id": "habit_late_snack",
+      "type": "habit",
+      "title": "吃宵夜",
+      "mini": null,
+      "attribute": "fitness",
+      "difficulty": "normal",
+      "category": "飲食",
+      "keywords": ["宵夜", "消夜"],
+      "allowUp": false,
+      "allowDown": true
+    },
+    {
+      "id": "habit_phone_in_bed",
+      "type": "habit",
+      "title": "睡前滑手機",
+      "mini": null,
+      "attribute": "spirit",
+      "difficulty": "normal",
+      "category": "睡眠",
+      "keywords": ["滑手機"],
+      "allowUp": false,
+      "allowDown": true
+    },
+    {
+      "id": "habit_procrastinate",
+      "type": "habit",
+      "title": "拖延",
+      "mini": null,
+      "attribute": "wisdom",
+      "difficulty": "normal",
+      "category": "學習",
+      "keywords": ["拖延"],
+      "allowUp": false,
+      "allowDown": true
+    },
+    {
+      "id": "todo_tidy_desk",
+      "type": "todo",
+      "title": "整理桌面",
+      "mini": {
+        "title": "收好桌上一樣東西"
+      },
+      "attribute": "spirit",
+      "difficulty": "easy",
+      "category": "整理",
+      "keywords": ["整理桌面", "收桌子"],
+      "checklist": ["清掉不需要的紙張", "收好文具", "擦一次桌面"]
+    },
+    {
+      "id": "todo_book_health_check",
+      "type": "todo",
+      "title": "預約健檢",
+      "mini": {
+        "title": "查好一家可以健檢的醫院"
+      },
+      "attribute": "fitness",
+      "difficulty": "normal",
+      "category": "健康",
+      "keywords": ["健檢", "體檢"],
+      "checklist": ["查可以預約的醫院", "確認自己有空的時間", "完成預約"]
+    },
+    {
+      "id": "todo_finish_book",
+      "type": "todo",
+      "title": "讀完一本書",
+      "mini": {
+        "title": "讀完一章"
+      },
+      "attribute": "wisdom",
+      "difficulty": "hard",
+      "category": "閱讀",
+      "keywords": ["讀完", "一本書"],
+      "checklist": ["選好要讀的書", "讀完前半本", "讀完後半本", "寫下三句心得"]
+    },
+    {
+      "id": "todo_plan_workouts",
+      "type": "todo",
+      "title": "排好這週的運動時間",
+      "mini": null,
+      "attribute": "fitness",
+      "difficulty": "easy",
+      "category": "運動",
+      "keywords": ["運動計畫", "排運動"],
+      "checklist": ["選好要做的運動", "在行事曆標出三個時段"]
+    },
+    {
+      "id": "todo_tidy_phone",
+      "type": "todo",
+      "title": "整理手機 App 與通知",
+      "mini": {
+        "title": "刪掉一個不用的 App"
+      },
+      "attribute": "spirit",
+      "difficulty": "easy",
+      "category": "整理",
+      "keywords": ["整理手機", "關通知"],
+      "checklist": ["刪掉三個月沒開的 App", "關掉不需要的通知"]
+    },
+    {
+      "id": "todo_meet_old_friend",
+      "type": "todo",
+      "title": "約一位很久沒見的朋友",
+      "mini": {
+        "title": "傳訊息問候一位老朋友"
+      },
+      "attribute": "bond",
+      "difficulty": "normal",
+      "category": "人際",
+      "keywords": ["約朋友", "老朋友", "聚餐"],
+      "checklist": ["想好要約誰", "傳訊息約時間", "見面"]
+    },
+    {
+      "id": "todo_review_subscription",
+      "type": "todo",
+      "title": "檢視一筆訂閱是否還需要",
+      "mini": null,
+      "attribute": "finance",
+      "difficulty": "easy",
+      "category": "記帳",
+      "keywords": ["訂閱", "月費"],
+      "checklist": ["列出目前所有訂閱", "挑一筆看最近有沒有在用", "決定保留或取消"]
+    }
+  ]
+}
