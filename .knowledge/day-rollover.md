@@ -1,7 +1,7 @@
 # 晨光之誓 — 換日／日結模組設計
 
 > 層級：🔴 規範
-> 狀態：v0.1 草案（2026-10-23，tech-lead，Sprint 1 設計步驟 D4）— 待 project-lead 驗收
+> 狀態：v0.2（2026-10-23，tech-lead）— 修正 `R_effective` 定義、換日時間排程、夏令時間結束；來源：T7 實作回報
 > 相關：`.knowledge/data-model.md`（欄位定義）、`.knowledge/decision-tables.md`（數值，product-manager 產出）
 > **數值**：本文件不寫任何數字。以下符號都對應設定檔或使用者設定：
 >
@@ -72,7 +72,7 @@ effectiveDayKey = max(computeDayKey(now, tz, R), nextDay(lastSettledDayKey))
 輸入：`now`、`timeZone`、`settings`、`tasks`、`events`（相關的幾天）、`character`、`balance`
 輸出：要寫入的 `daySummaries`、`events`、新的 `character`、新的 `settings`
 
-**`R_effective(d)` 的定義**：遊戲日 `d` 使用哪一個換日時間。
+**`R_effective(d)` 的定義**：遊戲日 `d` **從什麼時間開始**，也就是「日曆日 `d` 的當地時間 `R_effective(d)`」是 `d−1` 和 `d` 的分界。（v0.2 修正：舊版只說「d 使用哪個換日時間」，沒說是開始還是結束，換日時間改晚時會算出兩種答案。）
 
 ```
 如果 settings.pendingRolloverTime 存在，而且 d ≥ pendingRolloverTime.effectiveFromDayKey：
@@ -81,7 +81,14 @@ effectiveDayKey = max(computeDayKey(now, tz, R), nextDay(lastSettledDayKey))
   R_effective(d) = settings.rolloverTime
 ```
 
-計算「現在是哪一天」時，先用舊的 R 算出 dayKey；如果那一天已經到了生效日，再用新的 R 重算一次，以第二次的結果為準。
+計算「現在是哪一天」（`currentDayKey`）只用一條規則，不重算：
+
+```
+c = now 在 timeZone 的當地日曆日；m = 當地時間的分鐘數
+dayKey = (m ≥ R_effective(c)) ? c : c 的前一天
+```
+
+例：舊 R 較早、新 R 較晚、生效日為 E。日曆日 E 的當地時間介於舊 R 和新 R 之間 → 用 `R_effective(E)`（新 R）判斷 → 還沒到 → 算 `E−1`。所以 `E−1` 這一天被拉長，到新 R 才結束；新 R 較早時則相反，`E−1` 被縮短。遊戲日不會跳號，也不會倒退。
 
 ```
 1. today = computeDayKey(now, timeZone, R_effective(…))（依上面的規則）
@@ -193,7 +200,17 @@ S1 不提供「補登昨天」（2026-10-23 老闆決定）。
 
 如果改了 `R` 立刻生效，遊戲日可能突然往前跳，造成還沒打卡的 Dailies 被立刻結算扣血。
 
-**做法**：寫入 `settings.pendingRolloverTime`，從**下一個遊戲日**開始生效；在那之前一律用舊的 `R`。
+**做法**：寫入 `settings.pendingRolloverTime`，在那之前一律用舊的 `R`。生效日用純函式 `scheduleRolloverChange(now, timeZone, settings, newTime)` 決定：
+
+```
+today = currentDayKey(now, …)
+E = today 的下一天
+如果「日曆日 E 的當地新 R 時間」≤ now（新 R 比現在的時刻還早，E 用新 R 的話已經開始了）：
+  E = E 的下一天
+回傳 { time: newTime, effectiveFromDayKey: E }
+```
+
+保證：改設定的當下，`currentDayKey` 的結果不變（不會立刻換日、不會立刻結算）。
 
 ### 5.8 使用者手動調手機時間
 
@@ -216,7 +233,8 @@ S1 不提供「補登昨天」（2026-10-23 老闆決定）。
 台灣沒有夏令時間，但時區變更後可能遇到：
 
 - 遊戲日以當地時間判斷，一天有 23 或 25 小時都沒關係
-- `R` 剛好落在被跳過的那一小時裡：當地時間會直接從 `R` 之前跳到 `R` 之後，比較結果仍然正確
+- `R` 落在**被跳過**的那一小時（夏令時間開始）：當地時間直接從 `R` 之前跳到 `R` 之後，在跳過的那一刻換到新的一天，整天只換日一次
+- `R` 落在**重複**的那一小時（夏令時間結束）：第一次經過 `R` 時換到新的一天；時鐘撥回後，`computeDayKey` 會短暫算回前一天。這段時間一律由 `effectiveDayKey` 處理：前一天如果已經結算，就算在新的一天；如果還沒結算（App 沒開），打卡算在前一天。可以接受，不另外處理
 
 ### 5.11 第一次使用
 
@@ -238,7 +256,11 @@ S1 不提供「補登昨天」（2026-10-23 老闆決定）。
 | TC-DK-03 | 跨午夜 | 當地時間 00:00～`R` 之間 | dayKey = 前一個日曆日 |
 | TC-DK-04 | 月底、年底、閏年 | 2 月 29 日、12 月 31 日 | 前一天／下一天正確 |
 | TC-DK-05 | 不同時區同一瞬間 | 同一個 instant，兩個時區 | 各自算出當地的 dayKey |
-| TC-DK-06 | 夏令時間跳過的一小時 | 有夏令時間的時區，`R` 落在被跳過的小時 | 不拋錯；結果符合 5.10 |
+| TC-DK-06 | 夏令時間跳過的一小時 | 有夏令時間的時區，`R` 落在被跳過的小時 | 不拋錯；在跳過的那一刻換到新的一天；逐分鐘掃描整天只換日一次 |
+| TC-DK-08 | 夏令時間重複的一小時 | `R` 落在重複的小時，前一天已結算 | `effectiveDayKey` 不倒退 |
+| TC-DK-09 | 換日時間改晚的過渡日 | 舊 R 早於新 R，生效日 E | E 當地時間介於舊 R、新 R 之間 → `E−1`；到新 R → E；逐分鐘不跳號不倒退 |
+| TC-DK-10 | 換日時間改早的過渡日 | 舊 R 晚於新 R，生效日 E | E 當地時間到新 R 就換成 E |
+| TC-DK-11 | 排程不立即生效 | 在任何時刻呼叫 `scheduleRolloverChange`（新 R 比現在早或晚） | 套用前後 `currentDayKey` 相同 |
 | TC-DK-07 | 星期判斷 | `R` 之前的週六凌晨 | 星期算週五 |
 | TC-ST-01 | 正常一天 | 2 個 Daily，完成 1 個 | 扣 `P(未完成的難度)`；完成的 streak + 1，沒完成的歸零；1 筆 summary |
 | TC-ST-02 | 全部完成 | 全部打勾 | 不扣血；沒有 `rollover_penalty` 事件 |

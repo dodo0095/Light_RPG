@@ -16,3 +16,15 @@
 | 預防 | 指令範本不要假設 node 在 PATH；回報 Agent-hub 公司範本一併修正 |
 | 狀態 | open（待重開 Claude Code 後重跑 /task-dispatch 確認才能 resolve） |
 | 到期日 | 2026-11-06 |
+
+### 2026-10-23 — Windows Application Control 擋下 Vite 8 的 rolldown 原生 binding
+
+| 項目 | 內容 |
+|------|------|
+| 分類 | build |
+| 問題 | T1 安裝 Vite 8 後執行失敗：`rolldown-binding.win32-x64-msvc.node` — "An Application Control policy has blocked this file"；改用 WASI（wasm）binding 則無法解析 Windows 路徑 |
+| 原因 | 這台電腦的 Windows Application Control（WDAC／Smart App Control）政策不允許載入未受信任的原生 `.node` 模組；Vite 8 改用 rolldown，依賴該原生模組 |
+| 解法 | 改用 esbuild 系的 Vite ~6.4.5＋Vitest ~4.1.12（Agent-hub 已在本機驗證過的組合）；TypeScript 釘 ~6.0.3（typescript-eslint 8.72 的 peer 範圍）；`pnpm-workspace.yaml` 設 `allowBuilds: esbuild: true` |
+| 預防 | 升級 Vite／Vitest 或新增含原生 binding 的套件前，先在本機實跑一次；`package.json` 這三個套件用 `~` 鎖小版本，不要隨手升大版 |
+| 狀態 | open（暫時解法；之後評估是否把 rolldown binding 加入信任清單） |
+| 到期日 | 2026-11-06 |
