@@ -1,0 +1,10 @@
+dist/
+coverage/
+node_modules/
+pnpm-lock.yaml
+.tasks/
+.knowledge/
+proposal/
+*.md
+.claude/
+pnpm-workspace.yaml

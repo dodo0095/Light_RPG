@@ -7,3 +7,14 @@ dist/
 Thumbs.db
 .claude/hook-execution.jsonl
 .claude/settings.local.json
+coverage/
+dev-dist/
+
+# Cloudflare Tunnel 憑證（不得進 repo）
+*.pem
+deploy/**/credentials*.json
+.cloudflared/
+
+# TypeScript 編譯殘留（避免被 Vitest 撿到）
+src/**/*.js
+tests/**/*.js
