@@ -70,7 +70,9 @@ effectiveDayKey = max(computeDayKey(now, tz, R), nextDay(lastSettledDayKey))
 ### 3.2 步驟（`planSettlement` 純函式）
 
 輸入：`now`、`timeZone`、`settings`、`tasks`、`events`（相關的幾天）、`character`、`balance`
-輸出：要寫入的 `daySummaries`、`events`、新的 `character`、新的 `settings`
+輸出：要寫入的 `daySummaries`、`events`、新的 `character`、新的 `settings`、streak 有變動的 Daily（`tasks`）。沒有待結算日時回傳「無變更」及原因（`not_initialized`／`nothing_pending`／`clock_behind`）。
+
+**HP 歸零懲罰的觸發時機**（2026-10-23 tech-lead 釐清，T8 回報）：HP **變成 0 的當下**就觸發，不論原因。Habit「－」扣到 0 由打卡引擎（T9）當場觸發；日結扣到 0 由日結觸發。所以正常情況下，日結開始時 HP 不會是 0；萬一是 0 且當天有沒完成的 Daily，視為「扣到 0」照樣觸發（仍受一次結算最多一次的限制）。有沒完成的 Daily 時一律寫 `rollover_penalty` 事件，即使實際扣 0。
 
 **`R_effective(d)` 的定義**：遊戲日 `d` **從什麼時間開始**，也就是「日曆日 `d` 的當地時間 `R_effective(d)`」是 `d−1` 和 `d` 的分界。（v0.2 修正：舊版只說「d 使用哪個換日時間」，沒說是開始還是結束，換日時間改晚時會算出兩種答案。）
 
@@ -300,7 +302,7 @@ E = today 的下一天
 | TC-CL-01 | 手機時間調回過去 | `now` 比上次結算早 | 不結算；打卡算在 `effectiveDayKey` |
 | TC-RT-01 | 修改換日時間 | 改 `R` | 當天仍用舊 `R`；下一個遊戲日才用新的 |
 | TC-RT-02 | 修改換日時間不會立刻觸發日結 | 改成比現在早的時間 | 不立刻結算 |
-| TC-RT-03 | 生效日落在補算區間內 | 改 `R` 後隔多天沒開，生效日在待結算日中間 | 生效日之前用舊 `R`、之後用新 `R`；結算完成後 `rolloverTime` 已更新，`pendingRolloverTime` 已清空 |
+| TC-RT-03 | 生效日落在補算區間內 | 改 `R` 後隔多天沒開，生效日在待結算日中間 | 生效日之前用舊 `R`、之後用新 `R`；結算完成後 `rolloverTime` 已更新，`pendingRolloverTimes` 中已生效的項目已移除 |
 | TC-ST-13 | mode 標記 | 分別模擬 1 天、n 天（n ≤ `K`）、超過 `K` 天待結算 | mode 依序為 `normal`／`catch_up_penalized`／`catch_up_penalized`＋`catch_up_skipped` |
 | TC-UN-01 | 取消今天的打勾 | 今天打勾後取消 | 反向事件 deltas = 原事件的相反數 |
 | TC-UN-02 | 改了數值設定後取消 | 打勾 → 換 `configVersion` → 取消 | 退回的是原事件的量，不是新設定的量 |
