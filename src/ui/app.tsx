@@ -9,6 +9,8 @@ import { UpdatePrompt } from './components/update-prompt';
 import { ClassSelectPage } from './pages/class-select';
 import { ErrorPage, LoadingPage } from './pages/boot';
 import { PlaceholderPage } from './pages/placeholder';
+import { RewardsPage } from './pages/rewards';
+import { SettingsPage } from './pages/settings';
 import { TodayPage } from './pages/today';
 import type { AppStore } from './state/app-store';
 import { needsSafariHint } from './state/environment';
@@ -25,6 +27,8 @@ function Screen({ store }: { store: AppStore }) {
       return <ClassSelectPage store={store} />;
     case 'ready':
       if (page === 'today') return <TodayPage store={store} />;
+      if (page === 'rewards') return <RewardsPage store={store} />;
+      if (page === 'settings') return <SettingsPage store={store} />;
       return <PlaceholderPage page={page} onNavigate={(next) => store.navigate(next)} />;
   }
 }

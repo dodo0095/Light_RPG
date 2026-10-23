@@ -2,7 +2,7 @@
  * 匯出／匯入（data-model.md 第 8 節）。
  *
  * 匯入流程：Zod 驗外框 → 版本較新就拒絕 → 自動備份目前資料到 `morning-oath-backup`
- * → 舊版本先跑遷移 → 驗證記錄必要欄位 → 在**單一 transaction** 裡清空所有 store 再寫入。
+ * → 舊版本先跑遷移 → 換成本機 installId → 驗證記錄必要欄位 → 在**單一 transaction** 裡清空所有 store 再寫入。
  * 任何一步失敗，目前資料保持不變。
  */
 import { unwrap } from 'idb';
@@ -70,6 +70,17 @@ export function withSchemaVersion(backup: BackupFile, version: number): BackupFi
     schemaVersion: version,
     data: { ...backup.data, meta: [...meta, { key: 'schemaVersion', value: version }] },
   };
+}
+
+/**
+ * 把匯入資料的 `meta.installId` 換成本機的值（data-model 4.1：匯入時保留本機 installId，
+ * 不採用備份檔的值，避免兩台裝置共用同一個 id）。本機還沒有 installId 時直接拿掉備份檔的值，
+ * 由 service 層之後補寫新的。不修改輸入。
+ */
+export function withLocalInstallId(backup: BackupFile, localInstallId: string | null): BackupFile {
+  const meta = (backup.data.meta ?? []).filter((r) => r.key !== 'installId');
+  if (localInstallId !== null) meta.push({ key: 'installId', value: localInstallId });
+  return { ...backup, installId: localInstallId, data: { ...backup.data, meta } };
 }
 
 /**
@@ -168,6 +179,7 @@ export async function importAll(
   try {
     migrated = runMigrations(incoming, currentVersion, options.migrations ?? MIGRATIONS);
     migrated = withSchemaVersion(migrated, currentVersion);
+    migrated = withLocalInstallId(migrated, current.installId);
     (options.validateData ?? assertBackupV1)(migrated);
   } catch (error) {
     if (error instanceof StorageError) {

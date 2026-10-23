@@ -261,6 +261,29 @@ export interface TodayView {
   inInn: boolean;
 }
 
+/** 今天兌換過、尚未取消的某項獎勵（取消時從最後一次開始退回） */
+export interface RewardRedemptionView {
+  /** 含已軟刪除的獎勵（今天兌換後才刪除的仍可取消） */
+  reward: Reward;
+  /** 今天有效的兌換次數（兌換數 − 取消數） */
+  count: number;
+  /** 取消時會退回的金幣（最後一次兌換事件記下的量） */
+  refund: number;
+  /** 最後一次兌換時間 */
+  lastRedeemedAt: string;
+}
+
+/** 獎勵頁資料（唯讀，不日結；由 UI 在 getTodayView 之後查詢） */
+export interface RewardsView {
+  /** 今天（effectiveDayKey） */
+  dayKey: DayKey;
+  gold: number;
+  /** 未刪除的獎勵（依 sortOrder） */
+  rewards: Reward[];
+  /** 今天兌換、尚未取消的（依最後兌換時間由舊到新）；今天未結算，全部可以取消 */
+  redeemedToday: RewardRedemptionView[];
+}
+
 export interface SettingsView {
   rolloverTime: string;
   pendingRolloverTimes: PendingRolloverTime[];

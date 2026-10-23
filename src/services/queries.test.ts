@@ -113,6 +113,7 @@ describe('匯出／匯入', () => {
     const fresh = await boot(clock);
     services.push(fresh.service);
     expect(fresh.state.onboarded).toBe(false);
+    const freshInstallId = (await fresh.service.context.storage.meta.get('installId'))?.value;
 
     const imported = await fresh.service.importBackup(exported.json);
     expect(imported).toMatchObject({
@@ -122,7 +123,11 @@ describe('匯出／匯入', () => {
     });
     const after = await fresh.service.getTodayView();
     expect(after).toEqual(before);
-    expect((await fresh.service.getSettingsView())?.installId).toBe(installId);
+    // 匯入保留本機（新裝置）的 installId，不採用備份檔的值（data-model 4.1，T18）
+    const importedInstallId = (await fresh.service.getSettingsView())?.installId;
+    expect(importedInstallId).not.toBe(installId);
+    expect(typeof importedInstallId).toBe('string');
+    if (typeof freshInstallId === 'string') expect(importedInstallId).toBe(freshInstallId);
     const [importedEvent] = await fresh.service.context.storage.events.listByType('data_imported');
     expect(importedEvent).toMatchObject({ dayKey: '2026-10-28', payload: { fromVersion: 1 } });
   });

@@ -25,7 +25,9 @@ import {
 } from '../core/check-in';
 import { checkIntoInn as coreCheckIntoInn, checkOutOfInn as coreCheckOutOfInn } from '../core/inn';
 import { scheduleRolloverChange } from '../core/time';
+import { ATTRIBUTE_KEYS } from '../core/types';
 import type {
+  AttributeKey,
   Character,
   ChecklistItem,
   DailyTask,
@@ -660,6 +662,26 @@ export function changeRolloverTime(
       throw error;
     }
     const settings: Settings = { ...p.settings, ...rollover, updatedAt: ctx.nowIso() };
+    return { ok: true, value: settings, writes: { settings }, change: { type: 'settings' } };
+  });
+}
+
+// ---------------------------------------------------------------------------
+// 顯示設定（T19：是否顯示財務屬性，data-model 4.2 enabledAttributes）
+// ---------------------------------------------------------------------------
+
+/** 開關選用的財務屬性（只改 `settings.enabledAttributes`，不影響已累積的屬性經驗）。 */
+export function setFinanceAttributeEnabled(
+  ctx: ServiceContext,
+  enabled: boolean,
+  options: ActionOptions = {},
+): Promise<ActionResult<Settings>> {
+  return act(ctx, options, (p) => {
+    const current = new Set<AttributeKey>(p.settings.enabledAttributes);
+    if (enabled) current.add('finance');
+    else current.delete('finance');
+    const enabledAttributes = ATTRIBUTE_KEYS.filter((key) => current.has(key));
+    const settings: Settings = { ...p.settings, enabledAttributes, updatedAt: ctx.nowIso() };
     return { ok: true, value: settings, writes: { settings }, change: { type: 'settings' } };
   });
 }

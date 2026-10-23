@@ -92,7 +92,35 @@ describe('importAll — 成功路徑', () => {
 
     const result = await importAll(db, json, importOptions());
     expect(result.fromVersion).toBe(1);
-    expect(await snapshot()).toEqual(before);
+    // 清空後本機沒有 installId → 不採用備份檔的值（之後由 service 層補寫），其餘完全相同
+    const withoutInstallId = {
+      ...before,
+      meta: (before.meta as { key: string }[]).filter((r) => r.key !== 'installId'),
+    };
+    expect(await snapshot()).toEqual(withoutInstallId);
+  });
+
+  it('匯入時保留本機 meta.installId，不採用備份檔的值（data-model 4.1）', async () => {
+    const backup = await exportAll(db, INFO);
+    const fromOtherDevice = structuredClone(backup);
+    fromOtherDevice.installId = 'install-other';
+    fromOtherDevice.data.meta = fromOtherDevice.data.meta.map((m) =>
+      m.key === 'installId' ? { key: 'installId', value: 'install-other' } : m,
+    );
+    const result = await importAll(db, fromOtherDevice, importOptions());
+    expect(await storage.meta.get('installId')).toEqual({ key: 'installId', value: 'install-1' });
+    expect(result.backup.installId).toBe('install-1');
+    expect(fromOtherDevice.data.meta).toContainEqual({ key: 'installId', value: 'install-other' });
+  });
+
+  it('本機還沒有 installId 時，也不採用備份檔的值', async () => {
+    const backup = await exportAll(db, INFO);
+    db.close();
+    resetIndexedDb();
+    db = await openAppDb();
+    storage = createStorage(db);
+    await importAll(db, backup, importOptions());
+    expect(await storage.meta.get('installId')).toBeUndefined();
   });
 
   it('匯入會取代（不是合併）現有資料，並先自動備份目前資料', async () => {
