@@ -60,6 +60,9 @@ importers:
       vitest:
         specifier: ~4.1.12
         version: 4.1.12(@vitest/coverage-v8@4.1.12)(vite@6.4.5(lightningcss@1.33.0)(terser@5.51.2))
+      workbox-window:
+        specifier: 7.4.1
+        version: 7.4.1
 
 packages:
 
