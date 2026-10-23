@@ -142,3 +142,35 @@ body { overflow: hidden; }
 
 /* 今天頁修行列：點名稱開啟進階編輯（外觀與純文字相同） */
 .task__title-btn { padding: 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+
+/* ---------- 獎勵頁（T17；沿用今天頁 .task／.btn／.sheet） ---------- */
+.reward-row { align-items: center; }
+.reward-row .btn { flex: none; }
+.reward-row__reason { margin: 4px 0 0; font-size: var(--fs-xs); color: var(--c-warn); text-shadow: none; }
+.reward-sheet__delete { margin-top: var(--sp-2); color: var(--c-danger); }
+
+/* ---------- 設定頁（T19；沿用 .win／.switch／.field／.banner） ---------- */
+.settings-win { padding: var(--sp-3); }
+.settings-row { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); min-height: var(--touch); }
+.settings-row + .settings-row { border-top: 1px solid var(--c-border-dim); }
+.settings-note { margin: 0 0 var(--sp-2); }
+.settings-field { margin: var(--sp-2) 0 0; }
+.settings-inline { display: flex; gap: var(--sp-2); align-items: center; }
+.settings-inline .input { flex: 1; min-width: 0; }
+.settings-banner { margin: var(--sp-2) 0; }
+.settings-actions { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-2); margin-top: var(--sp-2); }
+/* .switch 做成整列可點的按鈕（role=switch） */
+.switch--btn { width: 100%; padding: 0; border: 0; background: none; color: inherit; text-align: left; cursor: pointer; }
+.switch--btn[disabled] { opacity: 0.6; cursor: default; }
+.switch__label { margin: 0; flex-wrap: wrap; }
+.event-log { list-style: none; margin: 0; padding: 0; }
+.event-log li { padding: 6px 0; border-bottom: 1px solid var(--c-border-dim); }
+.event-log li:last-child { border-bottom: 0; }
+.event-log__main { display: flex; justify-content: space-between; gap: var(--sp-2); align-items: baseline; font-size: var(--fs-sm); }
+.event-log__label { min-width: 0; }
+.event-log__subject { color: var(--c-ink-dim); }
+.event-log__label .tag { margin-left: 4px; }
+.event-log__main .reward-line { flex: none; font-size: var(--fs-xs); }
+.event-log__meta { font-size: var(--fs-xs); color: var(--c-ink-mute); text-shadow: none; }
+.backup-text { height: 160px; font-size: var(--fs-xs); font-family: ui-monospace, monospace; }
+.break-all { word-break: break-all; }

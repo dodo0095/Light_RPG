@@ -17,6 +17,14 @@ import type {
   BootstrapResult,
   DaySummaryView,
   NewTaskInput,
+  ExportResult,
+  GameEvent,
+  ImportFailure,
+  ImportOutcome,
+  NewRewardInput,
+  PersistenceRecord,
+  RewardPatch,
+  RewardsView,
   RolloverScheduleView,
   ServiceChange,
   SettingsView,
@@ -77,6 +85,12 @@ export function createAppStore(deps: AppStoreDeps) {
   const editor = signal<EditorTarget>({ taskId: null, returnTo: 'today' });
   /** 選職業那天（「來自職業套組」判斷用）；尚未讀取或沒有時為 null */
   const classSelectedDayKey = signal<DayKey | null>(null);
+  /** 獎勵頁資料（T17） */
+  const rewards = signal<RewardsView | null>(null);
+  /** 最近事件紀錄（T19；只在設定頁時讀取） */
+  const recentEvents = signal<GameEvent[] | null>(null);
+  /** 這次啟動實際取得的持久儲存狀態（匯入會覆蓋 meta，所以以啟動結果為準） */
+  const persistence = signal<PersistenceRecord | null>(null);
   /** 進行中的動作（防連點），key 例如 `daily:<id>` */
   const busy = signal<ReadonlySet<string>>(new Set());
 
@@ -104,7 +118,8 @@ export function createAppStore(deps: AppStoreDeps) {
       const days = rolloverDayKeys.value;
       const first = days[0];
       const last = days[days.length - 1];
-      const [settingsView, scheduleView, summaries, taskList, classDay] = await Promise.all([
+      const [settingsView, scheduleView, summaries, taskList, classDay, rewardsView, events] =
+        await Promise.all([
         svc.getSettingsView(),
         svc.getRolloverSchedule(),
         first !== undefined && last !== undefined
@@ -112,6 +127,8 @@ export function createAppStore(deps: AppStoreDeps) {
           : Promise.resolve([]),
         view === null ? Promise.resolve(null) : svc.listTasks(),
         view === null ? Promise.resolve(null) : svc.getClassSelectedDayKey(),
+        svc.getRewardsView(),
+        page.value === 'settings' ? svc.listRecentEvents() : Promise.resolve(null),
       ]);
       batch(() => {
         today.value = view;
@@ -120,6 +137,8 @@ export function createAppStore(deps: AppStoreDeps) {
         settings.value = settingsView;
         schedule.value = scheduleView;
         daySummaries.value = summaries;
+        rewards.value = rewardsView;
+        if (events !== null) recentEvents.value = events;
         if (phase.value.kind === 'error') return;
         phase.value = view === null ? { kind: 'onboarding' } : { kind: 'ready' };
       });
@@ -182,6 +201,7 @@ export function createAppStore(deps: AppStoreDeps) {
       balance.value = state.balance;
       content.value = state.content;
       today.value = state.today;
+      persistence.value = state.persistence;
       if (state.settlement.settled) addRolloverDays(state.settlement.dayKeys);
     });
     unsubscribe = service.subscribe(onChange);
@@ -272,6 +292,101 @@ export function createAppStore(deps: AppStoreDeps) {
     deleteTask: (taskId: string) => runAction(`task:${taskId}`, (s, o) => s.deleteTask(taskId, o)),
   };
 
+  /** 動作成功、且沒有換日時才顯示的提示（換日時 runAction 已顯示「已經換日」） */
+  const succeeded = <T>(result: ActionResult<T> | null): result is ActionResult<T> & { ok: true } =>
+    result !== null && result.ok && !result.dayChanged;
+  const rewardTitle = (rewardId: string) =>
+    rewards.value?.rewards.find((r) => r.id === rewardId)?.title ??
+    rewards.value?.redeemedToday.find((r) => r.reward.id === rewardId)?.reward.title ??
+    '獎勵';
+
+  // 獎勵（T17） ----------------------------------------------------------------
+  const rewardActions = {
+    async redeem(rewardId: string): Promise<boolean> {
+      const title = rewardTitle(rewardId);
+      const result = await runAction(`reward:${rewardId}`, (s, o) => s.redeemReward(rewardId, o));
+      if (succeeded(result)) showToast('◆', `已兌換「${title}」`, '今天換日前都可以取消兌換。');
+      return result?.ok ?? false;
+    },
+    async revert(rewardId: string): Promise<boolean> {
+      const title = rewardTitle(rewardId);
+      const result = await runAction(`reward:${rewardId}`, (s, o) => s.revertRedeem(rewardId, o));
+      if (succeeded(result)) showToast('↶', `已取消兌換「${title}」`, '金幣已退回。');
+      return result?.ok ?? false;
+    },
+    async create(input: NewRewardInput): Promise<boolean> {
+      const result = await runAction('reward:new', (s, o) => s.createReward(input, o));
+      return result?.ok ?? false;
+    },
+    async update(rewardId: string, patch: RewardPatch): Promise<boolean> {
+      const result = await runAction(`reward:${rewardId}`, (s, o) =>
+        s.updateReward(rewardId, patch, o),
+      );
+      return result?.ok ?? false;
+    },
+    async remove(rewardId: string): Promise<boolean> {
+      const title = rewardTitle(rewardId);
+      const result = await runAction(`reward:${rewardId}`, (s, o) => s.deleteReward(rewardId, o));
+      if (succeeded(result)) showToast('🗑', `已刪除「${title}」`, '今天已兌換的紀錄仍可取消。');
+      return result?.ok ?? false;
+    },
+  };
+
+  // 設定（T19） ----------------------------------------------------------------
+  const settingsActions = {
+    async changeRolloverTime(time: string): Promise<boolean> {
+      const result = await runAction('settings:rollover', (s, o) => s.changeRolloverTime(time, o));
+      if (succeeded(result))
+        showToast('🕓', '換日時間已排程', '從下一個遊戲日起生效，今天不受影響。');
+      return result?.ok ?? false;
+    },
+    async setInn(checkIn: boolean): Promise<boolean> {
+      const result = await runAction('settings:inn', (s, o) =>
+        checkIn ? s.checkIntoInn(o) : s.checkOutOfInn(o),
+      );
+      if (succeeded(result)) {
+        showToast(
+          '🛏',
+          checkIn ? '已入住旅館' : '已退房',
+          checkIn ? '今天起換日結算不扣 HP。' : '今天起每日討伐照常計算。',
+        );
+      }
+      return result?.ok ?? false;
+    },
+    async setFinanceAttribute(enabled: boolean): Promise<boolean> {
+      const result = await runAction('settings:finance', (s, o) =>
+        s.setFinanceAttributeEnabled(enabled, o),
+      );
+      return result?.ok ?? false;
+    },
+    /** 匯出備份 JSON；失敗時顯示提示並回傳 null */
+    async exportBackup(): Promise<ExportResult | null> {
+      const svc = service;
+      if (!svc) return null;
+      try {
+        const result = await svc.exportBackup();
+        await refresh();
+        return result;
+      } catch (error) {
+        showToast('⚠', '匯出失敗', errorMessage(error));
+        return null;
+      }
+    },
+    /** 匯入備份（檔案文字）；回傳結果給設定頁顯示 */
+    async importBackup(text: string): Promise<ImportOutcome | ImportFailure> {
+      const svc = service;
+      if (!svc) return { ok: false, error: 'not_ready', message: 'App 還沒準備好' };
+      try {
+        const result = await svc.importBackup(text);
+        await refresh();
+        return result;
+      } catch (error) {
+        await refresh();
+        return { ok: false, error: 'unexpected', message: errorMessage(error) };
+      }
+    },
+  };
+
   return {
     phase,
     page,
@@ -291,8 +406,15 @@ export function createAppStore(deps: AppStoreDeps) {
     refresh,
     selectClass,
     actions,
+    rewards,
+    recentEvents,
+    persistence,
+    rewardActions,
+    settingsActions,
     navigate(next: PageId) {
       page.value = next;
+      // 設定頁的事件紀錄只在進入時讀取
+      if (next === 'settings' && service) void refresh();
     },
     /** 開啟進階編輯（`taskId` 為 null ＝新增），儲存／取消後回到 `returnTo` */
     openEditor(taskId: string | null, returnTo: PageId = page.value) {

@@ -11,6 +11,8 @@ import { ErrorPage, LoadingPage } from './pages/boot';
 import { EditorPage } from './pages/editor';
 import { LibraryPage } from './pages/library';
 import { PlaceholderPage } from './pages/placeholder';
+import { RewardsPage } from './pages/rewards';
+import { SettingsPage } from './pages/settings';
 import { TodayPage } from './pages/today';
 import type { AppStore } from './state/app-store';
 import { needsSafariHint } from './state/environment';
@@ -29,6 +31,8 @@ function Screen({ store }: { store: AppStore }) {
       if (page === 'today') return <TodayPage store={store} />;
       if (page === 'library') return <LibraryPage store={store} />;
       if (page === 'editor') return <EditorPage store={store} />;
+      if (page === 'rewards') return <RewardsPage store={store} />;
+      if (page === 'settings') return <SettingsPage store={store} />;
       return <PlaceholderPage page={page} onNavigate={(next) => store.navigate(next)} />;
   }
 }

@@ -36,6 +36,8 @@ import {
   type ImportFailure,
   type ImportOutcome,
   type PersistenceRecord,
+  type RewardRedemptionView,
+  type RewardsView,
   type SettingsView,
   type TodayView,
 } from './types';
@@ -389,4 +391,49 @@ export async function ensureInstallMeta(ctx: ServiceContext): Promise<void> {
       await repos.meta.put({ key: 'schemaVersion', value: ctx.db.version });
     }
   });
+}
+
+// ---------------------------------------------------------------------------
+// 獎勵頁（T17，唯讀）
+// ---------------------------------------------------------------------------
+
+/**
+ * 獎勵頁資料：未刪除的獎勵、目前金幣、今天兌換且尚未取消的獎勵。
+ * 不日結（UI 先呼叫 getTodayView）；尚未選職業時回傳 null。
+ */
+export async function getRewardsView(ctx: ServiceContext): Promise<RewardsView | null> {
+  const settings = await readSettings(ctx.storage);
+  const character = await readCharacter(ctx.storage);
+  if (!settings || !character || settings.lastSettledDayKey === null) return null;
+  const dayKey = effectiveToday(ctx, settings);
+  const [rewards, events] = await Promise.all([
+    ctx.storage.rewards.list(),
+    ctx.storage.events.listByDayKey(dayKey),
+  ]);
+  rewards.sort(bySortOrder);
+
+  const reversed = new Set(events.flatMap((e) => (e.reversesEventId ? [e.reversesEventId] : [])));
+  const live = events
+    .filter((e) => e.type === 'reward_redeemed' && e.rewardId !== undefined && !reversed.has(e.id))
+    .sort((a, b) => a.occurredAt.localeCompare(b.occurredAt));
+  const byReward = new Map<string, GameEvent[]>();
+  for (const event of live) {
+    const id = event.rewardId as string;
+    byReward.set(id, [...(byReward.get(id) ?? []), event]);
+  }
+  const redeemedToday: RewardRedemptionView[] = [];
+  for (const [rewardId, list] of byReward) {
+    const reward =
+      rewards.find((r) => r.id === rewardId) ?? (await ctx.storage.rewards.get(rewardId));
+    const last = list[list.length - 1];
+    if (!reward || !last) continue;
+    redeemedToday.push({
+      reward,
+      count: list.length,
+      refund: -last.deltas.gold,
+      lastRedeemedAt: last.occurredAt,
+    });
+  }
+  redeemedToday.sort((a, b) => a.lastRedeemedAt.localeCompare(b.lastRedeemedAt));
+  return { dayKey, gold: character.gold, rewards, redeemedToday };
 }

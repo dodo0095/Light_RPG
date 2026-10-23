@@ -103,6 +103,9 @@ export function createAppService(deps: ServiceDeps) {
     /** 修改換日時間（排程，從下一個遊戲日生效；day-rollover 5.7） */
     changeRolloverTime: (newTime: string, options?: ActionOptions) =>
       actions.changeRolloverTime(ctx, newTime, options),
+    /** 是否顯示選用的財務屬性（settings.enabledAttributes） */
+    setFinanceAttributeEnabled: (enabled: boolean, options?: ActionOptions) =>
+      actions.setFinanceAttributeEnabled(ctx, enabled, options),
 
     // 查詢 -------------------------------------------------------------------
     getTodayView: (options?: { shownDayKey?: DayKey }) => queries.getTodayView(ctx, options),
@@ -117,6 +120,8 @@ export function createAppService(deps: ServiceDeps) {
     /** 目前生效與已排程的換日時間 */
     getRolloverSchedule: () => queries.getRolloverSchedule(ctx),
     getSettingsView: () => queries.getSettingsView(ctx),
+    /** 獎勵頁：未刪除的獎勵、金幣、今天兌換且尚未取消的（唯讀，不日結） */
+    getRewardsView: () => queries.getRewardsView(ctx),
     exportBackup: () => queries.exportBackup(ctx),
     importBackup: (input: unknown) => queries.importBackup(ctx, input),
   };

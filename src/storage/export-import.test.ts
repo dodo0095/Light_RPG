@@ -92,7 +92,63 @@ describe('importAll — 成功路徑', () => {
 
     const result = await importAll(db, json, importOptions());
     expect(result.fromVersion).toBe(1);
-    expect(await snapshot()).toEqual(before);
+    // 清空後本機沒有 installId／lastBackupAt → 不採用備份檔的值（data-model 4.1），其餘完全相同
+    const withoutLocalOnly = {
+      ...before,
+      meta: (before.meta as { key: string }[]).filter(
+        (r) => r.key !== 'installId' && r.key !== 'lastBackupAt',
+      ),
+    };
+    expect(await snapshot()).toEqual(withoutLocalOnly);
+  });
+
+  it('匯入時保留本機 meta.installId，不採用備份檔的值（data-model 4.1）', async () => {
+    const backup = await exportAll(db, INFO);
+    const fromOtherDevice = structuredClone(backup);
+    fromOtherDevice.installId = 'install-other';
+    fromOtherDevice.data.meta = fromOtherDevice.data.meta.map((m) =>
+      m.key === 'installId' ? { key: 'installId', value: 'install-other' } : m,
+    );
+    const result = await importAll(db, fromOtherDevice, importOptions());
+    expect(await storage.meta.get('installId')).toEqual({ key: 'installId', value: 'install-1' });
+    expect(result.backup.installId).toBe('install-1');
+    expect(fromOtherDevice.data.meta).toContainEqual({ key: 'installId', value: 'install-other' });
+  });
+
+  it('本機還沒有 installId 時，也不採用備份檔的值', async () => {
+    const backup = await exportAll(db, INFO);
+    db.close();
+    resetIndexedDb();
+    db = await openAppDb();
+    storage = createStorage(db);
+    await importAll(db, backup, importOptions());
+    expect(await storage.meta.get('installId')).toBeUndefined();
+  });
+
+  it('匯入時保留本機 meta.lastBackupAt（這台裝置最後一次匯出成功的時間）', async () => {
+    await storage.meta.put({ key: 'lastBackupAt', value: '2026-10-20T00:00:00.000Z' });
+    const backup = await exportAll(db, INFO);
+    backup.data.meta = [
+      ...backup.data.meta.filter((m) => m.key !== 'lastBackupAt'),
+      { key: 'lastBackupAt', value: '2026-09-01T00:00:00.000Z' },
+    ];
+    await storage.meta.put({ key: 'lastBackupAt', value: '2026-10-23T08:00:00.000Z' });
+    await importAll(db, backup, importOptions());
+    expect(await storage.meta.get('lastBackupAt')).toEqual({
+      key: 'lastBackupAt',
+      value: '2026-10-23T08:00:00.000Z',
+    });
+  });
+
+  it('本機沒有 lastBackupAt 時維持沒有（null），不採用備份檔的值', async () => {
+    await storage.meta.put({ key: 'lastBackupAt', value: '2026-09-01T00:00:00.000Z' });
+    const backup = await exportAll(db, INFO);
+    db.close();
+    resetIndexedDb();
+    db = await openAppDb();
+    storage = createStorage(db);
+    await importAll(db, backup, importOptions());
+    expect(await storage.meta.get('lastBackupAt')).toBeUndefined();
   });
 
   it('匯入會取代（不是合併）現有資料，並先自動備份目前資料', async () => {
