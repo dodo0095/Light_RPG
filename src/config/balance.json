@@ -1,0 +1,22 @@
+{
+  "configVersion": "1.0.0",
+  "defaults": { "rolloverTime": "04:00" },
+  "difficulties": {
+    "easy":   { "goldReward": 3,  "expReward": 5,  "attributeExpReward": 5,  "missedDailyHpPenalty": 2, "habitDownHpPenalty": 2 },
+    "normal": { "goldReward": 6,  "expReward": 10, "attributeExpReward": 10, "missedDailyHpPenalty": 4, "habitDownHpPenalty": 4 },
+    "hard":   { "goldReward": 10, "expReward": 16, "attributeExpReward": 16, "missedDailyHpPenalty": 6, "habitDownHpPenalty": 6 }
+  },
+  "miniVariantRatio": 0.5,
+  "primaryAttributeMultiplier": 1.2,
+  "habitUp": { "maxRewardedPerDay": 4 },
+  "levelCurve": {
+    "type": "table",
+    "thresholds": [0, 60, 150, 270, 420, 600, 810, 1050, 1320, 1620, 1950, 2310, 2700, 3120, 3570, 4050, 4560, 5100, 5670, 6270, 6900, 7560, 8250, 8970, 9720, 10500, 11310, 12150, 13020, 13920]
+  },
+  "hp": { "max": 50, "restoreOnLevelUp": true, "lowRatio": 0.3 },
+  "hpDepletion": { "goldLossRatio": 0.3, "restoreHpRatio": 1.0 },
+  "catchUp": { "maxPenalizedDays": 2, "penalizeWhich": "most_recent" },
+  "gold": { "allowNegative": true },
+  "eventLog": { "visibleCount": 50 },
+  "backup": { "keepSnapshots": 3 }
+}

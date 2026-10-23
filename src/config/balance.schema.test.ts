@@ -48,12 +48,17 @@ const REQUIRED_PATHS = [
   'difficulties.alpha.habitDownHpPenalty',
   'miniVariantRatio',
   'primaryAttributeMultiplier',
+  'habitUp',
+  'habitUp.maxRewardedPerDay',
   'levelCurve',
   'levelCurve.thresholds',
   'hp',
   'hp.max',
   'hp.restoreOnLevelUp',
+  'hp.lowRatio',
   'hpDepletion',
+  'hpDepletion.goldLossRatio',
+  'hpDepletion.restoreHpRatio',
   'catchUp',
   'catchUp.maxPenalizedDays',
   'catchUp.penalizeWhich',
@@ -84,14 +89,65 @@ describe('parseBalanceConfig', () => {
     expect(parseBalanceConfig(clone())).toEqual(fixture);
   });
 
-  it('接受 formula 型等級曲線與依等級的 hp.max 表', () => {
+  it('formula 型等級曲線已移除（決策表 v1.0）：拒絕', () => {
     const raw = clone();
     raw.levelCurve = { type: 'formula', expression: 'test-expression' };
+    expect(captureError(raw).message).toContain('levelCurve');
+  });
+
+  it('依等級的 hp.max 表已移除（決策表 v1.0）：拒絕陣列', () => {
+    const raw = clone();
     (raw.hp as Record<string, Json>).max = [10, 20, 30];
-    expect(parseBalanceConfig(raw).levelCurve).toEqual({
-      type: 'formula',
-      expression: 'test-expression',
-    });
+    expect(captureError(raw).message).toContain('hp.max');
+  });
+
+  it.each([0, -1])('hp.max 必須是正數（%s 失敗）', (max) => {
+    const raw = clone();
+    (raw.hp as Record<string, Json>).max = max;
+    expect(captureError(raw).message).toContain('hp.max');
+  });
+
+  it.each([
+    ['hp.lowRatio', -0.1],
+    ['hp.lowRatio', 1.1],
+    ['hpDepletion.goldLossRatio', -0.1],
+    ['hpDepletion.goldLossRatio', 1.01],
+    ['hpDepletion.restoreHpRatio', 0],
+    ['hpDepletion.restoreHpRatio', -0.5],
+    ['hpDepletion.restoreHpRatio', 1.5],
+    ['habitUp.maxRewardedPerDay', -1],
+    ['habitUp.maxRewardedPerDay', 2.5],
+  ])('%s 超出範圍（%s）時失敗', (path, value) => {
+    const raw = clone();
+    const [parent, key] = locate(raw, path);
+    parent[key] = value;
+    expect(captureError(raw).issues.some((issue) => issue.path === path)).toBe(true);
+  });
+
+  it.each([
+    ['hp.lowRatio', 0],
+    ['hp.lowRatio', 1],
+    ['hpDepletion.goldLossRatio', 0],
+    ['hpDepletion.goldLossRatio', 1],
+    ['hpDepletion.restoreHpRatio', 1],
+    ['habitUp.maxRewardedPerDay', 0],
+  ])('%s 邊界值 %s 可以通過', (path, value) => {
+    const raw = clone();
+    const [parent, key] = locate(raw, path);
+    parent[key] = value;
+    expect(() => parseBalanceConfig(raw)).not.toThrow();
+  });
+
+  it('hpDepletion 多出未知欄位（舊暫定結構 restoreHpTo）時失敗', () => {
+    const raw = clone();
+    (raw.hpDepletion as Record<string, Json>).restoreHpTo = 1;
+    expect(captureError(raw).message).toContain('hpDepletion');
+  });
+
+  it('levelCurve.thresholds[0] 不是 0 時失敗', () => {
+    const raw = clone();
+    (raw.levelCurve as Record<string, Json>).thresholds = [10, 100, 300];
+    expect(captureError(raw).message).toContain('levelCurve.thresholds');
   });
 
   it.each(REQUIRED_PATHS)('缺少 %s 時失敗，錯誤訊息含欄位路徑', (path) => {

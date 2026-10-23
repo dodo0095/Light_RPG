@@ -32,32 +32,35 @@ export const difficultyBalanceSchema = z.strictObject({
   habitDownHpPenalty: nonNegative,
 });
 
-const levelCurveTableSchema = z.strictObject({
+const ratio = z.number().min(0).max(1);
+
+/**
+ * 等級曲線：決策表 v1.0 只採表格型（formula 型已移除）。
+ * `thresholds[0]` 必須是 0（一開始就是 Lv.1，決策表第 4 節），之後嚴格遞增。
+ */
+export const levelCurveSchema = z.strictObject({
   type: z.literal('table'),
   thresholds: z
     .array(nonNegative)
     .min(1)
+    .refine((values) => values[0] === 0, { message: 'thresholds[0] 必須是 0（Lv.1）' })
     .refine((values) => values.every((value, i) => i === 0 || value > (values[i - 1] as number)), {
       message: 'thresholds 必須嚴格遞增',
     }),
 });
 
-/** 待決策表確認：formula 型內容未定義，暫定為 `expression` 字串。 */
-const levelCurveFormulaSchema = z.strictObject({
-  type: z.literal('formula'),
-  expression: z.string().min(1),
+/** HP 設定（決策表 v1.0 第 5 節）：上限只用固定正數（依等級的表已移除）。 */
+const hpSchema = z.strictObject({
+  max: z.number().positive(),
+  restoreOnLevelUp: z.boolean(),
+  lowRatio: ratio,
 });
 
-export const levelCurveSchema = z.discriminatedUnion('type', [
-  levelCurveTableSchema,
-  levelCurveFormulaSchema,
-]);
-
-/** 待決策表確認：「依等級的表」暫定為陣列，索引 0 對應等級 1。 */
-const hpMaxSchema = z.union([z.number().positive(), z.array(z.number().positive()).min(1)]);
-
-/** 待決策表定義欄位，暫定為 key-value。 */
-const hpDepletionSchema = z.record(z.string(), z.union([z.number(), z.boolean(), z.string()]));
+/** HP 歸零懲罰（決策表 v1.0 第 6、11 節）。 */
+const hpDepletionSchema = z.strictObject({
+  goldLossRatio: ratio,
+  restoreHpRatio: z.number().positive().max(1),
+});
 
 export const balanceConfigSchema = z.strictObject({
   configVersion: z.string().min(1),
@@ -69,11 +72,11 @@ export const balanceConfigSchema = z.strictObject({
     .refine((record) => Object.keys(record).length > 0, { message: '至少要有一個難度' }),
   miniVariantRatio: nonNegative,
   primaryAttributeMultiplier: nonNegative,
-  levelCurve: levelCurveSchema,
-  hp: z.strictObject({
-    max: hpMaxSchema,
-    restoreOnLevelUp: z.boolean(),
+  habitUp: z.strictObject({
+    maxRewardedPerDay: nonNegativeInt,
   }),
+  levelCurve: levelCurveSchema,
+  hp: hpSchema,
   hpDepletion: hpDepletionSchema,
   catchUp: z.strictObject({
     maxPenalizedDays: nonNegativeInt,

@@ -142,12 +142,18 @@ export function innEvent(type: 'inn_checked_in' | 'inn_checked_out', at: number)
   return baseEvent(type, '2000-01-01', iso(at));
 }
 
-/** HP 規則的測試替身（T9 未定案）：上限讀 balance.hp.max，歸零時回復到 hpDepletion.restoreHpTo、扣 goldLossRatio。 */
-export function stubRules(restoreHpTo = Number(balance.hpDepletion.restoreHpTo)): SettlementRules {
+/** fixture 的歸零回復量：round(hp.max × restoreHpRatio)。 */
+export const RESTORE_HP = Math.round(balance.hp.max * balance.hpDepletion.restoreHpRatio);
+
+/**
+ * HP 規則的測試替身（讓日結測試可指定任意回復量，例如 TC-CU-05b）。
+ * 正式實作是 `src/core/progression` 的 `settlementRules`。
+ */
+export function stubRules(restoreHpTo = RESTORE_HP): SettlementRules {
   return {
-    hpMax: (_character, b) => (typeof b.hp.max === 'number' ? b.hp.max : 0),
+    hpMax: (_character, b) => b.hp.max,
     applyHpDepletion: (character, b) => {
-      const goldLoss = Math.floor(character.gold * Number(b.hpDepletion.goldLossRatio));
+      const goldLoss = Math.floor(character.gold * b.hpDepletion.goldLossRatio);
       return {
         character: { ...character, hp: restoreHpTo, gold: character.gold - goldLoss },
         deltas: { gold: -goldLoss, exp: 0, hp: restoreHpTo - character.hp, attributeExp: {} },

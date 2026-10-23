@@ -21,35 +21,34 @@ export interface DifficultyBalance {
   habitDownHpPenalty: number;
 }
 
-/** 等級曲線：表格型。`thresholds` 為各等級所需累計經驗，嚴格遞增。 */
+/**
+ * 等級曲線：表格型（決策表 v1.0 第 4 節；formula 型不採用，已移除）。
+ * `thresholds[i]` = 達到 Lv.(i+1) 需要的累計總經驗；`thresholds[0]` 必須是 0，嚴格遞增。
+ */
 export interface LevelCurveTable {
   type: 'table';
   thresholds: number[];
 }
 
-/**
- * 等級曲線：公式型。
- * 待決策表確認：data-model.md 只寫 `{ type: 'formula'; ... }`，內容未定義，
- * 暫定為一個 `expression` 字串，決策表定案後再調整。
- */
-export interface LevelCurveFormula {
-  type: 'formula';
-  expression: string;
+export type LevelCurve = LevelCurveTable;
+
+/** HP 設定（決策表 v1.0 第 5 節）。 */
+export interface HpConfig {
+  /** HP 上限，固定數字（依等級的表不採用，已移除） */
+  max: number;
+  /** 升級時是否補滿 HP */
+  restoreOnLevelUp: boolean;
+  /** HP ≤ `max × lowRatio` 時畫面顯示「HP 低」（0～1） */
+  lowRatio: number;
 }
 
-export type LevelCurve = LevelCurveTable | LevelCurveFormula;
-
-/**
- * HP 上限：固定數字，或依等級的表。
- * 待決策表確認：「依等級的表」暫定為 `number[]`，索引 0 對應等級 1。
- */
-export type HpMax = number | number[];
-
-/**
- * HP 歸零時的懲罰。待決策表定義欄位（例如扣多少金幣、要不要降級、HP 回到多少），
- * 暫定為 key-value。
- */
-export type HpDepletionConfig = Record<string, number | boolean | string>;
+/** HP 歸零懲罰（決策表 v1.0 第 6 節）。 */
+export interface HpDepletionConfig {
+  /** 失去目前金幣的比例（0～1，無條件捨去；金幣 ≤ 0 不扣） */
+  goldLossRatio: number;
+  /** HP 回到 `round(hp.max × restoreHpRatio)`（大於 0、≤ 1） */
+  restoreHpRatio: number;
+}
 
 export type CatchUpPenalizeWhich = 'most_recent' | 'oldest';
 
@@ -63,11 +62,12 @@ export interface BalanceConfig {
   difficulties: Record<DifficultyKey, DifficultyBalance>;
   miniVariantRatio: number;
   primaryAttributeMultiplier: number;
-  levelCurve: LevelCurve;
-  hp: {
-    max: HpMax;
-    restoreOnLevelUp: boolean;
+  habitUp: {
+    /** 同一 Habit 同一遊戲日前幾次「＋」有獎勵（非負整數），之後事件 deltas 全為 0 */
+    maxRewardedPerDay: number;
   };
+  levelCurve: LevelCurve;
+  hp: HpConfig;
   hpDepletion: HpDepletionConfig;
   catchUp: {
     maxPenalizedDays: number;

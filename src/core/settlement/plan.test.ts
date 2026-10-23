@@ -4,6 +4,7 @@ import { addDays, currentDayKey, effectiveDayKey, scheduleRolloverChange } from 
 import { planSettlement, type SettlementInput, type SettlementPlan } from './index';
 import {
   LOS_ANGELES,
+  RESTORE_HP,
   TAIPEI,
   TOKYO,
   balance,
@@ -23,7 +24,7 @@ import {
 const P_ALPHA = balance.difficulties.alpha?.missedDailyHpPenalty as number;
 const P_BETA = balance.difficulties.beta?.missedDailyHpPenalty as number;
 const K = balance.catchUp.maxPenalizedDays;
-const RESTORE = Number(balance.hpDepletion.restoreHpTo);
+const RESTORE = RESTORE_HP;
 
 function settled(plan: SettlementPlan) {
   if (!plan.changed) throw new Error(`expected a settlement, got noop (${plan.reason})`);
@@ -213,7 +214,7 @@ describe('planSettlement — 單日結算（TC-ST）', () => {
     // 歸零懲罰後的 HP 依注入的規則（stub）回復
     expect(plan.character.hp).toBe(RESTORE);
     expect(plan.character.gold).toBe(
-      100 - Math.floor(100 * Number(balance.hpDepletion.goldLossRatio)),
+      100 - Math.floor(100 * balance.hpDepletion.goldLossRatio),
     );
   });
 

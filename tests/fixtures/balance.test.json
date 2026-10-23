@@ -21,18 +21,21 @@
   },
   "miniVariantRatio": 0.5,
   "primaryAttributeMultiplier": 2,
+  "habitUp": {
+    "maxRewardedPerDay": 3
+  },
   "levelCurve": {
     "type": "table",
     "thresholds": [0, 100, 300, 600]
   },
   "hp": {
     "max": 999,
-    "restoreOnLevelUp": true
+    "restoreOnLevelUp": true,
+    "lowRatio": 0.25
   },
   "hpDepletion": {
     "goldLossRatio": 0.25,
-    "loseLevel": false,
-    "restoreHpTo": 999
+    "restoreHpRatio": 0.75
   },
   "catchUp": {
     "maxPenalizedDays": 3,

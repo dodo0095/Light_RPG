@@ -8,3 +8,4 @@ proposal/
 *.md
 .claude/
 pnpm-workspace.yaml
+src/config/balance.json
