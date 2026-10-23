@@ -54,6 +54,8 @@
 
 > 檔名為建議，以 design-director 實際交付為準。獎勵、設定頁不在四頁圖稿內：沿用「今天」頁的樣式元件，G1 時請 design-director 確認是否需要補圖。
 
+> **字型決策（2026-10-24 老闆選 A）**：圖稿以 Google Fonts 載入 DotGothic16，但網站 CSP 只允許 `'self'`、App 須離線可用，且提案書排除像素字型。Sprint 1 **不載入外部字型**，沿用 tokens.css 的字型堆疊退回系統字型（iPhone 為 PingFang TC）。「對設計稿」Review 時，**字型差異不列為不一致**；其餘佈局、色彩、狀態、文案照常比對。像素字型（正式版預定俐方體 11 號，需自帶字型檔）移到 Sprint 2 backlog。
+
 ### 圖稿驗收標準
 
 - [ ] 四頁皆有 HTML mockup，可在瀏覽器直接開啟
