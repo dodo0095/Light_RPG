@@ -7,11 +7,11 @@
 | Sprint | Sprint 1 |
 | 指派給 | frontend-developer |
 | 優先級 | P0 |
-| 狀態 | assigned |
+| 狀態 | in_progress |
 | 依賴 | T1,T2 |
 | 預估 | 1d |
 | 建立時間 | 2026-10-23T07:23:49.853Z |
-| 開始時間 | — |
+| 開始時間 | 2026-10-23T12:55:18.023Z |
 | 完工時間 | — |
 
 ---
@@ -42,3 +42,9 @@
 5. 複合索引 `[taskId, dayKey]` 缺 taskId 時是否略過；unique 衝突的錯誤名稱與中止順序
 6. transaction 內 await 非 IDB 工作時的自動 commit 時機
 7. 自動備份整份 JSON 的容量配額
+
+### 2026-10-23T12:55:18.023Z — 狀態變更 → in_progress
+做法：iPhone 上執行的診斷頁 /__spike/（獨立建置、測試用資料庫、跑完清除），S1 中「安裝／全螢幕／離線」已由老闆實測通過
+
+### 2026-10-23T13:06:10.441Z — 診斷頁完成（commit d8d91ef）
+本機 Chrome：9 ✅、1 ⚠️（persist() 回 false）、0 ❌。tech-lead 決定：(1) serve.mjs 子目錄不回 index.html，診斷頁網址用 /__spike/index.html，不改伺服器（臨時頁面）；(2) 建置順序固定為 pnpm build → pnpm build:spike，不另加 globIgnores。待老闆 iPhone Safari 執行並回傳結果
