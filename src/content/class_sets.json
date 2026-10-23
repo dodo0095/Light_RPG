@@ -1,0 +1,76 @@
+{
+  "id": "class_sets",
+  "packType": "class_sets",
+  "formatVersion": 1,
+  "version": "1.0.0",
+  "items": [
+    {
+      "id": "class_warrior",
+      "name": "戰士",
+      "primaryAttributes": ["fitness"],
+      "taskTemplateIds": [
+        "daily_wake_before_7",
+        "daily_exercise_30",
+        "daily_drink_water",
+        "daily_sleep_before_2330",
+        "habit_take_stairs",
+        "habit_focus_25",
+        "habit_late_snack",
+        "todo_plan_workouts",
+        "todo_book_health_check"
+      ],
+      "rewardTemplateIds": ["reward_watch_episode", "reward_bubble_tea", "reward_sleep_in"]
+    },
+    {
+      "id": "class_mage",
+      "name": "法師",
+      "primaryAttributes": ["wisdom"],
+      "taskTemplateIds": [
+        "daily_read_20",
+        "daily_learn_one",
+        "daily_write_notes",
+        "daily_sleep_before_2330",
+        "habit_focus_25",
+        "habit_drink_cup",
+        "habit_procrastinate",
+        "todo_finish_book",
+        "todo_tidy_desk"
+      ],
+      "rewardTemplateIds": ["reward_watch_episode", "reward_bubble_tea", "reward_sleep_in"]
+    },
+    {
+      "id": "class_monk",
+      "name": "僧侶",
+      "primaryAttributes": ["spirit"],
+      "taskTemplateIds": [
+        "daily_meditate",
+        "daily_gratitude",
+        "daily_sleep_before_2330",
+        "daily_no_phone_before_bed",
+        "habit_drink_cup",
+        "habit_take_stairs",
+        "habit_late_snack",
+        "todo_tidy_phone",
+        "todo_tidy_desk"
+      ],
+      "rewardTemplateIds": ["reward_watch_episode", "reward_bubble_tea", "reward_sleep_in"]
+    },
+    {
+      "id": "class_ranger",
+      "name": "遊俠",
+      "primaryAttributes": ["bond", "finance"],
+      "taskTemplateIds": [
+        "daily_greet_someone",
+        "daily_compliment",
+        "daily_family_meal",
+        "daily_bookkeeping",
+        "habit_drink_cup",
+        "habit_take_stairs",
+        "habit_procrastinate",
+        "todo_meet_old_friend",
+        "todo_review_subscription"
+      ],
+      "rewardTemplateIds": ["reward_watch_episode", "reward_bubble_tea", "reward_sleep_in"]
+    }
+  ]
+}
