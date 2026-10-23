@@ -7,12 +7,12 @@
 | Sprint | Sprint 1 |
 | 指派給 | frontend-developer |
 | 優先級 | P0 |
-| 狀態 | in_progress |
+| 狀態 | done |
 | 依賴 | T8 |
 | 預估 | 0.5d |
 | 建立時間 | 2026-10-23T07:23:49.853Z |
 | 開始時間 | 2026-10-23T09:14:42.135Z |
-| 完工時間 | — |
+| 完工時間 | 2026-10-23T09:27:48.074Z |
 
 ---
 
@@ -24,8 +24,8 @@
 
 ## 驗收標準
 
-- [ ] TC-IN-01～05 通過
-- [ ] 入住／退房事件寫入格式符合 data-model.md 第 6 節
+- [x] TC-IN-01～05 通過
+- [x] 入住／退房事件寫入格式符合 data-model.md 第 6 節
 
 ---
 
@@ -36,3 +36,9 @@
 
 ### 2026-10-23T09:14:42.135Z — 狀態變更 → in_progress
 開始執行
+
+### 2026-10-23T09:27:48.074Z — 狀態變更 → in_review
+frontend-developer 回報：675 tests pass；storage 行覆蓋率 97.6%
+
+### 2026-10-23T09:27:48.074Z — 狀態變更 → done
+L1 Review 通過（tech-lead 重跑檢查、逐項比對 schema 與 data-model 第 3 節；commit 550a362）。🟡 Minor：backup-store 分支覆蓋率偏低（排序同分分支）

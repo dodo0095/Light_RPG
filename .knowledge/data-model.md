@@ -76,10 +76,10 @@
 | key | value 型別 | 說明 |
 |-----|-----------|------|
 | `schemaVersion` | `number` | 目前資料結構版本，必須等於 IndexedDB version |
-| `installId` | `string`（UUID） | 這台裝置的安裝 id；第二版同步用來辨識裝置 |
+| `installId` | `string`（UUID） | 這台裝置的安裝 id；第二版同步用來辨識裝置。由 service 層在第一次開啟資料庫時寫入（T12）；儲存層匯出時若尚未寫入則輸出 `null` |
 | `appVersion` | `string` | 最後一次寫入資料的 App 版本 |
 | `contentVersions` | `Record<string, string>` | 建立使用者資料時用的內容資料包版本，例如 `{ "class_sets": "1.0.0" }` |
-| `lastBackupAt` | `string \| null` | 最後一次匯出備份或自動備份的時間 |
+| `lastBackupAt` | `string \| null` | 使用者最後一次**下載備份檔**的時間（由 service 層在匯出完成時寫入）。遷移／匯入前的自動備份存在同一台手機的 `morning-oath-backup`，會跟主資料一起被 iOS 清除，所以**不更新**這個欄位（2026-10-23 釐清） |
 
 ### 4.2 `settings`（單筆）
 
