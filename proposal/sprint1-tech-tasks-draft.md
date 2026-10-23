@@ -3,6 +3,7 @@
 > **提案人**: tech-lead
 > **日期**: 2026-10-23
 > **用途**: 交付物 D5，交給 project-lead 併入 `sprint1-dev-plan.md` 第 6 節
+> **⚠️ 已併入**（2026-10-23）：本草稿已併入 `proposal/sprint1-dev-plan.md` 第 6 節，並重新編號為 `TN` 格式（T1～T23）。**任務以 dev-plan 為準**，本檔僅保留作為設計紀錄。
 > **前提**: 老闆已定案（2026-10-23）方案 A（Preact＋idb），部署在老闆自己的電腦＋Cloudflare Tunnel（自有網域）。
 > **估時單位**: 人日（一位工程師 Agent 的工作日，含單元測試，不含 Review 等待時間）
 
