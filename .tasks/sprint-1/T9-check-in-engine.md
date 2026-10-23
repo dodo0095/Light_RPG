@@ -7,12 +7,12 @@
 | Sprint | Sprint 1 |
 | 指派給 | frontend-developer |
 | 優先級 | P0 |
-| 狀態 | in_progress |
+| 狀態 | done |
 | 依賴 | T5,T7 |
 | 預估 | 2d |
 | 建立時間 | 2026-10-23T07:23:49.853Z |
 | 開始時間 | 2026-10-23T20:30:00.596Z |
-| 完工時間 | — |
+| 完工時間 | 2026-10-23T20:42:51.509Z |
 
 ---
 
@@ -26,9 +26,9 @@
 
 ## 驗收標準
 
-- [ ] TC-UN 系列全部有測試且通過
-- [ ] 反向事件 deltas = 原事件相反數（含改設定後取消）
-- [ ] 行覆蓋率 ≥ 80%
+- [x] TC-UN 系列全部有測試且通過
+- [x] 反向事件 deltas = 原事件相反數（含改設定後取消）
+- [x] 行覆蓋率 ≥ 80%
 
 ---
 
@@ -45,3 +45,9 @@ X2、X5 解除：數值決策表 v1.0 老闆確認（.knowledge/decision-tables.
 
 ### 2026-10-23T20:30:00.596Z — 狀態變更 → in_progress
 開始執行。tech-lead 決定（決策表第 11 節 #2、#3）：拿掉 hp.max 陣列型與 levelCurve formula 型，只保留 v1.0 採用的結構
+
+### 2026-10-23T20:42:51.509Z — 狀態變更 → in_review
+frontend-developer 回報：1081 tests pass；check-in／progression／config 覆蓋率 100%；balance.json 與附錄 A 逐字相同
+
+### 2026-10-23T20:42:51.509Z — 狀態變更 → done
+L1 Review 通過（tech-lead 重跑檢查、自行 diff balance.json 與附錄 A；commit 25003fb）。規格補充：反向事件 dayKey 沿用原事件、allowNegative=false 時拒絕取消、歸零回復 HP 最低 1（data-model 第 5、6.1 節）

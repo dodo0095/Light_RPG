@@ -217,7 +217,7 @@
 | `hp.restoreOnLevelUp` | `boolean` | 升級時要不要補滿 HP |
 | `hp.lowRatio` | `number`（0～1） | HP ≤ `hp.max × lowRatio` 時畫面顯示「HP 低」（決策表 v1.0 新增） |
 | `hpDepletion.goldLossRatio` | `number`（0～1） | HP 歸零時失去目前金幣的比例（無條件捨去；金幣 ≤ 0 不扣） |
-| `hpDepletion.restoreHpRatio` | `number`（大於 0、≤ 1） | HP 歸零後回到 `hp.max` 的幾成 |
+| `hpDepletion.restoreHpRatio` | `number`（大於 0、≤ 1） | HP 歸零後回到 `hp.max` 的幾成；結果為 `max(1, round(hp.max × restoreHpRatio))`，最低 1，避免回復後立刻又是 0（2026-10-24 tech-lead） |
 | `habitUp.maxRewardedPerDay` | `number`（非負整數） | 同一 Habit 同一遊戲日前幾次「＋」有獎勵，之後的事件 deltas 為 0（決策表 v1.0 新增） |
 | `catchUp.maxPenalizedDays` | `number` | 多日沒開 App 時，最多補算扣血幾天 |
 | `catchUp.penalizeWhich` | `'most_recent' \| 'oldest'` | 補算時，扣的是最近那幾天還是最早那幾天 |
@@ -234,6 +234,8 @@
 1. **只新增**：事件寫入後不修改、不刪除。
 2. **取消＝反向事件**：取消打卡時，新增一筆 `type` 不同的事件，`reversesEventId` 指向原事件，`deltas` 是原事件 `deltas` 的**相反數**（直接取原事件記錄的數字，不照目前設定檔重算）。所以就算試用期間改了數值，取消也一定退回原本拿到的量。
    **HP 例外**（決策表 v1.0 第 5 節）：取消後的 HP 夾在 1～`hp.max`，反向事件的 `deltas.hp` 記實際變動量；取消不會觸發 HP 歸零懲罰，已觸發的 `hp_depleted` 也不退回。
+   **反向事件的 `dayKey`** 沿用原事件的 `dayKey`（不是取消當下的遊戲日），讓 `byTaskDay` 能同時查到原事件與反向事件（2026-10-24 tech-lead，T9 回報）。
+   **金幣例外**：`gold.allowNegative = false` 且取消後金幣會小於 0 時，取消被拒絕（不把金幣夾在 0），以保住「取消一定完全退回」（2026-10-24 tech-lead，T9 回報；決策表 v1.0 為 `true`，此分支只在調整設定時生效）。
 3. **事件記的是「實際生效」的數值**：例如 HP 被扣到 0 就停住，事件只記實際扣掉的量，取消時才會剛好補回。
 4. `character` 存的是目前狀態（快照）。事件是用來回滾、查紀錄、做統計，**不是**每次開 App 都重播所有事件來算狀態。
 
