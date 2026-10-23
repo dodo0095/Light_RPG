@@ -25,8 +25,17 @@ export default tseslint.config(
           paths: [
             { name: 'preact', message: 'src/core 是純邏輯層，不得 import preact。' },
             { name: 'idb', message: 'src/core 不得直接存取 IndexedDB（idb）。' },
+            {
+              name: 'zod',
+              message:
+                'src/core 只依賴純 TS 型別，不得 import zod；驗證放在 src/config 或 src/content。',
+            },
           ],
           patterns: [
+            {
+              group: ['zod/*'],
+              message: 'src/core 不得 import zod 相關模組。',
+            },
             {
               group: ['preact/*', '@preact/*'],
               message: 'src/core 是純邏輯層，不得 import preact 相關套件。',

@@ -61,3 +61,177 @@ export interface DailySchedule {
   kind: ScheduleKind;
   daysOfWeek: number[];
 }
+
+// ---------------------------------------------------------------------------
+// 以下為 T8（日結引擎）需要的型別
+// ---------------------------------------------------------------------------
+
+/** ISO 8601 時間字串（帶時區位移），data-model.md 第 2.1 節。 */
+export type IsoDateTime = string;
+
+/**
+ * `settings`（單筆），data-model.md 第 4.2 節（v0.3：pendingRolloverTimes 為清單）。
+ * 換日相關欄位沿用 {@link RolloverSettings}。
+ */
+export interface Settings extends RolloverSettings {
+  id: string;
+  createdAt: IsoDateTime;
+  updatedAt: IsoDateTime;
+  /** IANA 時區；上次日結時偵測到的時區 */
+  timeZone: string;
+  /** 最後一個已經結算完的遊戲日；`null` 表示尚未完成選職業 */
+  lastSettledDayKey: DayKey | null;
+  lastOpenedAt: IsoDateTime | null;
+  enabledAttributes: AttributeKey[];
+  onboardingCompletedAt: IsoDateTime | null;
+}
+
+/** `character.inn`，data-model.md 第 4.3 節。 */
+export interface InnState {
+  active: boolean;
+  since: IsoDateTime | null;
+}
+
+/** `character`，data-model.md 第 4.3 節。等級與 HP 上限不存，由設定檔算出。 */
+export interface Character {
+  id: string;
+  createdAt: IsoDateTime;
+  updatedAt: IsoDateTime;
+  name: string;
+  classId: string;
+  totalExp: number;
+  attributeExp: Record<AttributeKey, number>;
+  hp: number;
+  gold: number;
+  inn: InnState;
+  resources: Record<string, number>;
+  equipment: Record<string, string | null>;
+}
+
+/** 檢查清單項目，data-model.md 第 4.4 節。 */
+export interface ChecklistItem {
+  id: string;
+  text: string;
+  done: boolean;
+}
+
+/** 所有任務類型共用的欄位，data-model.md 第 4.4 節。 */
+export interface TaskBase {
+  id: string;
+  createdAt: IsoDateTime;
+  updatedAt: IsoDateTime;
+  /** 軟刪除時間；`null` 表示未刪除 */
+  deletedAt: IsoDateTime | null;
+  type: TaskType;
+  title: string;
+  notes: string;
+  mini: { title: string } | null;
+  difficulty: DifficultyKey;
+  attribute: AttributeKey;
+  tags: string[];
+  sourceTemplateId: string | null;
+  sortOrder: number;
+  /** 在哪個遊戲日建立；日結只算 `createdDayKey < d` 的 Daily（day-rollover.md 第 7 節 #1） */
+  createdDayKey: DayKey;
+}
+
+/** Habit，data-model.md 第 4.4 節。 */
+export interface HabitTask extends TaskBase {
+  type: 'habit';
+  allowUp: boolean;
+  allowDown: boolean;
+}
+
+/** Daily，data-model.md 第 4.4 節。`streak` 只在日結時更新。 */
+export interface DailyTask extends TaskBase {
+  type: 'daily';
+  schedule: DailySchedule;
+  checklist: ChecklistItem[];
+  streak: number;
+}
+
+/** To-do，data-model.md 第 4.4 節。 */
+export interface TodoTask extends TaskBase {
+  type: 'todo';
+  checklist: ChecklistItem[];
+  dueDayKey: DayKey | null;
+  completedAt: IsoDateTime | null;
+}
+
+export type Task = HabitTask | DailyTask | TodoTask;
+
+/** 事件類型（S1），data-model.md 第 6.3 節。 */
+export const EVENT_TYPES = [
+  'class_selected',
+  'daily_checked',
+  'daily_unchecked',
+  'todo_completed',
+  'todo_uncompleted',
+  'habit_up',
+  'habit_up_reverted',
+  'habit_down',
+  'habit_down_reverted',
+  'reward_redeemed',
+  'reward_redeem_reverted',
+  'rollover_penalty',
+  'hp_depleted',
+  'level_changed',
+  'inn_checked_in',
+  'inn_checked_out',
+  'data_imported',
+  'schema_migrated',
+] as const;
+export type EventType = (typeof EVENT_TYPES)[number];
+
+/** 一次事件實際造成的數值變化，data-model.md 第 6.2 節。 */
+export interface Deltas {
+  gold: number;
+  exp: number;
+  hp: number;
+  attributeExp: Partial<Record<AttributeKey, number>>;
+}
+
+/**
+ * 事件（只新增），data-model.md 第 6.2 節。
+ * 選填欄位沒有值時**不寫這個欄位**（不要寫 `undefined`／`null`），見第 3 節索引說明。
+ */
+export interface GameEvent {
+  id: string;
+  createdAt: IsoDateTime;
+  type: EventType;
+  occurredAt: IsoDateTime;
+  dayKey: DayKey;
+  taskId?: string;
+  rewardId?: string;
+  variant?: 'full' | 'mini';
+  reversesEventId?: string;
+  deltas: Deltas;
+  configVersion: string;
+  payload?: Record<string, unknown>;
+}
+
+/** `daySummaries.mode`，data-model.md 第 4.7 節。 */
+export const DAY_SUMMARY_MODES = [
+  'normal',
+  'catch_up_penalized',
+  'catch_up_skipped',
+  'inn',
+] as const;
+export type DaySummaryMode = (typeof DAY_SUMMARY_MODES)[number];
+
+/** 日結紀錄（只新增），data-model.md 第 4.7 節。 */
+export interface DaySummary {
+  id: string;
+  /** 結算執行的時間 */
+  createdAt: IsoDateTime;
+  dayKey: DayKey;
+  timeZone: string;
+  /** `HH:mm`，結算這一天時使用的換日時間（R_effective(dayKey)） */
+  rolloverTime: string;
+  mode: DaySummaryMode;
+  dueDailyIds: string[];
+  completedDailyIds: string[];
+  missedDailyIds: string[];
+  penaltyEventId: string | null;
+  configVersion: string;
+}
