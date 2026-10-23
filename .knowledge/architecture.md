@@ -71,7 +71,7 @@ iPhone Safari ──HTTPS──> Cloudflare（自有網域的固定子網域）
 
 | 項目 | 規則 |
 |------|------|
-| 網址 | `rpg.<自有網域>`（2026-10-23 老闆定案子網域 `rpg`；DNS 不分大小寫，一律寫小寫）。定了就不要改。iPhone 的 IndexedDB 依網址存放，換網址＝原本的資料讀不到 |
+| 網址 | `rpg.starklab.tw`（2026-10-23 老闆定案；DNS 不分大小寫，一律寫小寫）。定了就不要改。iPhone 的 IndexedDB 依網址存放，換網址＝原本的資料讀不到 |
 | 網域 DNS | 網域註冊商維持 GoDaddy；在 GoDaddy 把 nameserver 改成 Cloudflare 指定的兩筆，DNS 改由 Cloudflare（免費方案）管理，才能建立具名 Tunnel。**改 nameserver 前**要先在 Cloudflare 匯入並核對既有 DNS 紀錄（尤其是 email 的 MX），避免其他服務中斷 |
 | `cloudflared` | 安裝成 Windows 服務，開機自動執行 |
 | 靜態檔伺服器 | 只聽 `localhost`；工具在 T19 選定（必須能設定 HTTP header） |

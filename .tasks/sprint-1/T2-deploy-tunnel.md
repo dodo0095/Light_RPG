@@ -18,7 +18,7 @@
 
 ## 任務描述
 
-在老闆電腦安裝 `cloudflared`（Windows 服務）、建立具名 Tunnel、綁定 `rpg.<自有網域>`；架設只聽 localhost、可設 header 的靜態檔伺服器；`sw.js`、`index.html`、`manifest.webmanifest` 設 `Cache-Control: no-cache`。需老闆先完成 X6（主網域名稱、Cloudflare 帳號、GoDaddy nameserver 改 Cloudflare、登入授權），改 nameserver 前先核對 MX 等既有 DNS 紀錄。
+在老闆電腦安裝 `cloudflared`（Windows 服務）、建立具名 Tunnel、綁定 `rpg.starklab.tw`；架設只聽 localhost、可設 header 的靜態檔伺服器；`sw.js`、`index.html`、`manifest.webmanifest` 設 `Cache-Control: no-cache`。需老闆先完成 X6（Cloudflare 帳號、GoDaddy nameserver 改 Cloudflare、登入授權），改 nameserver 前先核對 MX 等既有 DNS 紀錄。
 
 對應提案書第 2 節：#1。規範依據：`.knowledge/architecture.md`、`.knowledge/data-model.md`、`.knowledge/day-rollover.md`。
 
@@ -26,7 +26,7 @@
 
 ## 驗收標準
 
-- [ ] iPhone 用 HTTPS 開得到 `https://rpg.<自有網域>/` 的測試頁
+- [ ] iPhone 用 HTTPS 開得到 `https://rpg.starklab.tw/` 的測試頁
 - [ ] 電腦重開機後 Tunnel 自動恢復
 - [ ] `curl -I` 顯示 `sw.js` 的 `Cache-Control: no-cache`，且 Cloudflare 回應沒有 `cf-cache-status: HIT`
 - [ ] 憑證檔不在 repo 內

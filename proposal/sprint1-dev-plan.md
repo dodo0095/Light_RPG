@@ -29,7 +29,7 @@
 
 ### 選定方案
 
-方案 A：TypeScript＋Vite＋Preact＋idb（自寫 Repository）＋Zod＋Vitest＋vite-plugin-pwa；部署在老闆的 Windows 電腦，透過 Cloudflare Tunnel 以 `rpg.<自有網域>` 對外提供 HTTPS。詳見 `proposal/sprint1-tech-stack.md`、`.knowledge/architecture.md` 第 4、5 節。
+方案 A：TypeScript＋Vite＋Preact＋idb（自寫 Repository）＋Zod＋Vitest＋vite-plugin-pwa；部署在老闆的 Windows 電腦，透過 Cloudflare Tunnel 以 `rpg.starklab.tw` 對外提供 HTTPS。詳見 `proposal/sprint1-tech-stack.md`、`.knowledge/architecture.md` 第 4、5 節。
 
 ### 替代方案比較
 
@@ -133,14 +133,14 @@
 | X3 | G1 圖稿通過 | design-director → 老闆 | ⏳ |
 | X4 | 預設內容（職業套組、習慣庫、獎勵、快速新增關鍵字） | product-manager | ⏳ |
 | X5 | data-model／day-rollover 待確認事項答覆 | product-manager | ⏳ |
-| X6 | 主網域名稱、Cloudflare 帳號、GoDaddy nameserver 改 Cloudflare、登入授權（子網域已定 `rpg`） | 老闆 | ⏳ |
+| X6 | Cloudflare 帳號、GoDaddy 的 `starklab.tw` nameserver 改 Cloudflare、登入授權（網址已定 `rpg.starklab.tw`） | 老闆 | ⏳ |
 
 ### 任務清單
 
 | # | 任務名稱 | 說明 | 負責 Agent | 依賴 | 對應步驟 | 驗收標準 |
 |---|---------|------|-----------|------|---------|---------|
 | T1 | 專案腳手架 | 建立 Vite＋TypeScript strict＋Preact＋ESLint/Prettier＋Vitest＋pnpm 專案；依 architecture.md 第 5 節建立目錄；ESLint `no-restricted-imports` 擋住 core 反向依賴；`.gitignore` 排除 Tunnel 憑證。 | frontend-developer | 無 | 實作 | `pnpm install`、`pnpm lint`、`pnpm typecheck`、`pnpm test` 在 Windows Git Bash 全部通過（附輸出） |
-| T2 | 部署通道（Cloudflare Tunnel） | 在老闆電腦安裝 `cloudflared`（Windows 服務）、建立具名 Tunnel、綁定 `rpg.<自有網域>`；架設只聽 localhost、可設 header 的靜態檔伺服器；`sw.js`、`index.html`、`manifest.webmanifest` 設 `Cache-Control: no-cache`。 | project-shipper | 無（外部：X6） | 部署 | iPhone 用 HTTPS 開得到 `https://rpg.<自有網域>/` 的測試頁 |
+| T2 | 部署通道（Cloudflare Tunnel） | 在老闆電腦安裝 `cloudflared`（Windows 服務）、建立具名 Tunnel、綁定 `rpg.starklab.tw`；架設只聽 localhost、可設 header 的靜態檔伺服器；`sw.js`、`index.html`、`manifest.webmanifest` 設 `Cache-Control: no-cache`。 | project-shipper | 無（外部：X6） | 部署 | iPhone 用 HTTPS 開得到 `https://rpg.starklab.tw/` 的測試頁 |
 | T3 | Spike S1～S3 | 放在 `spike/`：S1 iOS 實機（加入主畫面、飛航模式、`navigator.storage.persist()`、SW 更新提示）；S2 Safari 上「舊版開 DB → 匯出 → 新版升級」流程；S3 空殼 bundle gzip 量測。 | frontend-developer | T1, T2 | 實作 | 三個 spike 結果都寫進 tech-stack.md 第 9 節，含截圖或指令輸出 |
 | T4 | PWA 外殼 | manifest、iOS meta 與 apple-touch-icon、vite-plugin-pwa 離線快取、`registerType: prompt` 的「有新版本，點此更新」提示（先最簡樣式，G1 後套版）、畫面顯示版本號。 | frontend-developer | T1, T3 | 實作 | Lighthouse PWA installable 檢查通過（附報告） |
 | T5 | 數值設定檔 | 依 data-model.md 第 5 節建立 `balance.schema.ts`（Zod）與讀取模組；建立測試用 `tests/balance.test.json`。 | frontend-developer | T1（外部：X2） | 實作 | schema 欄位與 data-model.md 第 5 節一一對應 |
