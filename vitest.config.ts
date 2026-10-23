@@ -13,6 +13,7 @@ export default defineConfig({
         'src/config/**/*.ts',
         'src/content/**/*.ts',
         'src/storage/**/*.ts',
+        'src/services/**/*.ts',
       ],
       exclude: ['src/**/*.test.ts', 'src/core/types.ts', 'src/core/balance-types.ts'],
       reporter: ['text', 'html'],
