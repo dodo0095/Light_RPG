@@ -26,6 +26,8 @@
 
 ## 驗收標準
 
+- [ ] 匯入時保留本機 `meta.installId`，不採用備份檔的值（data-model 4.1；T12 Review 發現目前會被覆蓋，需修改 `src/storage` 的 `importAll`）
+
 - [ ] 匯出 → 清除 → 匯入後所有 store 內容完全相同（測試比對）
 - [ ] 壞掉的 JSON 匯入失敗且原資料不變
 
