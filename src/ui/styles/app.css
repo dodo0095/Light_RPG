@@ -1,0 +1,97 @@
+/* =====================================================================
+   App 專用樣式（tokens.css 之外）
+   - 只用 tokens.css 的變數，不另開色碼。
+   - 圖稿裡寫成 inline style 的地方（例如狀態列屬性列、迷你版標籤）在這裡改成具名 class，
+     數值與圖稿相同，方便逐項比對。
+   ===================================================================== */
+
+/* ---------- 根節點：讓 .app 撐滿整個視窗 ---------- */
+html, body, #app { height: 100%; }
+body { overflow: hidden; }
+#app > .app,
+.app-root { height: 100%; }
+/* 桌機或 iPad 開啟時置中，維持手機版面（基準 390px） */
+.app { max-width: 520px; margin: 0 auto; }
+
+/* ---------- 狀態列（圖稿 inline style 改成 class） ---------- */
+.status.is-low { border-color: var(--c-hp-low); }
+.status__foot { margin-top: 6px; }
+.status__foot .attrs { flex: 1; margin: 0; }
+.status__foot .gold { margin-left: 8px; }
+.status .attrs--5 { grid-template-columns: repeat(5, 1fr); }
+.status .attrs em { font-style: normal; }
+.attr-fitness { color: var(--attr-fitness); }
+.attr-wisdom { color: var(--attr-wisdom); }
+.attr-spirit { color: var(--attr-spirit); }
+.attr-bond { color: var(--attr-bond); }
+.attr-finance { color: var(--attr-finance); }
+.daybar .tag { margin-left: 4px; }
+
+/* ---------- 今天頁 ---------- */
+.today-banner { margin-bottom: 12px; }
+.banner__actions { margin-top: 8px; }
+.banner ul { margin: 4px 0 0; padding-left: 16px; }
+.task--habit { align-items: center; }
+.tag--mini { color: var(--c-exp); border-color: var(--c-exp); }
+.habit-count--down { color: var(--c-danger); }
+.section__count.is-low { color: var(--c-hp-low); }
+.section__note { font-size: 12px; margin: 6px 2px 0; }
+.section__sub { font-size: 12px; margin: 10px 0 4px; }
+.empty--compact { padding: 12px; }
+.empty__actions { margin-top: 12px; }
+/* 子項勾選：整列可點（≥44px），按鈕本身沿用 .check--sm 的大小 */
+.subcheck li { cursor: pointer; }
+.toast { cursor: pointer; }
+
+/* ---------- 選職業（圖稿 mockup-class-select.html 的 <style> 照搬） ---------- */
+.cs-hero { text-align: center; }
+.cs-hero h1 { font-family: var(--font-pixel); font-size: var(--fs-2xl); margin: 0; text-shadow: var(--ts-strong); letter-spacing: 0.08em; }
+.cs-hero p { margin: 2px 0 0; font-size: var(--fs-sm); color: var(--c-ink-dim); }
+.cs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cs-card { position: relative; text-align: left; min-height: 118px; padding: 10px 10px 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.cs-card .ico { font-size: 26px; line-height: 1; }
+.cs-card .name { font-family: var(--font-pixel); font-size: var(--fs-xl); text-shadow: var(--ts-strong); }
+.cs-card .dir { font-size: var(--fs-xs); color: var(--c-ink-dim); text-shadow: none; }
+.cs-card .cursor { position: absolute; left: -14px; top: 40px; font-size: 16px; }
+.cs-card[disabled] { opacity: 0.5; cursor: default; }
+.cs-card[disabled].win--selected { opacity: 1; }
+.cs-card.is-dim { opacity: 0.6; }
+.cs-card__tags { display: flex; gap: 4px; flex-wrap: wrap; align-self: flex-start; }
+.cs-pack { margin-top: 14px; }
+.cs-pack h3 { font-family: var(--font-pixel); font-size: var(--fs-md); margin: 0 0 6px; text-shadow: var(--ts); }
+.cs-pack dl { margin: 0; display: grid; grid-template-columns: 74px 1fr; gap: 6px 8px; font-size: var(--fs-sm); }
+.cs-pack dt { font-family: var(--font-pixel); color: var(--c-ink-dim); }
+.cs-pack dd { margin: 0; text-shadow: none; }
+.cs-pack .n { font-family: var(--font-pixel); color: var(--c-gold); margin-left: 6px; }
+.cs-intro { font-size: var(--fs-sm); color: var(--c-ink-dim); text-shadow: none; margin: 10px 0; }
+.cs-placeholder { margin-top: 14px; }
+.cs-placeholder .empty { padding: 16px 8px; }
+.cs-main--picked { padding-left: 24px; }
+.cs-status { margin-top: 14px; }
+.btn.is-loading[disabled] { opacity: 0.8; }
+.sheet__lead { margin: 0 0 8px; font-size: 14px; }
+.sheet__notes { margin: 0; padding-left: 18px; font-size: 13px; color: var(--c-ink-dim); text-shadow: none; }
+
+/* ---------- 啟動、錯誤、佔位頁 ---------- */
+.boot { justify-content: center; }
+.boot .app__main { display: flex; flex-direction: column; justify-content: center; }
+.boot__note { margin-top: var(--sp-3); font-size: var(--fs-sm); text-align: center; }
+.error-details { margin-top: var(--sp-3); font-size: var(--fs-xs); color: var(--c-ink-mute); text-shadow: none; }
+.error-details summary { min-height: var(--touch); display: flex; align-items: center; cursor: pointer; }
+.error-details ul { margin: 0; padding-left: 18px; word-break: break-all; }
+.error-actions { margin-top: var(--sp-4); display: grid; gap: var(--sp-2); }
+.placeholder-note { margin-top: var(--sp-3); }
+
+/* ---------- 全域提示：更新、Safari ---------- */
+/* .toast 預設相對 .app 定位（在分頁列上方）；全域提示改成相對視窗 */
+.toast--global { position: fixed; max-width: 496px; margin: 0 auto; z-index: 30; }
+.toast--global .btn { flex: none; }
+.toast__body { flex: 1; min-width: 0; }
+.safari-banner {
+  position: fixed; left: var(--sp-3); right: var(--sp-3);
+  top: calc(var(--safe-top) + var(--sp-2));
+  max-width: 496px; margin: 0 auto; z-index: 40;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.safari-banner__url { display: block; margin-top: 4px; word-break: break-all; color: var(--c-ink-dim); }
+.safari-banner__actions { display: flex; gap: var(--sp-2); margin-top: var(--sp-2); flex-wrap: wrap; }

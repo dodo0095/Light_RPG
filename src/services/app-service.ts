@@ -107,6 +107,11 @@ export function createAppService(deps: ServiceDeps) {
     // 查詢 -------------------------------------------------------------------
     getTodayView: (options?: { shownDayKey?: DayKey }) => queries.getTodayView(ctx, options),
     listRecentEvents: () => queries.listRecentEvents(ctx),
+    /** 日結紀錄（換日提示的結算明細），依 dayKey 由舊到新 */
+    getDaySummaries: (fromDayKey: DayKey, toDayKey: DayKey) =>
+      queries.getDaySummaries(ctx, fromDayKey, toDayKey),
+    /** 目前生效與已排程的換日時間 */
+    getRolloverSchedule: () => queries.getRolloverSchedule(ctx),
     getSettingsView: () => queries.getSettingsView(ctx),
     exportBackup: () => queries.exportBackup(ctx),
     importBackup: (input: unknown) => queries.importBackup(ctx, input),

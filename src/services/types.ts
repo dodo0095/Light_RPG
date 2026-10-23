@@ -11,6 +11,8 @@ import type {
   DailySchedule,
   DailyTask,
   DayKey,
+  DaySummaryMode,
+  Deltas,
   GameEvent,
   HabitTask,
   PendingRolloverTime,
@@ -166,12 +168,58 @@ export interface SelectClassOptions {
 // 查詢
 // ---------------------------------------------------------------------------
 
+/** 某任務在某遊戲日「有效」（未被取消）的最後一筆完成事件（Daily 打勾／To-do 完成） */
+export interface CheckInView {
+  eventId: string;
+  dayKey: DayKey;
+  variant: 'full' | 'mini';
+  /** 事件實際造成的數值變化（入帳的金幣、經驗…） */
+  deltas: Deltas;
+  /** 所屬遊戲日尚未結算（`dayKey > lastSettledDayKey`），可以取消 */
+  canRevert: boolean;
+}
+
 export interface DailyView {
   task: DailyTask;
   /** 今天有沒有完成（打勾數 − 取消數 > 0，含迷你版） */
   completed: boolean;
   /** 今天結算時會不會算該做（新增當天不算，day-rollover 第 7 節 #1） */
   countsToday: boolean;
+  /** 今天有效的打勾事件（未完成時為 null；以 `byTaskDay` 索引查詢） */
+  checkIn: CheckInView | null;
+}
+
+/** 已完成的 To-do 與它的完成事件 */
+export interface CompletedTodoView {
+  task: TodoTask;
+  checkIn: CheckInView;
+}
+
+/** 日結紀錄（給換日提示的結算明細） */
+export interface DaySummaryView {
+  dayKey: DayKey;
+  mode: DaySummaryMode;
+  /** 應做的 Daily 數 */
+  dueCount: number;
+  completedCount: number;
+  missedCount: number;
+  /** 這天日結實際扣的 HP（penalty 事件的 `deltas.hp`；沒有扣為 0） */
+  hpDelta: number;
+  /** 這天日結觸發了 HP 歸零懲罰時，懲罰事件的 deltas；否則 null */
+  hpDepletion: Deltas | null;
+}
+
+/** 換日時間：目前遊戲日使用的，以及已排程、之後才生效的 */
+export interface RolloverScheduleView {
+  /** 目前遊戲日（effectiveDayKey） */
+  dayKey: DayKey;
+  /** 目前遊戲日使用的換日時間 `HH:mm`（R_effective(dayKey)） */
+  current: string;
+  /** 之後才生效的排程（effectiveFromDayKey > dayKey），由舊到新 */
+  upcoming: PendingRolloverTime[];
+  /** settings 原始欄位 */
+  rolloverTime: string;
+  pendingRolloverTimes: PendingRolloverTime[];
 }
 
 export interface HabitView {
@@ -202,6 +250,11 @@ export interface TodayView {
   habits: HabitView[];
   /** 未完成的 To-do */
   todos: TodoTask[];
+  /**
+   * 今天（可取消）與最近一個已結算日（`lastSettledDayKey`，不可取消）完成的 To-do，
+   * 來源是該日的 `todo_completed` 事件扣掉被反向的；依完成時間由舊到新。
+   */
+  completedTodos: CompletedTodoView[];
   rewards: Reward[];
   character: CharacterView;
   /** 是否在旅館（入住中） */

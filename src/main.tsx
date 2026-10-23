@@ -1,18 +1,17 @@
 import { render } from 'preact';
-import { UpdatePrompt } from './ui/components/update-prompt';
+import { bootstrap, documentVisibility } from './services';
+import { App } from './ui/app';
+import { createAppStore } from './ui/state/app-store';
+import './ui/styles/tokens.css';
+import './ui/styles/app.css';
 
-// G1 前不做 UI 設計，只放佔位畫面＋版本號（用來確認更新是否生效）。
-function App() {
-  return (
-    <>
-      <h1>晨光之誓</h1>
-      <p>版本 {__APP_VERSION__}</p>
-      <UpdatePrompt />
-    </>
-  );
-}
+const store = createAppStore({
+  // 自動日結由 store 在訂閱變更通知後再啟動（startAutoSettle）
+  bootstrap: () => bootstrap({ autoSettle: false }),
+  visibility: documentVisibility,
+});
 
 const root = document.getElementById('app');
 if (root) {
-  render(<App />, root);
+  render(<App store={store} />, root);
 }

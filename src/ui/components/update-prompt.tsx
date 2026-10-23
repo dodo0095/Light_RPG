@@ -1,5 +1,5 @@
 // PWA 更新提示：偵測到新版本時顯示「有新版本，點此更新」；首次可離線時顯示一次「已可離線使用」。
-// ⚠ G1 後依設計稿重做外觀。目前只用最簡單的 inline style，不做設計。
+// 外觀沿用 tokens.css 的 .toast（改成相對視窗定位的 .toast--global）。
 //
 // iOS 加入主畫面（standalone）時 App 可能長時間停在背景，
 // 回到前景（visibilitychange → visible）時主動呼叫 registration.update() 檢查新版。
@@ -8,19 +8,6 @@ import { useEffect } from 'preact/hooks';
 import { useRegisterSW } from 'virtual:pwa-register/preact';
 
 const OFFLINE_READY_MS = 4000;
-
-const boxStyle = {
-  position: 'fixed',
-  left: '16px',
-  right: '16px',
-  bottom: 'calc(16px + env(safe-area-inset-bottom))',
-  padding: '12px',
-  border: '1px solid #888',
-  background: '#fff',
-  color: '#000',
-  font: 'inherit',
-  textAlign: 'center',
-} as const;
 
 export function UpdatePrompt() {
   const {
@@ -46,15 +33,28 @@ export function UpdatePrompt() {
 
   if (needRefresh) {
     return (
-      <button type="button" style={boxStyle} onClick={() => void updateServiceWorker(true)}>
-        有新版本，點此更新
-      </button>
+      <div class="toast toast--global" role="status">
+        <span aria-hidden="true">★</span>
+        <div class="toast__body">
+          <b class="px">有新版本</b>
+          <br />
+          更新後會重新載入，資料不會消失。
+        </div>
+        <button
+          type="button"
+          class="btn btn--primary btn--sm"
+          onClick={() => void updateServiceWorker(true)}
+        >
+          點此更新
+        </button>
+      </div>
     );
   }
   if (offlineReady) {
     return (
-      <div role="status" style={boxStyle}>
-        已可離線使用
+      <div class="toast toast--global" role="status">
+        <span aria-hidden="true">✓</span>
+        <div class="toast__body">已可離線使用</div>
       </div>
     );
   }

@@ -4,7 +4,7 @@
 import { habitUpCountOn } from '../core/check-in';
 import { hpMax, isHpLow, levelProgress } from '../core/progression';
 import { completedDailyIdsOn, scheduleIncludes } from '../core/settlement';
-import { currentDayKey, effectiveDayKey, weekdayOf } from '../core/time';
+import { currentDayKey, dayRange, effectiveDayKey, isDayKey, weekdayOf } from '../core/time';
 import type {
   Character,
   DailyTask,
@@ -13,6 +13,7 @@ import type {
   HabitTask,
   MetaRecord,
   Settings,
+  Task,
   TodoTask,
 } from '../core/types';
 import { StorageError, exportAll, importAll } from '../storage';
@@ -27,7 +28,11 @@ import { settleUnlocked } from './settlement-service';
 import {
   PERSISTENCE_META_KEY,
   type CharacterView,
+  type CheckInView,
+  type CompletedTodoView,
+  type DaySummaryView,
   type ExportResult,
+  type RolloverScheduleView,
   type ImportFailure,
   type ImportOutcome,
   type PersistenceRecord,
@@ -53,6 +58,53 @@ export function characterView(ctx: ServiceContext, character: Character): Charac
     hpLow: isHpLow(character.hp, ctx.balance),
     primaryAttributes: primaryAttributesOf(ctx.content, character.classId),
   };
+}
+
+/**
+ * 某任務的事件（同一遊戲日或多日）中，指定類型、未被取消的最後一筆 → CheckInView。
+ * 反向事件沿用原事件的 taskId 與 dayKey，所以用 `byTaskDay`／`byDayKey` 查到的集合已包含它們。
+ */
+export function checkInFrom(
+  events: readonly GameEvent[],
+  type: 'daily_checked' | 'todo_completed',
+  lastSettledDayKey: DayKey | null,
+  taskId?: string,
+): CheckInView | null {
+  const reversed = new Set(events.flatMap((e) => (e.reversesEventId ? [e.reversesEventId] : [])));
+  let best: GameEvent | undefined;
+  let bestAt = -Infinity;
+  for (const event of events) {
+    if (event.type !== type || reversed.has(event.id)) continue;
+    if (taskId !== undefined && event.taskId !== taskId) continue;
+    const at = Date.parse(event.occurredAt);
+    if (at >= bestAt) {
+      best = event;
+      bestAt = at;
+    }
+  }
+  if (!best) return null;
+  return {
+    eventId: best.id,
+    dayKey: best.dayKey,
+    variant: best.variant ?? 'full',
+    deltas: best.deltas,
+    canRevert: lastSettledDayKey === null || best.dayKey > lastSettledDayKey,
+  };
+}
+
+/** 目前仍是「已完成」的 To-do 中，完成事件落在給定事件集合（今天＋最近已結算日）的那些。 */
+function completedTodosFrom(
+  tasks: readonly Task[],
+  events: readonly GameEvent[],
+  lastSettledDayKey: DayKey,
+): CompletedTodoView[] {
+  const result: CompletedTodoView[] = [];
+  for (const task of tasks) {
+    if (task.type !== 'todo' || task.completedAt === null) continue;
+    const checkIn = checkInFrom(events, 'todo_completed', lastSettledDayKey, task.id);
+    if (checkIn) result.push({ task, checkIn });
+  }
+  return result.sort((a, b) => (a.task.completedAt ?? '').localeCompare(b.task.completedAt ?? ''));
 }
 
 /**
@@ -88,17 +140,34 @@ export async function readTodayView(
   rewards.sort(bySortOrder);
   const weekday = weekdayOf(dayKey);
   const completed = completedDailyIdsOn(dayKey, events);
+  const lastSettled = settings.lastSettledDayKey;
+  const dailyTasks = tasks.filter(
+    (t): t is DailyTask => t.type === 'daily' && scheduleIncludes(t.schedule, weekday),
+  );
+  const dailyCheckIns = await Promise.all(
+    dailyTasks.map(async (task) =>
+      completed.has(task.id)
+        ? checkInFrom(
+            await ctx.storage.events.listByTaskDay(task.id, dayKey),
+            'daily_checked',
+            lastSettled,
+          )
+        : null,
+    ),
+  );
+  const settledDayEvents =
+    lastSettled < dayKey ? await ctx.storage.events.listByDayKey(lastSettled) : [];
 
   return {
     dayKey,
     dayChanged: settled || (shownDayKey !== undefined && shownDayKey !== dayKey),
-    dailies: tasks
-      .filter((t): t is DailyTask => t.type === 'daily' && scheduleIncludes(t.schedule, weekday))
-      .map((task) => ({
-        task,
-        completed: completed.has(task.id),
-        countsToday: task.createdDayKey < dayKey,
-      })),
+    dailies: dailyTasks.map((task, index) => ({
+      task,
+      completed: completed.has(task.id),
+      countsToday: task.createdDayKey < dayKey,
+      checkIn: dailyCheckIns[index] ?? null,
+    })),
+    completedTodos: completedTodosFrom(tasks, [...settledDayEvents, ...events], lastSettled),
     habits: tasks
       .filter((t): t is HabitTask => t.type === 'habit')
       .map((task) => ({
@@ -110,6 +179,73 @@ export async function readTodayView(
     rewards,
     character: characterView(ctx, character),
     inInn: character.inn.active,
+  };
+}
+
+/** 一次最多查幾天的日結紀錄（防止誤傳很大的範圍） */
+export const MAX_SUMMARY_DAYS = 366;
+
+/**
+ * 日結紀錄（`daySummaries`，依 dayKey 由舊到新），給換日提示的結算明細。
+ * 扣血量取 `penaltyEventId` 對應事件的 `deltas.hp`；同一天有 `hp_depleted`（payload.penaltyEventId
+ * 指向該 penalty）時一併回傳懲罰 deltas。沒有紀錄的日子不回傳。
+ */
+export async function getDaySummaries(
+  ctx: ServiceContext,
+  fromDayKey: DayKey,
+  toDayKey: DayKey,
+): Promise<DaySummaryView[]> {
+  if (!isDayKey(fromDayKey) || !isDayKey(toDayKey) || fromDayKey > toDayKey) return [];
+  const days = dayRange(fromDayKey, toDayKey).slice(-MAX_SUMMARY_DAYS);
+  const result: DaySummaryView[] = [];
+  for (const dayKey of days) {
+    const summary = await ctx.storage.daySummaries.getByDayKey(dayKey);
+    if (!summary) continue;
+    let hpDelta = 0;
+    let hpDepletion: DaySummaryView['hpDepletion'] = null;
+    if (summary.penaltyEventId !== null) {
+      const penalty = await ctx.storage.events.get(summary.penaltyEventId);
+      hpDelta = penalty?.deltas.hp ?? 0;
+      const depleted = (await ctx.storage.events.listByDayKey(dayKey)).find(
+        (e) => e.type === 'hp_depleted' && e.payload?.['penaltyEventId'] === summary.penaltyEventId,
+      );
+      hpDepletion = depleted ? depleted.deltas : null;
+    }
+    result.push({
+      dayKey,
+      mode: summary.mode,
+      dueCount: summary.dueDailyIds.length,
+      completedCount: summary.completedDailyIds.length,
+      missedCount: summary.missedDailyIds.length,
+      hpDelta,
+      hpDepletion,
+    });
+  }
+  return result;
+}
+
+/** 遊戲日 d 使用的換日時間字串（R_effective(d)，day-rollover 5.7）。 */
+function rolloverTimeOn(dayKey: DayKey, settings: Settings): string {
+  let time = settings.rolloverTime;
+  for (const pending of settings.pendingRolloverTimes) {
+    if (pending.effectiveFromDayKey <= dayKey) time = pending.time;
+  }
+  return time;
+}
+
+/** 目前生效與已排程的換日時間；尚未選職業時回傳 null。 */
+export async function getRolloverSchedule(
+  ctx: ServiceContext,
+): Promise<RolloverScheduleView | null> {
+  const settings = await readSettings(ctx.storage);
+  if (!settings || settings.lastSettledDayKey === null) return null;
+  const dayKey = effectiveToday(ctx, settings);
+  return {
+    dayKey,
+    current: rolloverTimeOn(dayKey, settings),
+    upcoming: settings.pendingRolloverTimes.filter((p) => p.effectiveFromDayKey > dayKey),
+    rolloverTime: settings.rolloverTime,
+    pendingRolloverTimes: settings.pendingRolloverTimes,
   };
 }
 
