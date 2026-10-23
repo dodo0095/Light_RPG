@@ -37,7 +37,9 @@ App 平常離線運作；只有**第一次安裝**和**取得新版本**時，�
 |------|------|---------|
 | Git for Windows | https://git-scm.com/download/win | `git --version` |
 | Node.js（LTS 版，22 以上） | https://nodejs.org/ | `node -v` |
-| pnpm | 裝好 Node.js 後執行 `npm install -g pnpm` | `pnpm -v` |
+| pnpm 12.15.0 | 裝好 Node.js 後執行 `npm install -g pnpm@12.15.0`（要跟 `package.json` 的 `packageManager` 一致） | `pnpm -v` 顯示 `12.15.0` |
+
+> ⚠️ 本專案只能用 **pnpm**，不要執行 `npm install`。npm 讀不懂 pnpm 的鎖定檔，會出現 `Cannot read properties of null (reading 'edgesOut')` 之類的錯誤。如果已經執行過 `npm install`，請先刪掉專案裡的 `node_modules` 資料夾和 `package-lock.json`（若有），再執行 `pnpm install`。
 
 ### 2. 下載程式並建置
 
@@ -47,9 +49,11 @@ App 平常離線運作；只有**第一次安裝**和**取得新版本**時，�
 cd /d C:\
 git clone https://github.com/dodo0095/Light_RPG.git
 cd Light_RPG
-pnpm install
+pnpm install --frozen-lockfile
 pnpm build
 ```
+
+`--frozen-lockfile` 會確保部署機裝的套件版本跟開發機完全一樣。若放在其他位置（例如桌面），後面所有 `C:\Light_RPG` 都要換成實際路徑。
 
 > 如果 `pnpm install` 或 `pnpm build` 出現「An Application Control policy has blocked this file」：代表這台電腦的 Windows 安全政策擋了建置工具（開發機遇過類似狀況，見 `.knowledge/postmortem-log.md`）。請把錯誤訊息貼給 tech-lead；暫時可以改在開發機 build，再把整個 `dist\` 資料夾複製到部署機的 `C:\Light_RPG\dist\`。
 
@@ -136,7 +140,7 @@ schtasks /Delete /TN "RPG-serve" /F
    ```bat
    cd /d C:\Light_RPG
    git pull
-   pnpm install
+   pnpm install --frozen-lockfile
    pnpm build
    ```
 3. 伺服器**不用重啟**（它每次都直接讀 `dist\` 的檔案）
