@@ -182,6 +182,24 @@ export async function readTodayView(
   };
 }
 
+/**
+ * 所有未刪除的任務（三種類型，依類型內 sortOrder），唯讀、不日結。
+ * 給預設庫判斷「已加入」（`sourceTemplateId`）與進階編輯讀取今天沒排到的 Daily、已完成的 To-do。
+ */
+export async function listTasks(ctx: ServiceContext): Promise<Task[]> {
+  const tasks = await ctx.storage.tasks.list();
+  return tasks.sort(bySortOrder);
+}
+
+/** 選職業那天（最早一筆 `class_selected` 事件的 dayKey）；尚未選職業時為 null。唯讀。 */
+export async function getClassSelectedDayKey(ctx: ServiceContext): Promise<DayKey | null> {
+  const events = await ctx.storage.events.listByType('class_selected');
+  return events.reduce<DayKey | null>(
+    (min, e) => (min === null || e.dayKey < min ? e.dayKey : min),
+    null,
+  );
+}
+
 /** 一次最多查幾天的日結紀錄（防止誤傳很大的範圍） */
 export const MAX_SUMMARY_DAYS = 366;
 

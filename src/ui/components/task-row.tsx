@@ -120,6 +120,8 @@ export function HabitRow(props: {
   onUp: () => void;
   onDown: () => void;
   onRevert: () => void;
+  /** 點名稱開啟進階編輯（今天頁的修行列沒有「⋯」） */
+  onEdit?: () => void;
 }) {
   const { row, busy } = props;
   return (
@@ -138,7 +140,20 @@ export function HabitRow(props: {
         <span class="hbtn hbtn--none" aria-hidden="true" />
       )}
       <div class="task__body">
-        <div class="task__title">{row.title}</div>
+        <div class="task__title">
+          {props.onEdit ? (
+            <button
+              type="button"
+              class="task__title-btn"
+              aria-label={`編輯：${row.title}`}
+              onClick={props.onEdit}
+            >
+              {row.title}
+            </button>
+          ) : (
+            row.title
+          )}
+        </div>
         <div class="task__meta">
           {row.tags.map((tag) => (
             <Tag key={tag.text} tag={tag} />

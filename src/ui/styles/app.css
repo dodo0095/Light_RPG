@@ -95,3 +95,50 @@ body { overflow: hidden; }
 }
 .safari-banner__url { display: block; margin-top: 4px; word-break: break-all; color: var(--c-ink-dim); }
 .safari-banner__actions { display: flex; gap: var(--sp-2); margin-top: var(--sp-2); flex-wrap: wrap; }
+
+/* ---------- 預設庫（T15，圖稿 mockup-library.html 的 <style> 照搬） ---------- */
+.topbar__spacer { width: 44px; }
+.lib-top { display: grid; gap: 8px; }
+.lib-sub { font-family: var(--font-pixel); font-size: 13px; color: var(--c-ink-dim); margin: 14px 2px 6px; text-shadow: var(--ts); }
+.app__main > .lib-group:first-child .lib-sub { margin-top: 0; }
+.lib-item .task__title { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.lib-add { flex: none; align-self: center; }
+.lib-add.is-added { background: transparent; border-color: var(--c-ok); color: var(--c-ok); box-shadow: none; }
+.lib-banner { margin-bottom: 12px; }
+.lib-foot { font-size: 12px; margin-top: 12px; }
+.lib-toast__ok { color: var(--c-ok); }
+.lib-toast .btn { flex: none; }
+.chip.is-on.is-off { opacity: 1; }
+
+/* ---------- 進階編輯（T16，圖稿 mockup-editor.html 的 <style> 照搬＋inline style 改 class） ---------- */
+.ed-top { border-bottom: var(--bw) solid var(--c-border-dim); background: rgba(10, 16, 48, 0.92); }
+.ed-main { padding-top: 16px; }
+.ed-cancel { text-decoration: none; }
+.ed-banner { margin-bottom: 16px; }
+.ed-src { font-size: var(--fs-xs); color: var(--c-ink-mute); margin: -8px 0 14px; }
+.ed-list { list-style: none; margin: 0 0 8px; padding: 0; }
+.ed-list li { display: flex; align-items: center; gap: 8px; min-height: 44px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); font-size: 14px; }
+.ed-list .x { width: 44px; height: 44px; background: none; border: 0; color: var(--c-ink-mute); font-size: 18px; flex: none; }
+.ed-list__input { flex: 1; min-width: 0; min-height: 44px; padding: 0; background: none; border: 0; color: var(--c-ink); font: inherit; font-size: 14px; }
+.ed-list__input::placeholder { color: var(--c-ink-mute); }
+.ed-add { width: 100%; justify-content: flex-start; border-style: dashed; }
+.ed-chip-add { border-style: dashed; }
+.ed-inline { margin-top: 8px; }
+.ed-del { margin-top: 8px; color: var(--c-danger); border-color: var(--c-danger); }
+.ed-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
+.ed-days .chip { min-width: 0; padding: 0; justify-content: center; }
+.ed-days.is-error { outline: 2px solid var(--c-danger); outline-offset: 3px; border-radius: 4px; }
+.ed-group { padding: 12px; margin-bottom: 16px; }
+.ed-group.is-error { border-color: var(--c-danger); }
+.ed-small { font-size: 12px; }
+.ed-mini { margin-top: 6px; }
+.ed-warn { color: var(--c-warn); }
+/* 開關：整列是一個按鈕（role="switch"），外觀沿用 .switch */
+.ed-switch { width: 100%; padding: 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.ed-switch__label { flex: 1; }
+.ed-switch__title { margin: 0; }
+.ed-del-sheet { border-color: var(--c-danger); }
+.ed-del-list { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.6; }
+
+/* 今天頁修行列：點名稱開啟進階編輯（外觀與純文字相同） */
+.task__title-btn { padding: 0; background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; }

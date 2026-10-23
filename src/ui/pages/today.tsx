@@ -63,7 +63,7 @@ export function TodayPage({ store }: { store: AppStore }) {
     schedule: store.schedule.value,
     rollover: { dayKeys: store.rolloverDayKeys.value, summaries: store.daySummaries.value },
   });
-  const openEditor = () => store.navigate('editor');
+  const openEditor = (taskId: string | null) => store.openEditor(taskId, 'today');
   const checklist = (taskId: string) => (itemId: string, done: boolean) =>
     void actions.setChecklistItemDone(taskId, itemId, done);
   const isBusy = (kind: 'daily' | 'habit' | 'todo', id: string) =>
@@ -129,7 +129,7 @@ export function TodayPage({ store }: { store: AppStore }) {
                     onMini: () => void actions.checkDaily(row.id, 'mini'),
                     onUndo: () => void actions.uncheckDaily(row.id),
                     onChecklist: checklist(row.id),
-                    onMore: openEditor,
+                    onMore: () => openEditor(row.id),
                   }}
                 />
               ))}
@@ -154,6 +154,7 @@ export function TodayPage({ store }: { store: AppStore }) {
                   onUp={() => void actions.habitUp(row.id)}
                   onDown={() => void actions.habitDown(row.id)}
                   onRevert={() => void actions.revertHabit(row.id)}
+                  onEdit={() => openEditor(row.id)}
                 />
               ))}
             </div>
@@ -173,7 +174,7 @@ export function TodayPage({ store }: { store: AppStore }) {
                     onMini: () => void actions.completeTodo(row.id, 'mini'),
                     onUndo: () => void actions.uncompleteTodo(row.id),
                     onChecklist: checklist(row.id),
-                    onMore: openEditor,
+                    onMore: () => openEditor(row.id),
                   }}
                 />
               ))}
@@ -213,7 +214,7 @@ export function TodayPage({ store }: { store: AppStore }) {
                       onMini: () => undefined,
                       onUndo: () => void actions.uncompleteTodo(row.id),
                       onChecklist: () => undefined,
-                      onMore: openEditor,
+                      onMore: () => openEditor(row.id),
                     }}
                   />
                 ))}
@@ -226,7 +227,7 @@ export function TodayPage({ store }: { store: AppStore }) {
       {toast ? (
         <Toast {...toast} onClose={onCloseToast} />
       ) : (
-        <button type="button" class="fab" aria-label="新增" onClick={openEditor}>
+        <button type="button" class="fab" aria-label="新增" onClick={() => openEditor(null)}>
           ＋
         </button>
       )}

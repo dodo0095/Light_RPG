@@ -8,6 +8,8 @@ import { SafariBanner } from './components/safari-banner';
 import { UpdatePrompt } from './components/update-prompt';
 import { ClassSelectPage } from './pages/class-select';
 import { ErrorPage, LoadingPage } from './pages/boot';
+import { EditorPage } from './pages/editor';
+import { LibraryPage } from './pages/library';
 import { PlaceholderPage } from './pages/placeholder';
 import { TodayPage } from './pages/today';
 import type { AppStore } from './state/app-store';
@@ -25,6 +27,8 @@ function Screen({ store }: { store: AppStore }) {
       return <ClassSelectPage store={store} />;
     case 'ready':
       if (page === 'today') return <TodayPage store={store} />;
+      if (page === 'library') return <LibraryPage store={store} />;
+      if (page === 'editor') return <EditorPage store={store} />;
       return <PlaceholderPage page={page} onNavigate={(next) => store.navigate(next)} />;
   }
 }

@@ -16,15 +16,17 @@ import type {
   AppService,
   BootstrapResult,
   DaySummaryView,
+  NewTaskInput,
   RolloverScheduleView,
   ServiceChange,
   SettingsView,
+  TaskPatch,
   TodayView,
   VisibilitySource,
 } from '../../services';
 import { formatMonthDay } from './format';
 import { actionErrorText, type StartupError } from './messages';
-import type { BalanceConfig, ContentPacks, DayKey, PageId } from './types';
+import type { BalanceConfig, ContentPacks, DayKey, PageId, Task } from './types';
 
 export type Phase =
   | { kind: 'loading' }
@@ -43,6 +45,12 @@ export interface AppStoreDeps {
   bootstrap: () => Promise<BootstrapResult>;
   /** 回到前景的來源（瀏覽器為 document；測試傳 null） */
   visibility: () => VisibilitySource | null;
+}
+
+/** 進階編輯的對象：`taskId` 為 null ＝新增；`returnTo` ＝儲存／取消後回到哪一頁 */
+export interface EditorTarget {
+  taskId: string | null;
+  returnTo: PageId;
 }
 
 export type SelectClassOutcome = { ok: true } | { ok: false; message: string };
@@ -64,6 +72,11 @@ export function createAppStore(deps: AppStoreDeps) {
   /** rolloverDayKeys 的日結紀錄（換日提示的結算明細） */
   const daySummaries = signal<DaySummaryView[]>([]);
   const toast = signal<ToastState | null>(null);
+  /** 所有未刪除的任務（預設庫「已加入」、進階編輯用）；尚未讀取時為 null */
+  const tasks = signal<Task[] | null>(null);
+  const editor = signal<EditorTarget>({ taskId: null, returnTo: 'today' });
+  /** 選職業那天（「來自職業套組」判斷用）；尚未讀取或沒有時為 null */
+  const classSelectedDayKey = signal<DayKey | null>(null);
   /** 進行中的動作（防連點），key 例如 `daily:<id>` */
   const busy = signal<ReadonlySet<string>>(new Set());
 
@@ -91,15 +104,19 @@ export function createAppStore(deps: AppStoreDeps) {
       const days = rolloverDayKeys.value;
       const first = days[0];
       const last = days[days.length - 1];
-      const [settingsView, scheduleView, summaries] = await Promise.all([
+      const [settingsView, scheduleView, summaries, taskList, classDay] = await Promise.all([
         svc.getSettingsView(),
         svc.getRolloverSchedule(),
         first !== undefined && last !== undefined
           ? svc.getDaySummaries(first, last)
           : Promise.resolve([]),
+        view === null ? Promise.resolve(null) : svc.listTasks(),
+        view === null ? Promise.resolve(null) : svc.getClassSelectedDayKey(),
       ]);
       batch(() => {
         today.value = view;
+        tasks.value = taskList;
+        classSelectedDayKey.value = classDay;
         settings.value = settingsView;
         schedule.value = scheduleView;
         daySummaries.value = summaries;
@@ -191,12 +208,13 @@ export function createAppStore(deps: AppStoreDeps) {
   }
 
   // 動作 ----------------------------------------------------------------------
+  /** 執行動作後重新查詢；回傳結果（沒有執行、或拋出例外時為 null） */
   async function runAction<T>(
     key: string,
     action: (svc: AppService, options: ActionOptions) => Promise<ActionResult<T>>,
-  ): Promise<void> {
+  ): Promise<ActionResult<T> | null> {
     const svc = service;
-    if (!svc || busy.value.has(key)) return;
+    if (!svc || busy.value.has(key)) return null;
     busy.value = new Set([...busy.value, key]);
     const shown = today.value?.dayKey;
     try {
@@ -213,9 +231,11 @@ export function createAppStore(deps: AppStoreDeps) {
       } else if (!result.ok) {
         showToast('⚠', '沒有完成', actionErrorText(result.error, result.message));
       }
+      return result;
     } catch (error) {
       showToast('⚠', '操作失敗', errorMessage(error));
       await refresh();
+      return null;
     } finally {
       const next = new Set(busy.value);
       next.delete(key);
@@ -241,6 +261,15 @@ export function createAppStore(deps: AppStoreDeps) {
       runAction(`check:${taskId}:${itemId}`, (s, o) =>
         s.setChecklistItemDone(taskId, itemId, done, o),
       ),
+    // 預設庫（T15）、進階編輯（T16）
+    addTaskFromTemplate: (templateId: string) =>
+      runAction(`template:${templateId}`, (s, o) => s.addTaskFromTemplate(templateId, o)),
+    addRewardFromTemplate: (templateId: string) =>
+      runAction(`template:${templateId}`, (s, o) => s.addRewardFromTemplate(templateId, o)),
+    createTask: (input: NewTaskInput) => runAction('task:new', (s, o) => s.createTask(input, o)),
+    updateTask: (taskId: string, patch: TaskPatch) =>
+      runAction(`task:${taskId}`, (s, o) => s.updateTask(taskId, patch, o)),
+    deleteTask: (taskId: string) => runAction(`task:${taskId}`, (s, o) => s.deleteTask(taskId, o)),
   };
 
   return {
@@ -255,6 +284,9 @@ export function createAppStore(deps: AppStoreDeps) {
     daySummaries,
     toast,
     busy,
+    tasks,
+    editor,
+    classSelectedDayKey,
     start,
     refresh,
     selectClass,
@@ -262,6 +294,18 @@ export function createAppStore(deps: AppStoreDeps) {
     navigate(next: PageId) {
       page.value = next;
     },
+    /** 開啟進階編輯（`taskId` 為 null ＝新增），儲存／取消後回到 `returnTo` */
+    openEditor(taskId: string | null, returnTo: PageId = page.value) {
+      batch(() => {
+        editor.value = { taskId, returnTo: returnTo === 'editor' ? 'today' : returnTo };
+        page.value = 'editor';
+      });
+    },
+    closeEditor() {
+      page.value = editor.value.returnTo;
+    },
+    /** 顯示一般提示（例如刪除成功） */
+    notify: showToast,
     dismissRollover() {
       batch(() => {
         rolloverDayKeys.value = [];

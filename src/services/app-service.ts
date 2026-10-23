@@ -107,6 +107,10 @@ export function createAppService(deps: ServiceDeps) {
     // 查詢 -------------------------------------------------------------------
     getTodayView: (options?: { shownDayKey?: DayKey }) => queries.getTodayView(ctx, options),
     listRecentEvents: () => queries.listRecentEvents(ctx),
+    /** 所有未刪除的任務（唯讀、不日結；預設庫「已加入」與進階編輯用） */
+    listTasks: () => queries.listTasks(ctx),
+    /** 選職業那天（編輯頁判斷「來自職業套組」用）；尚未選職業為 null */
+    getClassSelectedDayKey: () => queries.getClassSelectedDayKey(ctx),
     /** 日結紀錄（換日提示的結算明細），依 dayKey 由舊到新 */
     getDaySummaries: (fromDayKey: DayKey, toDayKey: DayKey) =>
       queries.getDaySummaries(ctx, fromDayKey, toDayKey),
