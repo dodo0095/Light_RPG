@@ -1,0 +1,42 @@
+{
+  "id": "habit_library",
+  "packType": "habit_library",
+  "formatVersion": 1,
+  "version": "0.0.1-test",
+  "items": [
+    {
+      "id": "test_habit_a",
+      "type": "habit",
+      "title": "測試習慣 A",
+      "mini": null,
+      "attribute": "fitness",
+      "difficulty": "alpha",
+      "category": "測試分類",
+      "keywords": ["測試甲"],
+      "allowUp": true,
+      "allowDown": false
+    },
+    {
+      "id": "test_daily_b",
+      "type": "daily",
+      "title": "測試每日 B",
+      "mini": { "title": "測試每日 B（迷你）" },
+      "attribute": "wisdom",
+      "difficulty": "beta",
+      "category": "測試分類",
+      "keywords": [],
+      "schedule": { "kind": "custom", "daysOfWeek": [1, 3, 5] }
+    },
+    {
+      "id": "test_todo_c",
+      "type": "todo",
+      "title": "測試委託 C",
+      "mini": null,
+      "attribute": "bond",
+      "difficulty": "alpha",
+      "category": "測試分類",
+      "keywords": ["測試乙", "測試丙"],
+      "checklist": ["測試步驟 1", "測試步驟 2"]
+    }
+  ]
+}

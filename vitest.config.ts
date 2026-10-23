@@ -8,8 +8,8 @@ export default defineConfig({
     environment: 'node',
     coverage: {
       provider: 'v8',
-      include: ['src/core/**/*.ts'],
-      exclude: ['src/**/*.test.ts', 'src/core/types.ts'],
+      include: ['src/core/**/*.ts', 'src/config/**/*.ts', 'src/content/**/*.ts'],
+      exclude: ['src/**/*.test.ts', 'src/core/types.ts', 'src/core/balance-types.ts'],
       reporter: ['text', 'html'],
     },
   },

@@ -1,0 +1,50 @@
+{
+  "configVersion": "test-only-0.0.0",
+  "defaults": {
+    "rolloverTime": "04:00"
+  },
+  "difficulties": {
+    "alpha": {
+      "goldReward": 11,
+      "expReward": 22,
+      "attributeExpReward": 33,
+      "missedDailyHpPenalty": 4,
+      "habitDownHpPenalty": 5
+    },
+    "beta": {
+      "goldReward": 111,
+      "expReward": 222,
+      "attributeExpReward": 333,
+      "missedDailyHpPenalty": 44,
+      "habitDownHpPenalty": 55
+    }
+  },
+  "miniVariantRatio": 0.5,
+  "primaryAttributeMultiplier": 2,
+  "levelCurve": {
+    "type": "table",
+    "thresholds": [0, 100, 300, 600]
+  },
+  "hp": {
+    "max": 999,
+    "restoreOnLevelUp": true
+  },
+  "hpDepletion": {
+    "goldLossRatio": 0.25,
+    "loseLevel": false,
+    "restoreHpTo": 999
+  },
+  "catchUp": {
+    "maxPenalizedDays": 3,
+    "penalizeWhich": "most_recent"
+  },
+  "gold": {
+    "allowNegative": true
+  },
+  "eventLog": {
+    "visibleCount": 7
+  },
+  "backup": {
+    "keepSnapshots": 2
+  }
+}

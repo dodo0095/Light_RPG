@@ -1,0 +1,10 @@
+{
+  "id": "reward_library",
+  "packType": "reward_library",
+  "formatVersion": 1,
+  "version": "0.0.1-test",
+  "items": [
+    { "id": "test_reward_a", "title": "測試獎勵 A", "cost": 12 },
+    { "id": "test_reward_b", "title": "測試獎勵 B", "cost": 34 }
+  ]
+}
