@@ -74,5 +74,5 @@
 | 原因 | 讀取在 transaction 外、以時間戳當版本號；時間戳解析度不足以當版本 |
 | 解法 | 「讀取 → 純函式計算 → 寫入」整段放進同一個 readwrite transaction，交由 IndexedDB 依序執行（修正派給 T12 作者） |
 | 預防 | 任何「讀後寫」都要在同一個 readwrite transaction 內完成；不得用時間戳當版本；整合測試保留「同一毫秒雙寫」案例 |
-| 狀態 | open（修正中） |
+| 狀態 | resolved（commit 67e2454） |
 | 到期日 | 2026-11-07 |
