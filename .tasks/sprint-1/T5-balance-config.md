@@ -18,7 +18,7 @@
 
 ## 任務描述
 
-依 data-model.md 第 5 節建立 `balance.schema.ts`（Zod）與讀取模組；建立測試用 `tests/balance.test.json`。正式 `balance.json` 的數字等 decision-tables.md 定案後照表填入，**不得自行假設**。
+依 data-model.md 第 5 節建立 `balance.schema.ts`（Zod）與讀取模組；建立測試用 `tests/fixtures/balance.test.json`。正式 `balance.json` 的數字等 decision-tables.md 定案後照表填入，**不得自行假設**。
 
 對應提案書第 2 節：#6。規範依據：`.knowledge/architecture.md`、`.knowledge/data-model.md`、`.knowledge/day-rollover.md`。
 

@@ -64,9 +64,16 @@
 
 ## 踩坑紀錄
 
+> 摘要；完整紀錄見 `.knowledge/postmortem-log.md`。
+
 | 問題 | 原因 | 正確做法 |
 |------|------|---------|
-| （尚無） | | |
+| Git Bash 找不到 node，slash command 取時間失敗 | PATH 沒有 `C:\Program Files\nodejs` | `~/.bashrc` 已補 PATH；指令範本不要假設 node 在 PATH |
+| Vite 8 的 rolldown 原生 binding 被 Windows Application Control 擋下 | 本機政策不允許未受信任的 `.node` 模組 | Vite ~6.4／Vitest ~4.1／TS ~6.0 鎖小版本；升級前先在本機實跑 |
+| AgentHub 產生的 hook 寫死絕對路徑 | hook 依 checkout 位置產生 | `g5-pre-deploy.sh`、`stop-validator.sh` 不進版控；commit 前 `git grep "ALL PROJECT"` |
+| 用 JS 樣板字串改檔，Windows 路徑反斜線被吃掉 | 樣板字串會解析跳脫字元 | 含反斜線的內容一律用 Edit 工具；改完 read-back |
+| 解衝突腳本未生效，衝突標記被 commit | 檔案是 CRLF，`\n` 比對不到 | 用 Edit 工具解衝突；commit 前檢查衝突標記，有結果就不 commit |
+| 同一毫秒內兩次寫入互相覆寫（lost update） | 讀取在 transaction 外、用毫秒 `updatedAt` 當版本 | 讀取→計算→寫入在同一個 readwrite transaction；不得用時間戳當版本 |
 
 ## 可用指令（Slash Commands）— 強制使用
 

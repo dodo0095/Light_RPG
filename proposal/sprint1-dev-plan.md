@@ -4,7 +4,7 @@
 > **日期**: 2026-10-23
 > **專案**: 晨光之誓
 > **Sprint 提案書**: `proposal/sprint1-proposal.md`
-> **狀態**: G0、G1 通過，實作中（技術棧、數值決策表、UI 圖稿皆已定案；預設內容 X4 待交）
+> **狀態**: G0、G1 通過；T1～T21 完成，G2 程式碼審查中（第一輪不通過，修正中）
 > **備註**: 交辦單原定由 project-lead 彙整本計畫書；因跨 Agent 傳訊服務離線、老闆指示繼續執行，由 tech-lead 先產出。project-lead 可直接接手修訂。
 
 ---
@@ -58,10 +58,10 @@
 
 ### 圖稿驗收標準
 
-- [ ] 四頁皆有 HTML mockup，可在瀏覽器直接開啟
-- [ ] 繁體中文化完成
-- [ ] 標出每頁所有 UI 狀態（空狀態、已完成、已結算不可取消、旅館中、HP 低）
-- [ ] 安全區域（瀏海、Home 條）已處理
+- [x] 四頁皆有 HTML mockup，可在瀏覽器直接開啟
+- [x] 繁體中文化完成
+- [x] 標出每頁所有 UI 狀態（空狀態、已完成、已結算不可取消、旅館中、HP 低）
+- [x] 安全區域（瀏海、Home 條）已處理
 
 ---
 
@@ -145,7 +145,7 @@
 | T2 | 部署：本機靜態檔伺服器 | 寫 `deploy/serve.mjs`（只聽 127.0.0.1:5810，可用 RPG_PORT 覆蓋），設定快取 header 與開機自動啟動；老闆的反向代理轉到這個 port。 | project-shipper | 無 | 部署 | `curl -I http://127.0.0.1:5810/sw.js` 顯示 `Cache-Control: no-cache` |
 | T3 | Spike S1～S3 | 放在 `spike/`：S1 iOS 實機（加入主畫面、飛航模式、`navigator.storage.persist()`、SW 更新提示）；S2 Safari 上「舊版開 DB → 匯出 → 新版升級」流程；S3 空殼 bundle gzip 量測。 | frontend-developer | T1, T2 | 實作 | 三個 spike 結果都寫進 tech-stack.md 第 9 節，含截圖或指令輸出 |
 | T4 | PWA 外殼 | manifest、iOS meta 與 apple-touch-icon、vite-plugin-pwa 離線快取、`registerType: prompt` 的「有新版本，點此更新」提示（先最簡樣式，G1 後套版）、畫面顯示版本號。 | frontend-developer | T1, T3 | 實作 | Lighthouse PWA installable 檢查通過（附報告） |
-| T5 | 數值設定檔 | 依 data-model.md 第 5 節建立 `balance.schema.ts`（Zod）與讀取模組；建立測試用 `tests/balance.test.json`。 | frontend-developer | T1（外部：X2） | 實作 | schema 欄位與 data-model.md 第 5 節一一對應 |
+| T5 | 數值設定檔 | 依 data-model.md 第 5 節建立 `balance.schema.ts`（Zod）與讀取模組；建立測試用 `tests/fixtures/balance.test.json`。 | frontend-developer | T1（外部：X2） | 實作 | schema 欄位與 data-model.md 第 5 節一一對應 |
 | T6 | 儲存層 | 依 data-model.md 第 3、4、9 節：開 DB、7 個 store 與索引、Repository 介面、`schemaVersion`、遷移框架（遷移函式只處理匯出格式）、遷移前備份到 `morning-oath-backup`。 | frontend-developer | T1, T3 | 實作 | store／索引名稱與 data-model.md 完全一致 |
 | T7 | 遊戲日模組 | `src/core/time/`：`computeDayKey`、`effectiveDayKey`、`R_effective`、日期運算（UTC 加減）、星期判斷。 | frontend-developer | T1 | 實作 | day-rollover.md 的 TC-DK-01～07 全部有測試且通過 |
 | T8 | 日結引擎 | `src/core/settlement/`：`planSettlement`（補算上限、mode 標記、旅館判斷、streak、HP 歸零觸發）。 | frontend-developer | T5, T7（外部：X5） | 實作 | TC-ST、TC-CU、TC-IN、TC-TZ、TC-CL、TC-RT 系列全部有測試且通過 |
@@ -220,7 +220,7 @@ T2 → X6 → T3 ─┬→ T4 ────────────────�
 | `src/storage/**/*.test.ts` | store／索引、遷移、備份、匯出格式驗證 |
 | `src/content/*.test.ts` | 資料包 schema、id 參照完整性 |
 
-測試案例定義見 `.knowledge/day-rollover.md` 第 6 節。數值一律使用 `tests/balance.test.json`，不依賴正式數值。
+測試案例定義見 `.knowledge/day-rollover.md` 第 6 節。數值一律使用 `tests/fixtures/balance.test.json`，不依賴正式數值。
 
 ### 整合／實機測試
 
@@ -288,7 +288,7 @@ T2 → X6 → T3 ─┬→ T4 ────────────────�
 |------------|------|------|---------------|
 | 設計 Review（對規範） | 2026-10-23 | 通過 | fresh-context agent 對照交辦單第 7 節驗收，5 項全過，6 處一致性問題已修正 |
 | UI 圖稿 Review | 2026-10-24 | 通過 | fresh-context agent 對照第 3 節圖稿驗收標準：首輪 2 Blocker（today 缺 To-do 迷你版、Daily 檢查清單）＋6 小修，修正後複驗 8 項全過、無剩餘 Blocker；圖稿 `docs/design/`（分支 agent/design-director/2026-10-23） |
-| 實作 Review | | | |
+| 實作 Review（G2 第一輪，獨立審查員） | 2026-10-24 | 不通過 | `docs/reviews/sprint1-g2-review-round1.md`（0 Blocker／1 Major：匯入驗證不足／9 Minor） |
 | 測試 Review | | | |
 
 ### Gate 紀錄
