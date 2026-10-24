@@ -4,7 +4,7 @@
 > **日期**: 2026-10-23
 > **專案**: 晨光之誓
 > **Sprint 提案書**: `proposal/sprint1-proposal.md`
-> **狀態**: G0、G1 通過；T1～T21 完成；G2 複驗通過，送老闆審核（commit 72058ad）
+> **狀態**: G0、G1、G2 通過；進入測試步驟（T22 部署、T23 iPhone 實機驗收 → G3）
 > **備註**: 交辦單原定由 project-lead 彙整本計畫書；因跨 Agent 傳訊服務離線、老闆指示繼續執行，由 tech-lead 先產出。project-lead 可直接接手修訂。
 
 ---
@@ -298,7 +298,7 @@ T2 → X6 → T3 ─┬→ T4 ────────────────�
 |------|------|------|---------|
 | G0 | 2026-10-23 | ✅ 通過 | `proposal/sprint1-proposal.md` |
 | G1 | 2026-10-24 | ✅ 通過 | 老闆審核四頁圖稿 `docs/design/`；區段名稱用 RPG 名稱＋英文小字；換日提示附結算明細；獎勵、設定頁不補圖，沿用今天頁元件（tokens.css） |
-| G2 | | | |
+| G2 | 2026-10-24 | ✅ 通過 | 老闆審核：獨立審查員兩輪（第一輪 1 Major 匯入驗證→修正；第二輪 0 Blocker／0 Major），報告 `docs/reviews/sprint1-g2-review-round1.md`、`round2.md`。同時確認：今天頁「＋」改開快速新增（design-director 於 S2 補圖，backlog B4）；刪除任務不收回已得獎勵 |
 | G3 | | | |
 | G5 | | | |
 
