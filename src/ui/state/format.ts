@@ -35,6 +35,33 @@ export function isNextDay(dayKey: DayKey, next: DayKey): boolean {
   return key === next;
 }
 
+/**
+ * 換日時間排程文案（day-rollover 5.7：生效日可能是明天或後天）。
+ *
+ * 只看 `effectiveFromDayKey > dayKey` 的排程，依生效日排序：
+ * - 最近一筆：與目前遊戲日差 1 天 →「明天起改為 HH:mm」，否則「MM/DD 起改為 HH:mm」
+ * - 之後還有排程時，用「，」接上「MM/DD 起改為 HH:mm」
+ * - 沒有排程 → null
+ */
+export function rolloverScheduleText(
+  dayKey: DayKey,
+  pending: readonly { time: string; effectiveFromDayKey: DayKey }[],
+): string | null {
+  const upcoming = pending
+    .filter((p) => p.effectiveFromDayKey > dayKey)
+    .sort((a, b) => (a.effectiveFromDayKey < b.effectiveFromDayKey ? -1 : 1));
+  if (upcoming.length === 0) return null;
+  return upcoming
+    .map((p, i) => {
+      const when =
+        i === 0 && isNextDay(dayKey, p.effectiveFromDayKey)
+          ? '明天起'
+          : `${formatMonthDay(p.effectiveFromDayKey)} 起`;
+      return `${when}改為 ${p.time}`;
+    })
+    .join('，');
+}
+
 /** 連續日期範圍：`10/24～10/29`；單日只顯示一天 */
 export function formatDayRange(first: DayKey, last: DayKey): string {
   return first === last

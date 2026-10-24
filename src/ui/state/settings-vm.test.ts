@@ -49,6 +49,15 @@ describe('換日時間', () => {
       buildRolloverVM(schedule([{ time: '05:00', effectiveFromDayKey: '2026-10-29' }]))
         .scheduledText,
     ).toBe('10/29 起改為 05:00');
+    // 多筆：最近一筆在前；輸入框預設為最後一筆
+    const multi = buildRolloverVM(
+      schedule([
+        { time: '06:30', effectiveFromDayKey: '2026-10-27' },
+        { time: '05:00', effectiveFromDayKey: '2026-10-28' },
+      ]),
+    );
+    expect(multi.scheduledText).toBe('明天起改為 06:30，10/28 起改為 05:00');
+    expect(multi.inputValue).toBe('05:00');
   });
 
   it('時間輸入正規化（容許秒數，拒絕不合法）', () => {

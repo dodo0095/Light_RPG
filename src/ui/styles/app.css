@@ -174,3 +174,10 @@ body { overflow: hidden; }
 .event-log__meta { font-size: var(--fs-xs); color: var(--c-ink-mute); text-shadow: none; }
 .backup-text { height: 160px; font-size: var(--fs-xs); font-family: ui-monospace, monospace; }
 .break-all { word-break: break-all; }
+
+/* ---------- 快速新增（T20；圖稿未畫，沿用 .sheet／.seg／.chip） ---------- */
+.qa-result { margin-top: var(--sp-3); }
+.qa-row { margin-top: var(--sp-2); }
+.qa-reason { margin: 0 0 var(--sp-1); }
+.qa-alt { margin-top: var(--sp-3); }
+.qa-small { display: block; font-size: var(--fs-xs); margin-bottom: var(--sp-1); }

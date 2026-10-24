@@ -3,8 +3,9 @@
  * 一般、空狀態、已完成（全勤）、換日提示、已結算不可取消、旅館中、HP 低、多日未開補算。
  * 數字與狀態全部由 services 提供，這裡只負責顯示（view-model 見 state/today-vm.ts）。
  */
-import { useCallback } from 'preact/hooks';
+import { useCallback, useState } from 'preact/hooks';
 import { Banner, EmptyState, Section, Tabbar, Toast } from '../components/common';
+import { QuickAddSheet } from '../components/quick-add-sheet';
 import { Daybar, StatusPanel } from '../components/status-panel';
 import { HabitRow, TaskRow } from '../components/task-row';
 import type { AppStore } from '../state/app-store';
@@ -52,6 +53,7 @@ export function TodayPage({ store }: { store: AppStore }) {
   const toast = store.toast.value;
   const { actions } = store;
   const onCloseToast = useCallback((id: number) => store.dismissToast(id), [store]);
+  const [quickAdd, setQuickAdd] = useState(false);
 
   if (!today || !balance || !content) return null;
 
@@ -227,10 +229,11 @@ export function TodayPage({ store }: { store: AppStore }) {
       {toast ? (
         <Toast {...toast} onClose={onCloseToast} />
       ) : (
-        <button type="button" class="fab" aria-label="新增" onClick={() => openEditor(null)}>
+        <button type="button" class="fab" aria-label="新增" onClick={() => setQuickAdd(true)}>
           ＋
         </button>
       )}
+      {quickAdd && <QuickAddSheet store={store} onClose={() => setQuickAdd(false)} />}
       <Tabbar current="today" onNavigate={(page) => store.navigate(page)} />
     </div>
   );

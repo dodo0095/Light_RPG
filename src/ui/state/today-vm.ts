@@ -23,7 +23,7 @@ import {
   formatDayWithWeekday,
   formatIsoMonthDay,
   formatMonthDay,
-  isNextDay,
+  rolloverScheduleText,
   signed,
 } from './format';
 import { DEFAULT_ADVENTURER_NAME, attributeLabel, classIcon, difficultyLabel } from './labels';
@@ -392,12 +392,8 @@ function finishedTodoRow({ task, checkIn }: CompletedTodoView): TaskRowVM {
 }
 
 function scheduleText(schedule: RolloverScheduleView | null): string | null {
-  const next = schedule?.upcoming[0];
-  if (!schedule || !next) return null;
-  const when = isNextDay(schedule.dayKey, next.effectiveFromDayKey)
-    ? '明天起'
-    : `${formatMonthDay(next.effectiveFromDayKey)} 起`;
-  return `${when}改為 ${next.time}`;
+  if (!schedule) return null;
+  return rolloverScheduleText(schedule.dayKey, schedule.pendingRolloverTimes);
 }
 
 // ---------------------------------------------------------------------------

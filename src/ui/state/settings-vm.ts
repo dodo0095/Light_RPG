@@ -11,7 +11,7 @@ import type {
   RolloverScheduleView,
   SettingsView,
 } from '../../services';
-import { formatIsoMonthDay, formatMonthDay, isNextDay, signed } from './format';
+import { formatIsoMonthDay, formatMonthDay, rolloverScheduleText, signed } from './format';
 import type { TagVM } from './today-vm';
 
 // ---------------------------------------------------------------------------
@@ -29,9 +29,7 @@ export interface RolloverVM {
 
 export function buildRolloverVM(schedule: RolloverScheduleView): RolloverVM {
   const last = schedule.upcoming[schedule.upcoming.length - 1];
-  const scheduledText = last
-    ? `${isNextDay(schedule.dayKey, last.effectiveFromDayKey) ? '明天起' : `${formatMonthDay(last.effectiveFromDayKey)} 起`}改為 ${last.time}`
-    : null;
+  const scheduledText = rolloverScheduleText(schedule.dayKey, schedule.pendingRolloverTimes);
   return { current: schedule.current, scheduledText, inputValue: last?.time ?? schedule.current };
 }
 

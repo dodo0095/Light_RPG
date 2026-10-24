@@ -197,18 +197,26 @@ describe('狀態列與遊戲日列', () => {
 
   it('換日時間有排程時顯示「明天起改為 HH:mm」，更晚的顯示日期', () => {
     const base = input(view()).schedule!;
-    const tomorrow = buildTodayVM(
-      input(view(), {
-        schedule: { ...base, upcoming: [{ time: '05:00', effectiveFromDayKey: '2026-10-24' }] },
-      }),
+    const withPending = (pending: { time: string; effectiveFromDayKey: string }[]) =>
+      buildTodayVM(
+        input(view(), {
+          schedule: { ...base, upcoming: pending, pendingRolloverTimes: pending },
+        }),
+      ).daybar.scheduleText;
+    expect(withPending([{ time: '05:00', effectiveFromDayKey: '2026-10-24' }])).toBe(
+      '明天起改為 05:00',
     );
-    expect(tomorrow.daybar.scheduleText).toBe('明天起改為 05:00');
-    const later = buildTodayVM(
-      input(view(), {
-        schedule: { ...base, upcoming: [{ time: '03:00', effectiveFromDayKey: '2026-10-26' }] },
-      }),
+    // 生效日是後天（day-rollover 5.7）
+    expect(withPending([{ time: '03:00', effectiveFromDayKey: '2026-10-25' }])).toBe(
+      '10/25 起改為 03:00',
     );
-    expect(later.daybar.scheduleText).toBe('10/26 起改為 03:00');
+    expect(
+      withPending([
+        { time: '05:00', effectiveFromDayKey: '2026-10-24' },
+        { time: '06:00', effectiveFromDayKey: '2026-10-25' },
+      ]),
+    ).toBe('明天起改為 05:00，10/25 起改為 06:00');
+    expect(withPending([])).toBeNull();
   });
 });
 

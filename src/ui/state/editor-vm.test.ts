@@ -317,7 +317,7 @@ describe('store：新增／編輯／刪除', () => {
     store.navigate('library');
     store.openEditor('x');
     expect(store.page.value).toBe('editor');
-    expect(store.editor.value).toEqual({ taskId: 'x', returnTo: 'library' });
+    expect(store.editor.value).toEqual({ taskId: 'x', returnTo: 'library', prefill: null });
     store.closeEditor();
     expect(store.page.value).toBe('library');
     store.openEditor(null, 'today');

@@ -32,6 +32,7 @@ import type {
   TodayView,
   VisibilitySource,
 } from '../../services';
+import type { EditorForm } from './editor-vm';
 import { formatMonthDay } from './format';
 import { actionErrorText, type StartupError } from './messages';
 import type { BalanceConfig, ContentPacks, DayKey, PageId, Task } from './types';
@@ -59,6 +60,8 @@ export interface AppStoreDeps {
 export interface EditorTarget {
   taskId: string | null;
   returnTo: PageId;
+  /** 新增時的預填表單（快速新增帶過來）；沒有時用空白表單 */
+  prefill?: EditorForm | null;
 }
 
 export type SelectClassOutcome = { ok: true } | { ok: false; message: string };
@@ -417,9 +420,17 @@ export function createAppStore(deps: AppStoreDeps) {
       if (next === 'settings' && service) void refresh();
     },
     /** 開啟進階編輯（`taskId` 為 null ＝新增），儲存／取消後回到 `returnTo` */
-    openEditor(taskId: string | null, returnTo: PageId = page.value) {
+    openEditor(
+      taskId: string | null,
+      returnTo: PageId = page.value,
+      prefill: EditorForm | null = null,
+    ) {
       batch(() => {
-        editor.value = { taskId, returnTo: returnTo === 'editor' ? 'today' : returnTo };
+        editor.value = {
+          taskId,
+          returnTo: returnTo === 'editor' ? 'today' : returnTo,
+          prefill: taskId === null ? prefill : null,
+        };
         page.value = 'editor';
       });
     },

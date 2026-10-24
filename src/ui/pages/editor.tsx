@@ -175,7 +175,15 @@ function ChecklistEditor(props: {
   );
 }
 
-function EditorBody({ store, task }: { store: AppStore; task: Task | null }) {
+function EditorBody({
+  store,
+  task,
+  prefill,
+}: {
+  store: AppStore;
+  task: Task | null;
+  prefill: EditorForm | null;
+}) {
   const balance = store.balance.value;
   const content = store.content.value;
   const today = store.today.value;
@@ -185,7 +193,9 @@ function EditorBody({ store, task }: { store: AppStore; task: Task | null }) {
   const [form, setForm] = useState<EditorForm | null>(() =>
     task !== null
       ? formFromTask(task)
-      : balance
+      : prefill
+        ? prefill
+        : balance
         ? newTaskForm({
             balance,
             primaryAttributes: today?.character.primaryAttributes ?? [],
@@ -560,5 +570,12 @@ export function EditorPage({ store }: { store: AppStore }) {
       </div>
     );
   }
-  return <EditorBody key={target.taskId ?? 'new'} store={store} task={task} />;
+  return (
+    <EditorBody
+      key={target.taskId ?? 'new'}
+      store={store}
+      task={task}
+      prefill={target.prefill ?? null}
+    />
+  );
 }
