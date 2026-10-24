@@ -289,6 +289,7 @@ T2 → X6 → T3 ─┬→ T4 ────────────────�
 | 設計 Review（對規範） | 2026-10-23 | 通過 | fresh-context agent 對照交辦單第 7 節驗收，5 項全過，6 處一致性問題已修正 |
 | UI 圖稿 Review | 2026-10-24 | 通過 | fresh-context agent 對照第 3 節圖稿驗收標準：首輪 2 Blocker（today 缺 To-do 迷你版、Daily 檢查清單）＋6 小修，修正後複驗 8 項全過、無剩餘 Blocker；圖稿 `docs/design/`（分支 agent/design-director/2026-10-23） |
 | 實作 Review（G2 第一輪，獨立審查員） | 2026-10-24 | 不通過 | `docs/reviews/sprint1-g2-review-round1.md`（0 Blocker／1 Major：匯入驗證不足／9 Minor） |
+| 實作 Review（G2 第二輪複驗，同一獨立審查員） | 2026-10-24 | 通過 | `docs/reviews/sprint1-g2-review-round2.md`（0 Blocker／0 Major／3 Minor：n1 救援優先下載舊快照→G2 提交前修正；n2 忽略；n3 排 S2 backlog） |
 | 測試 Review | | | |
 
 ### Gate 紀錄
