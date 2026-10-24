@@ -10,7 +10,7 @@ import { FakeClock, boot, resetIndexedDb, taipei } from '../../tests/helpers/ser
 import { DB_NAME } from '../storage';
 import type { AppService } from './app-service';
 import { importReferenceIssues } from './queries';
-import { prepareRescueBackup } from './rescue';
+import { findRescueSources, prepareRescueBackup } from './rescue';
 
 const MON = taipei(2026, 10, 26, 10);
 
@@ -123,29 +123,66 @@ describe('M1：竄改過的備份', () => {
   });
 });
 
-describe('m1：啟動失敗頁的救援備份', () => {
-  it('有自動備份快照時下載最新的快照', async () => {
-    clock.set(MON + 60_000);
-    await service.importBackup(JSON.stringify(exported)); // 匯入前會存一份快照
-    const rescue = await prepareRescueBackup({ clock, appVersion: 'test' });
-    expect(rescue).toMatchObject({
-      source: 'snapshot',
-      exportedAt: new Date(MON + 60_000).toISOString(),
+describe('m1／n1：啟動失敗頁的救援備份', () => {
+  interface Dump {
+    data: { character: { totalExp: number }[]; events: { type: string }[] };
+  }
+  const habitUps = (b: Dump) => b.data.events.filter((e) => e.type === 'habit_up').length;
+
+  function deleteMainDb(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.deleteDatabase(DB_NAME);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
     });
-    expect(rescue!.fileName).toBe('morning-oath-auto-backup-2026-10-26.json');
-    expect(JSON.parse(rescue!.json)).toMatchObject({ format: 'morning-oath-backup' });
+  }
+
+  it('快照比目前資料舊：「下載目前資料」拿到最新進度，快照另外提供；主資料庫不被修改', async () => {
+    clock.set(MON + 60_000);
+    await service.importBackup(JSON.stringify(exported)); // 匯入前存一份快照（habit_up 1 次）
+    const habitId = (await service.context.storage.tasks.list()).find(
+      (t) => t.type === 'habit',
+    )!.id;
+    await service.habitUp(habitId);
+    await service.habitUp(habitId); // 之後又玩了：目前資料比快照新
+
+    const before = await dumpAll(service.context.db);
+    const sources = await findRescueSources();
+    expect(sources).toEqual({
+      current: true,
+      snapshot: { createdAt: new Date(MON + 60_000).toISOString() },
+    });
+    const current = await prepareRescueBackup('current', { clock, appVersion: 'test' });
+    const snapshot = await prepareRescueBackup('snapshot', { clock });
+    expect(current?.source).toBe('current');
+    expect(snapshot?.source).toBe('snapshot');
+    expect(snapshot!.fileName).toBe('morning-oath-auto-backup-2026-10-26.json');
+    const cur = JSON.parse(current!.json) as Dump;
+    const snap = JSON.parse(snapshot!.json) as Dump;
+    expect(habitUps(cur)).toBe(3);
+    expect(habitUps(snap)).toBe(1);
+    expect(cur.data.character[0]!.totalExp).toBeGreaterThan(snap.data.character[0]!.totalExp);
+    expect(JSON.parse(current!.json)).toMatchObject({ configVersion: 'unknown' });
+    expect(await dumpAll(service.context.db)).toEqual(before);
   });
 
-  it('沒有快照但主資料庫讀得到時匯出目前內容（含版本較新、無法啟動的資料庫）', async () => {
-    const rescue = await prepareRescueBackup({ clock, appVersion: 'test' });
-    expect(rescue?.source).toBe('current');
-    const backup = JSON.parse(rescue!.json) as {
-      data: { character: Json[] };
-      configVersion: string;
-    };
-    expect(backup.data.character).toHaveLength(1);
-    expect(backup.configVersion).toBe('unknown');
+  it('主資料庫讀不到時只拿得到快照', async () => {
+    clock.set(MON + 60_000);
+    await service.importBackup(JSON.stringify(exported));
+    service.dispose();
+    await deleteMainDb();
+    const sources = await findRescueSources();
+    expect(sources.current).toBe(false);
+    expect(sources.snapshot).not.toBeNull();
+    expect(await prepareRescueBackup('current', { clock })).toBeNull();
+    const snapshot = await prepareRescueBackup('snapshot', { clock });
+    expect(snapshot?.source).toBe('snapshot');
+    expect(habitUps(JSON.parse(snapshot!.json) as Dump)).toBe(1);
+    expect((await indexedDB.databases()).map((d) => d.name)).not.toContain(DB_NAME);
+    ({ service } = await boot(clock));
+  });
 
+  it('資料庫版本比 App 新（無法啟動）時，「下載目前資料」以原版本匯出', async () => {
     service.dispose();
     resetIndexedDb();
     const db = await openDB(DB_NAME, 9, {
@@ -155,20 +192,23 @@ describe('m1：啟動失敗頁的救援備份', () => {
     });
     await db.put('character', { id: 'future' });
     db.close();
-    const newer = await prepareRescueBackup({ clock });
+    expect(await findRescueSources()).toEqual({ current: true, snapshot: null });
+    const newer = await prepareRescueBackup('current', { clock });
     expect(JSON.parse(newer!.json)).toMatchObject({
       schemaVersion: 9,
       data: { character: [{ id: 'future' }] },
     });
-    ({ service } = await boot(clock).catch(() => ({ service: { dispose() {} } as AppService })));
+    resetIndexedDb();
+    ({ service } = await boot(clock));
   });
 
-  it('什麼都沒有時回傳 null，且不留下空的主資料庫', async () => {
+  it('兩者都沒有時：沒有來源、回傳 null，且不留下空的主資料庫', async () => {
     service.dispose();
     resetIndexedDb();
-    expect(await prepareRescueBackup({ clock })).toBeNull();
-    const dbs = await indexedDB.databases();
-    expect(dbs.map((d) => d.name)).not.toContain(DB_NAME);
+    expect(await findRescueSources()).toEqual({ current: false, snapshot: null });
+    expect(await prepareRescueBackup('current', { clock })).toBeNull();
+    expect(await prepareRescueBackup('snapshot', { clock })).toBeNull();
+    expect((await indexedDB.databases()).map((d) => d.name)).not.toContain(DB_NAME);
     ({ service } = await boot(clock));
   });
 });
