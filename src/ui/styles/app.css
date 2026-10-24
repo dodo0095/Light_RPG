@@ -72,6 +72,16 @@ body { overflow: hidden; }
 .sheet__lead { margin: 0 0 8px; font-size: 14px; }
 .sheet__notes { margin: 0; padding-left: 18px; font-size: 13px; color: var(--c-ink-dim); text-shadow: none; }
 
+/* ---------- 右下「＋」(.fab) 的留白（G2 審查：FAB 遮住最後一張卡片的「⋯」） ----------
+   tokens.css 用 .app__main 的 padding-bottom 預留空間，但部分 WebKit 版本的捲動容器
+   不把 padding-bottom 算進可捲動範圍。改用實際佔高度的 ::after，捲到底時最後一張卡片
+   一定停在「＋」上方（高度 = FAB 高 ＋ 上下各 --sp-4 間隔，與原本的設計相同）。 */
+.app__main:not(.app__main--bare) { padding-bottom: 0; }
+.app__main:not(.app__main--bare)::after {
+  content: ''; display: block; flex: none;
+  height: calc(var(--fab-size) + var(--sp-4) * 2);
+}
+
 /* ---------- 啟動、錯誤、佔位頁 ---------- */
 .boot { justify-content: center; }
 .boot .app__main { display: flex; flex-direction: column; justify-content: center; }
@@ -91,7 +101,7 @@ body { overflow: hidden; }
   position: fixed; left: var(--sp-3); right: var(--sp-3);
   top: calc(var(--safe-top) + var(--sp-2));
   max-width: 496px; margin: 0 auto; z-index: 40;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--c-shadow) 70%, transparent);
 }
 .safari-banner__url { display: block; margin-top: 4px; word-break: break-all; color: var(--c-ink-dim); }
 .safari-banner__actions { display: flex; gap: var(--sp-2); margin-top: var(--sp-2); flex-wrap: wrap; }
@@ -111,13 +121,13 @@ body { overflow: hidden; }
 .chip.is-on.is-off { opacity: 1; }
 
 /* ---------- 進階編輯（T16，圖稿 mockup-editor.html 的 <style> 照搬＋inline style 改 class） ---------- */
-.ed-top { border-bottom: var(--bw) solid var(--c-border-dim); background: rgba(10, 16, 48, 0.92); }
+.ed-top { border-bottom: var(--bw) solid var(--c-border-dim); background: color-mix(in srgb, var(--c-bg) 92%, transparent); }
 .ed-main { padding-top: 16px; }
 .ed-cancel { text-decoration: none; }
 .ed-banner { margin-bottom: 16px; }
 .ed-src { font-size: var(--fs-xs); color: var(--c-ink-mute); margin: -8px 0 14px; }
 .ed-list { list-style: none; margin: 0 0 8px; padding: 0; }
-.ed-list li { display: flex; align-items: center; gap: 8px; min-height: 44px; border-bottom: 1px solid rgba(255, 255, 255, 0.14); font-size: 14px; }
+.ed-list li { display: flex; align-items: center; gap: 8px; min-height: 44px; border-bottom: 1px solid color-mix(in srgb, var(--c-ink) 14%, transparent); font-size: 14px; }
 .ed-list .x { width: 44px; height: 44px; background: none; border: 0; color: var(--c-ink-mute); font-size: 18px; flex: none; }
 .ed-list__input { flex: 1; min-width: 0; min-height: 44px; padding: 0; background: none; border: 0; color: var(--c-ink); font: inherit; font-size: 14px; }
 .ed-list__input::placeholder { color: var(--c-ink-mute); }

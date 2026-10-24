@@ -12,4 +12,5 @@ export {
   type BalanceSource,
   type ContentSource,
 } from './sources';
+export { prepareRescueBackup, type RescueBackup, type RescueOptions } from './rescue';
 export * from './types';

@@ -213,9 +213,7 @@ describe('planSettlement — 單日結算（TC-ST）', () => {
     expect(depleted?.deltas.hp).toBe(RESTORE);
     // 歸零懲罰後的 HP 依注入的規則（stub）回復
     expect(plan.character.hp).toBe(RESTORE);
-    expect(plan.character.gold).toBe(
-      100 - Math.floor(100 * balance.hpDepletion.goldLossRatio),
-    );
+    expect(plan.character.gold).toBe(100 - Math.floor(100 * balance.hpDepletion.goldLossRatio));
   });
 
   it('TC-ST-13 mode 標記：1 天 normal；n ≤ K 天 catch_up_penalized；> K 天加上 catch_up_skipped', () => {
@@ -642,5 +640,38 @@ describe('planSettlement — 第一次使用（TC-AP-02）', () => {
     expect(() =>
       planSettlement(makeInput({ ...ONE_DAY, tasks: [daily('x', { difficulty: 'nope' })] })),
     ).toThrow(/Unknown difficulty/);
+  });
+});
+
+describe('G2 m2：未完成的 Daily 扣 0 HP 時仍寫 rollover_penalty', () => {
+  it('missedDailyHpPenalty = 0：寫一筆 deltas.hp = 0 的事件，summary 指向它；HP 不變', () => {
+    const zeroPenalty = {
+      ...balance,
+      difficulties: {
+        ...balance.difficulties,
+        alpha: {
+          ...(balance.difficulties.alpha as NonNullable<typeof balance.difficulties.alpha>),
+          missedDailyHpPenalty: 0,
+        },
+      },
+    };
+    const input = makeInput({
+      ...ONE_DAY,
+      balance: zeroPenalty,
+      tasks: [daily('a', { difficulty: 'alpha' })],
+    });
+    const plan = settled(planSettlement(input));
+    const [penalty, ...rest] = penalties(plan);
+    expect(rest).toHaveLength(0);
+    expect(penalty?.deltas.hp).toBe(0);
+    expect(penalty?.payload).toMatchObject({ missedDailyIds: ['a'], hpLossBeforeClamp: 0 });
+    expect(summaryOf(plan, D).penaltyEventId).toBe(penalty?.id);
+    expect(plan.character.hp).toBe(100);
+    expect(plan.events.some((e) => e.type === 'hp_depleted')).toBe(false);
+  });
+
+  it('全部完成時不寫 rollover_penalty', () => {
+    const input = makeInput({ ...ONE_DAY, tasks: [daily('a')], events: [checked('a', D)] });
+    expect(penalties(settled(planSettlement(input)))).toHaveLength(0);
   });
 });

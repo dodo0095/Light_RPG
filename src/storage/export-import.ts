@@ -5,7 +5,7 @@
  * → 舊版本先跑遷移 → 換成本機 installId／lastBackupAt → 驗證記錄必要欄位 → 在**單一 transaction** 裡清空所有 store 再寫入。
  * 任何一步失敗，目前資料保持不變。
  */
-import { unwrap } from 'idb';
+import { openDB, unwrap } from 'idb';
 import type { GameEvent, IsoDateTime } from '../core/types';
 import {
   BACKUP_FORMAT,
@@ -17,8 +17,8 @@ import {
 import { saveSnapshot } from './backup-store';
 import { StorageError } from './errors';
 import { MIGRATIONS, runMigrations, type MigrationRegistry } from './migrations';
-import type { AppDb } from './open-db';
-import { CURRENT_SCHEMA_VERSION, SCHEMAS, type SchemaSpec } from './schema';
+import { readStoredVersion, type AppDb } from './open-db';
+import { CURRENT_SCHEMA_VERSION, DB_NAME, SCHEMAS, type SchemaSpec } from './schema';
 
 export interface ExportInfo {
   appVersion: string;
@@ -60,6 +60,24 @@ export async function exportRaw(db: AppDb, info: ExportInfo): Promise<BackupFile
 /** 匯出目前版本的完整資料（data-model.md 第 8 節格式）。 */
 export async function exportAll(db: AppDb, info: ExportInfo): Promise<BackupFileV1> {
   return (await exportRaw(db, info)) as unknown as BackupFileV1;
+}
+
+/**
+ * 救援用（啟動／遷移失敗時，G2 m1）：用資料庫**目前的版本**開啟並匯出，不升級、不遷移。
+ * 資料庫不存在時回傳 null（不會留下空資料庫）。
+ */
+export async function exportExistingDatabase(
+  info: ExportInfo,
+  name: string = DB_NAME,
+): Promise<BackupFile | null> {
+  const version = await readStoredVersion(name);
+  if (version === 0) return null;
+  const db = await openDB(name, version);
+  try {
+    return await exportRaw(db, info);
+  } finally {
+    db.close();
+  }
 }
 
 /** 把匯出檔的 schemaVersion（外框與 `meta.schemaVersion`）設成 `version`。不修改輸入。 */

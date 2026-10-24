@@ -13,7 +13,8 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run && pnpm run test:deploy",
+    "test:deploy": "node --test deploy/serve.test.mjs",
     "coverage": "vitest run --coverage",
     "format": "prettier --write ."
   },

@@ -3,10 +3,10 @@ import preact from '@preact/preset-vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import { getAppVersion } from './scripts/app-version.mjs';
 
-// 暫定色（G1 前，待設計稿替換）：中性深藍＋白。
-// 須與 index.html 的 theme-color、scripts/generate-icons.mjs 的 BG 一致。
-const THEME_COLOR = '#1a2b4c';
-const BACKGROUND_COLOR = '#ffffff';
+// 設計 tokens 的 --c-bg（src/ui/styles/tokens.css）。須與 index.html 的 theme-color 一致。
+// 啟動畫面背景也用同色，避免從白底閃到深色畫面。
+const THEME_COLOR = '#0a1030';
+const BACKGROUND_COLOR = '#0a1030';
 
 export default defineConfig({
   define: {

@@ -3,13 +3,24 @@
  */
 /* eslint-disable @typescript-eslint/no-non-null-assertion -- 測試資料必定存在 */
 import { describe, expect, it } from 'vitest';
-import officialBalance from '../../config/balance.json';
+import fixtureBalance from '../../../tests/fixtures/balance.test.json';
 import officialClassSets from '../../content/class_sets.json';
 import type { CheckInView, DaySummaryView, TodayView } from '../../services';
 import { buildRolloverBanner, buildTodayVM, type TodayVMInput } from './today-vm';
 import type { BalanceConfig, ContentPacks, DailyTask, HabitTask, TodoTask } from './types';
 
-const balance = officialBalance as unknown as BalanceConfig;
+// 數值用測試 fixture（decision-tables：測試不依賴正式數值）。UI 的難度標籤只認
+// easy／normal／hard，所以把 fixture 的 alpha／beta 數值掛到這三個 key 上；數字仍是測試值。
+// 職業圖示依正式 class id 對應，所以內容仍用正式 class_sets。
+const fixture = fixtureBalance as unknown as BalanceConfig;
+const balance: BalanceConfig = {
+  ...fixture,
+  difficulties: {
+    easy: fixture.difficulties['alpha']!,
+    normal: fixture.difficulties['alpha']!,
+    hard: fixture.difficulties['beta']!,
+  },
+};
 const content = { classSets: officialClassSets } as unknown as ContentPacks;
 const DAY = '2026-10-23';
 const T = '2026-10-23T01:00:00.000Z';

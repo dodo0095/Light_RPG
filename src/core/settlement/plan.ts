@@ -171,7 +171,8 @@ export function planSettlement(input: SettlementInput): SettlementPlan {
 
     if (mode === 'normal' || mode === 'catch_up_penalized') {
       const hpLoss = missed.reduce((sum, t) => sum + penaltyOf(t, balance), 0);
-      if (hpLoss > 0) {
+      // 有沒完成的 Daily 就一律寫 rollover_penalty，即使實際扣 0（day-rollover 3.2）
+      if (missed.length > 0) {
         const hpBefore = character.hp;
         const hpAfter = Math.max(0, hpBefore - hpLoss);
         character = { ...character, hp: hpAfter };

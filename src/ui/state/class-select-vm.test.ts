@@ -3,7 +3,7 @@
  */
 /* eslint-disable @typescript-eslint/no-non-null-assertion -- 測試資料必定存在 */
 import { describe, expect, it } from 'vitest';
-import officialBalance from '../../config/balance.json';
+import fixtureBalance from '../../../tests/fixtures/balance.test.json';
 import classSets from '../../content/class_sets.json';
 import habitLibrary from '../../content/habit_library.json';
 import rewardLibrary from '../../content/reward_library.json';
@@ -13,7 +13,8 @@ import { actionErrorText, describeStartupError, type StartupError } from './mess
 import type { BalanceConfig, ContentPacks } from './types';
 
 const content = { classSets, habitLibrary, rewardLibrary } as unknown as ContentPacks;
-const balance = officialBalance as unknown as BalanceConfig;
+// 數值用測試 fixture（這裡只讀 primaryAttributeMultiplier）；套組內容要驗證正式資料包，所以內容用正式檔
+const balance = fixtureBalance as unknown as BalanceConfig;
 
 describe('buildClassSelectVM', () => {
   const vm = buildClassSelectVM(content, balance);

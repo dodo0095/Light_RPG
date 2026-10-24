@@ -16,7 +16,16 @@ import type {
   Task,
   TodoTask,
 } from '../core/types';
-import { StorageError, exportAll, importAll } from '../storage';
+import type { BalanceConfig } from '../core/balance-types';
+import type { ContentPacks } from '../content/validate';
+import {
+  StorageError,
+  assertBackupV1,
+  exportAll,
+  importAll,
+  type BackupFile,
+  type BackupFileV1,
+} from '../storage';
 import {
   effectiveToday,
   primaryAttributesOf,
@@ -319,6 +328,46 @@ export function exportBackup(ctx: ServiceContext): Promise<ExportResult> {
   });
 }
 
+/**
+ * 匯入資料的跨檔參照檢查（G2 M1）：結構已由 `assertBackupV1` 驗過，
+ * 這裡確認任務難度存在於目前的數值設定檔、職業存在於 class_sets。回傳全部問題（含欄位路徑）。
+ */
+export function importReferenceIssues(
+  data: BackupFileV1['data'],
+  balance: Pick<BalanceConfig, 'difficulties'>,
+  content: Pick<ContentPacks, 'classSets'>,
+): string[] {
+  const issues: string[] = [];
+  data.tasks.forEach((task, i) => {
+    if (!Object.hasOwn(balance.difficulties, task.difficulty)) {
+      issues.push(`tasks.${i}.difficulty: 難度 "${task.difficulty}" 不存在於目前的數值設定檔`);
+    }
+  });
+  const classIds = new Set(content.classSets.items.map((c) => c.id));
+  data.character.forEach((character, i) => {
+    if (!classIds.has(character.classId)) {
+      issues.push(`character.${i}.classId: 職業 "${character.classId}" 不存在於 class_sets`);
+    }
+  });
+  return issues;
+}
+
+/** 匯入驗證：完整 schema ＋ 參照檢查；任何一項失敗都拋 `invalid_format`（資料不會被寫入）。 */
+function validateImportData(
+  backup: BackupFile,
+  balance: BalanceConfig,
+  content: ContentPacks,
+): void {
+  const v1 = assertBackupV1(backup);
+  const issues = importReferenceIssues(v1.data, balance, content);
+  if (issues.length > 0) {
+    throw new StorageError(
+      'invalid_format',
+      `Invalid backup data: ${issues.slice(0, 5).join('; ')}`,
+    );
+  }
+}
+
 /** 匯入事件的遊戲日：依匯入資料的 settings 計算；沒有 settings 時用預設換日時間。 */
 function importDayKey(ctx: ServiceContext, settings: Settings | undefined): DayKey {
   const rollover = settings ?? {
@@ -350,6 +399,7 @@ export function importBackup(
         newId: ctx.clock.newId,
         keepSnapshots: ctx.balance.backup.keepSnapshots,
         ...(ctx.backupDbName === undefined ? {} : { backupDbName: ctx.backupDbName }),
+        validateData: (backup) => validateImportData(backup, ctx.balance, ctx.content),
         createImportedEvent: ({ backup, fromVersion: version }) => {
           const nowIso = ctx.nowIso();
           const settings = (backup.data.settings?.[0] ?? undefined) as Settings | undefined;
