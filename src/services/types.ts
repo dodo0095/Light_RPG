@@ -47,10 +47,8 @@ export type SettleSkipReason =
   | 'nothing_pending'
   /** 時間倒退（往西改時區、調回手機時間） */
   | 'clock_behind'
-  /** transaction 內重讀 `lastSettledDayKey` 與計算時不同（別的分頁已經結算） */
-  | 'settled_elsewhere'
-  /** transaction 內重讀角色，發現計算後角色被別的分頁改過；下次觸發會重試 */
-  | 'conflict';
+  /** transaction 內重讀 `lastSettledDayKey` 與快速檢查時不同（別的分頁已經結算） */
+  | 'settled_elsewhere';
 
 export type SettleOutcome =
   | { settled: false; reason: SettleSkipReason }
@@ -75,8 +73,6 @@ export type ActionErrorCode =
   | 'wrong_task_type'
   /** 輸入格式錯誤（標題空白、難度不存在、換日時間格式錯誤…） */
   | 'invalid_input'
-  /** 寫入時發現資料已被別的分頁改過，請重新整理後再試 */
-  | 'conflict'
   /** 已經選過職業（selectClass 重複呼叫） */
   | 'already_onboarded';
 

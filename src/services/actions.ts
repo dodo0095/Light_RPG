@@ -3,10 +3,12 @@
  *
  * 每個動作（`act`）：
  * 1. 進互斥佇列（同一 App 實例依序執行）
- * 2. 先日結（day-rollover 5.3、TC-AP-01）：有結算或畫面顯示的遊戲日已過 → 回傳 `dayChanged: true`
- * 3. 讀狀態 → 呼叫 core 純函式
- * 4. 單一 readwrite transaction 寫入；transaction 內重讀 `lastSettledDayKey` 與角色 `updatedAt`，
- *    跟讀取時不同（別的分頁改過）就不寫，回傳 `conflict`。transaction 內只 await IndexedDB 操作。
+ * 2. 先日結（day-rollover 5.3、TC-AP-01），在動作之前、用日結自己的單一 transaction 完成；
+ *    有結算或畫面顯示的遊戲日已過 → 回傳 `dayChanged: true`
+ * 3. 在**同一個 readwrite transaction** 內：讀狀態 → 呼叫 core 純函式（同步）→ 寫入。
+ *    重疊的 readwrite transaction 由 IndexedDB 依序執行，所以不同分頁、同一分頁的連點
+ *    都不會互相覆寫（不用 updatedAt 當版本號：同一毫秒內的兩次寫入值相同，擋不住）。
+ *    transaction 內只 await IndexedDB 操作（T3：不得 await 計時器／網路）。
  */
 import {
   checkDaily as coreCheckDaily,
@@ -46,6 +48,7 @@ import {
   readSettings,
   type ServiceContext,
 } from './context';
+import type { Repositories } from '../storage';
 import { settleUnlocked } from './settlement-service';
 import {
   InvalidInputError,
@@ -80,6 +83,8 @@ interface Prepared {
   character: Character;
   /** 有效遊戲日（日結之後） */
   today: DayKey;
+  /** 動作 transaction 內的 repositories：body 只能 await 這些 IndexedDB 操作 */
+  repos: Repositories;
 }
 
 interface Writes {
@@ -104,28 +109,54 @@ function act<T>(
   body: (prepared: Prepared) => Promise<BodyResult<T>> | BodyResult<T>,
 ): Promise<ActionResult<T>> {
   return ctx.exclusive(async () => {
+    // 2. 先日結（自己的單一 transaction）。日結結束後別的分頁可能又寫入，
+    //    所以下面的動作 transaction 一律重新讀取狀態，不沿用這裡讀到的任何值。
     const settlement = await settleUnlocked(ctx);
-    if (!settlement.settled && settlement.reason === 'conflict') {
-      return { ok: false, dayChanged: false, error: 'conflict' };
-    }
-    const settings = await readSettings(ctx.storage);
-    const character = await readCharacter(ctx.storage);
-    if (!settings || !character || settings.lastSettledDayKey === null) {
-      return { ok: false, dayChanged: false, error: 'not_initialized' };
-    }
-    const today = effectiveToday(ctx, settings);
-    const dayChanged =
-      settlement.settled || (options.shownDayKey !== undefined && options.shownDayKey !== today);
 
-    let result: BodyResult<T>;
+    // 3–4. 讀狀態 → 純函式 → 寫入，全部在同一個 readwrite transaction。
+    //      重疊的 readwrite transaction 由 IndexedDB 依序執行，所以不會有 lost update。
+    type TxOutcome =
+      { kind: 'not_initialized' } | { kind: 'done'; today: DayKey; result: BodyResult<T> };
+    let outcome: TxOutcome;
     try {
-      result = await body({ settings, character, today });
+      outcome = await ctx.storage.runInTransaction(ACTION_STORES, 'readwrite', async (repos) => {
+        const settings = await readSettings(repos);
+        const character = await readCharacter(repos);
+        if (!settings || !character || settings.lastSettledDayKey === null) {
+          return { kind: 'not_initialized' } as const;
+        }
+        const today = effectiveToday(ctx, settings);
+        // body 只 await repos 的 IndexedDB 操作；純函式計算是同步的
+        const result = await body({ settings, character, today, repos });
+        if (result.ok) {
+          const { writes } = result;
+          for (const event of writes.events ?? []) await repos.events.add(event);
+          for (const task of writes.tasks ?? []) await repos.tasks.put(task);
+          for (const reward of writes.rewards ?? []) await repos.rewards.put(reward);
+          if (writes.character) await repos.character.put(writes.character);
+          if (writes.settings) await repos.settings.put(writes.settings);
+        }
+        return { kind: 'done', today, result } as const;
+      });
     } catch (error) {
+      // InvalidInputError 在寫入前拋出 → transaction 已回滾、沒有寫入任何東西
       if (error instanceof InvalidInputError) {
-        return { ok: false, dayChanged, error: 'invalid_input', message: error.message };
+        return {
+          ok: false,
+          dayChanged: settlement.settled,
+          error: 'invalid_input',
+          message: error.message,
+        };
       }
       throw error;
     }
+    if (outcome.kind === 'not_initialized') {
+      return { ok: false, dayChanged: false, error: 'not_initialized' };
+    }
+
+    const { today, result } = outcome;
+    const dayChanged =
+      settlement.settled || (options.shownDayKey !== undefined && options.shownDayKey !== today);
     if (!result.ok) {
       return {
         ok: false,
@@ -134,31 +165,6 @@ function act<T>(
         ...(result.message === undefined ? {} : { message: result.message }),
       };
     }
-
-    const { writes } = result;
-    const committed = await ctx.storage.runInTransaction(
-      ACTION_STORES,
-      'readwrite',
-      async (repos) => {
-        const currentSettings = await repos.settings.get(settings.id);
-        const currentCharacter = await repos.character.get(character.id);
-        if (
-          currentSettings?.lastSettledDayKey !== settings.lastSettledDayKey ||
-          currentSettings.updatedAt !== settings.updatedAt ||
-          currentCharacter?.updatedAt !== character.updatedAt
-        ) {
-          return false;
-        }
-        for (const event of writes.events ?? []) await repos.events.add(event);
-        for (const task of writes.tasks ?? []) await repos.tasks.put(task);
-        for (const reward of writes.rewards ?? []) await repos.rewards.put(reward);
-        if (writes.character) await repos.character.put(writes.character);
-        if (writes.settings) await repos.settings.put(writes.settings);
-        return true;
-      },
-    );
-    if (!committed) return { ok: false, dayChanged, error: 'conflict' };
-
     ctx.emit(result.change);
     return { ok: true, dayChanged, dayKey: result.dayKey ?? today, value: result.value };
   });
@@ -177,17 +183,17 @@ async function checkInContext(ctx: ServiceContext, p: Prepared): Promise<CheckIn
     settings: p.settings,
     character: p.character,
     // 未結算遊戲日 = 今天（日結之後）；反向事件沿用原事件的 dayKey
-    events: await ctx.storage.events.listByDayKey(p.today),
+    events: await p.repos.events.listByDayKey(p.today),
     primaryAttributes: primaryAttributesOf(ctx.content, p.character.classId),
   };
 }
 
 async function loadTask<K extends Task['type']>(
-  ctx: ServiceContext,
+  repos: Repositories,
   taskId: string,
   type: K,
 ): Promise<Extract<Task, { type: K }> | ActionErrorCode> {
-  const task = await ctx.storage.tasks.get(taskId);
+  const task = await repos.tasks.get(taskId);
   if (!task) return 'not_found';
   if (task.type !== type) return 'wrong_task_type';
   return task as Extract<Task, { type: K }>;
@@ -216,7 +222,7 @@ function taskAction<K extends Task['type']>(
   run: (checkIn: CheckInContext, task: Extract<Task, { type: K }>) => BodyResult<undefined>,
 ): Promise<ActionResult> {
   return act(ctx, options, async (p) => {
-    const task = await loadTask(ctx, taskId, type);
+    const task = await loadTask(p.repos, taskId, type);
     if (typeof task === 'string') return failure(task);
     return run(await checkInContext(ctx, p), task);
   });
@@ -304,7 +310,7 @@ function rewardAction(
   run: (checkIn: CheckInContext, reward: Reward) => CheckInResult,
 ): Promise<ActionResult> {
   return act(ctx, options, async (p) => {
-    const reward = await ctx.storage.rewards.get(rewardId);
+    const reward = await p.repos.rewards.get(rewardId);
     if (!reward) return failure('not_found');
     return fromCheckIn(run(await checkInContext(ctx, p), reward));
   });
@@ -376,8 +382,8 @@ export function setChecklistItemDone(
   done: boolean,
   options: ActionOptions = {},
 ): Promise<ActionResult> {
-  return act(ctx, options, async () => {
-    const task = await ctx.storage.tasks.get(taskId);
+  return act(ctx, options, async (p) => {
+    const task = await p.repos.tasks.get(taskId);
     if (!task) return failure('not_found');
     if (task.type === 'habit') return failure('wrong_task_type');
     const result = coreSetChecklistItemDone(task, itemId, done, ctx.clock.now());
@@ -395,8 +401,8 @@ export function setChecklistItemDone(
 // 任務 CRUD
 // ---------------------------------------------------------------------------
 
-async function sortOrderFor(ctx: ServiceContext, type: Task['type']): Promise<number> {
-  return nextSortOrder(await ctx.storage.tasks.listByType(type));
+async function sortOrderFor(repos: Repositories, type: Task['type']): Promise<number> {
+  return nextSortOrder(await repos.tasks.listByType(type));
 }
 
 /** 新增自訂任務（`createdDayKey` = 今天，所以 Daily 從下一個遊戲日才算該做）。 */
@@ -406,7 +412,7 @@ export function createTask(
   options: ActionOptions = {},
 ): Promise<ActionResult<Task>> {
   return act(ctx, options, async (p) => {
-    const sortOrder = await sortOrderFor(ctx, input.type);
+    const sortOrder = await sortOrderFor(p.repos, input.type);
     const task = taskFromInput(
       input,
       { id: ctx.clock.newId(), nowIso: ctx.nowIso(), dayKey: p.today, sortOrder },
@@ -426,7 +432,7 @@ export function addTaskFromTemplate(
   return act(ctx, options, async (p) => {
     const template = ctx.content.habitLibrary.items.find((t) => t.id === templateId);
     if (!template) return failure('not_found');
-    const sortOrder = await sortOrderFor(ctx, template.type);
+    const sortOrder = await sortOrderFor(p.repos, template.type);
     const task = taskFromTemplate(
       template,
       { id: ctx.clock.newId(), nowIso: ctx.nowIso(), dayKey: p.today, sortOrder },
@@ -524,8 +530,8 @@ export function updateTask(
   patch: TaskPatch,
   options: ActionOptions = {},
 ): Promise<ActionResult<Task>> {
-  return act(ctx, options, async () => {
-    const task = await ctx.storage.tasks.get(taskId);
+  return act(ctx, options, async (p) => {
+    const task = await p.repos.tasks.get(taskId);
     if (!task) return failure('not_found');
     if (task.deletedAt !== null) return failure('task_deleted');
     const updated = applyTaskPatch(task, patch, ctx);
@@ -539,8 +545,8 @@ export function deleteTask(
   taskId: string,
   options: ActionOptions = {},
 ): Promise<ActionResult> {
-  return act(ctx, options, async () => {
-    const task = await ctx.storage.tasks.get(taskId);
+  return act(ctx, options, async (p) => {
+    const task = await p.repos.tasks.get(taskId);
     if (!task) return failure('not_found');
     if (task.deletedAt !== null) return failure('task_deleted');
     const nowIso = ctx.nowIso();
@@ -559,7 +565,7 @@ export function createReward(
   options: ActionOptions = {},
 ): Promise<ActionResult<Reward>> {
   return act(ctx, options, async (p) => {
-    const sortOrder = nextSortOrder(await ctx.storage.rewards.list());
+    const sortOrder = nextSortOrder(await p.repos.rewards.list());
     const reward = rewardFromInput(input, {
       id: ctx.clock.newId(),
       nowIso: ctx.nowIso(),
@@ -579,7 +585,7 @@ export function addRewardFromTemplate(
   return act(ctx, options, async (p) => {
     const template = ctx.content.rewardLibrary.items.find((r) => r.id === templateId);
     if (!template) return failure('not_found');
-    const sortOrder = nextSortOrder(await ctx.storage.rewards.list());
+    const sortOrder = nextSortOrder(await p.repos.rewards.list());
     const reward = rewardFromTemplate(template, {
       id: ctx.clock.newId(),
       nowIso: ctx.nowIso(),
@@ -596,8 +602,8 @@ export function updateReward(
   patch: RewardPatch,
   options: ActionOptions = {},
 ): Promise<ActionResult<Reward>> {
-  return act(ctx, options, async () => {
-    const reward = await ctx.storage.rewards.get(rewardId);
+  return act(ctx, options, async (p) => {
+    const reward = await p.repos.rewards.get(rewardId);
     if (!reward) return failure('not_found');
     if (reward.deletedAt !== null) return failure('reward_deleted');
     if (patch.cost !== undefined) assertCost(patch.cost);
@@ -625,8 +631,8 @@ export function deleteReward(
   rewardId: string,
   options: ActionOptions = {},
 ): Promise<ActionResult> {
-  return act(ctx, options, async () => {
-    const reward = await ctx.storage.rewards.get(rewardId);
+  return act(ctx, options, async (p) => {
+    const reward = await p.repos.rewards.get(rewardId);
     if (!reward) return failure('not_found');
     if (reward.deletedAt !== null) return failure('reward_deleted');
     const nowIso = ctx.nowIso();

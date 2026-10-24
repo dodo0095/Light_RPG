@@ -240,7 +240,7 @@ describe('防重複與 transaction', () => {
     expect(await eventsOfType(tabA, 'rollover_penalty')).toHaveLength(1);
   });
 
-  it('角色在計算後被改過：放棄並回報 conflict，下次再結算', async () => {
+  it('快速檢查後、日結 transaction 前角色被別的分頁改過（同一毫秒）：日結以最新角色計算，不覆寫', async () => {
     const clock = new FakeClock(MON);
     const tabA = await start(clock);
     await onboard(tabA);
@@ -249,13 +249,18 @@ describe('防重複與 transaction', () => {
     const tabB = createAppService({
       ...ctx,
       storage: hookedStorage(ctx.storage, async () => {
+        // updatedAt 不變（模擬同一毫秒的寫入），只改金幣
         const [character] = await ctx.storage.character.list();
-        await ctx.storage.character.put({ ...character!, updatedAt: 'changed-elsewhere' });
+        await ctx.storage.character.put({ ...character!, gold: 777 });
       }),
     });
-    expect(await tabB.settle()).toEqual({ settled: false, reason: 'conflict' });
-    expect(await summaries(tabA)).toHaveLength(0);
-    expect(await tabA.settle()).toMatchObject({ settled: true });
+    expect(await tabB.settle()).toMatchObject({ settled: true });
+    expect(await summaries(tabA)).toHaveLength(3);
+    const [character] = await ctx.storage.character.list();
+    expect(character!.gold).toBe(777);
+    expect(character!.hp).toBe(
+      fixtureBalance.hp.max - fixtureBalance.difficulties.beta.missedDailyHpPenalty,
+    );
   });
 
   it('transaction 中途失敗（daySummaries.dayKey unique 衝突）時資料完全不變', async () => {

@@ -164,18 +164,42 @@ describe('打卡動作', () => {
     expect((await service.getTodayView())!.dailies).toHaveLength(0);
   });
 
-  it('另一個分頁在寫入前改了角色：回傳 conflict，不寫入', async () => {
+  it('另一個分頁在同一毫秒先寫入：兩次都入帳，角色＝事件加總（沒有 lost update）', async () => {
     const ctx = service.context;
     const otherTab = createAppService({
       ...ctx,
       storage: hookedStorage(ctx.storage, async () => {
-        clock.set(MON + 60_000);
-        await service.habitUp(ids.habit);
+        expect(await service.habitUp(ids.habit)).toMatchObject({ ok: true });
       }),
     });
-    const result = await otherTab.checkDaily(ids.daily);
-    expect(result).toMatchObject({ ok: false, error: 'conflict' });
-    expect(await ctx.storage.events.listByType('daily_checked')).toHaveLength(0);
+    expect(await otherTab.checkDaily(ids.daily)).toMatchObject({ ok: true });
+    const events = await ctx.storage.events.list();
+    const sum = events.reduce((acc, e) => acc + e.deltas.gold, 0);
+    expect(events.filter((e) => e.type === 'habit_up')).toHaveLength(1);
+    expect(events.filter((e) => e.type === 'daily_checked')).toHaveLength(1);
+    expect((await character()).gold).toBe(sum);
+  });
+
+  it('同一分頁同時發出兩個 habitUp（同一毫秒）：兩次獎勵都正確累加', async () => {
+    const [a, b] = await Promise.all([service.habitUp(ids.habit), service.habitUp(ids.habit)]);
+    expect(a).toMatchObject({ ok: true });
+    expect(b).toMatchObject({ ok: true });
+    const ups = await service.context.storage.events.listByType('habit_up');
+    expect(ups).toHaveLength(2);
+    expect(ups.map((e) => e.payload?.countToday).sort()).toEqual([1, 2]);
+    expect(ups.every((e) => e.occurredAt === new Date(MON).toISOString())).toBe(true);
+    const c = await character();
+    expect(c.gold).toBe(ups.reduce((acc, e) => acc + e.deltas.gold, 0));
+    expect(c.totalExp).toBe(ups.reduce((acc, e) => acc + e.deltas.exp, 0));
+    expect(c.gold).toBeGreaterThan(ups[0]!.deltas.gold);
+  });
+
+  it('兩個 App 實例（各自的互斥佇列）同時 habitUp：仍由 IndexedDB 依序執行，不遺失', async () => {
+    const otherTab = createAppService({ ...service.context });
+    await Promise.all([service.habitUp(ids.habit), otherTab.habitUp(ids.habit)]);
+    const ups = await service.context.storage.events.listByType('habit_up');
+    expect(ups).toHaveLength(2);
+    expect((await character()).gold).toBe(ups.reduce((acc, e) => acc + e.deltas.gold, 0));
   });
 
   it('尚未選職業時動作回 not_initialized', async () => {

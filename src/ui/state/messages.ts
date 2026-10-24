@@ -91,7 +91,6 @@ const ACTION_ERROR_TEXT: Partial<Record<ActionErrorCode, string>> = {
   checklist_item_not_found: '找不到這個檢查清單項目。',
   not_found: '找不到這個項目，畫面已重新整理。',
   wrong_task_type: '項目類型不符，畫面已重新整理。',
-  conflict: '資料剛被另一個視窗改過，畫面已重新整理，請再試一次。',
   already_onboarded: '已經選過職業了。',
 };
 
