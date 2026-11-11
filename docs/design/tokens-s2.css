@@ -1,0 +1,243 @@
+/* =====================================================================
+   晨光之誓 — Sprint 2 元件（tokens-s2.css）
+   版本：G1 送審稿 v0.1（2026-11-11，design-director）
+   延續 tokens.css：只用既有變數，不另開 UI 色碼（像素圖調色盤屬美術資料，在 mockup-s2.js）。
+   實作時合併進 src/ui/styles/（建議檔名 battle.css）；最後一節 .mk-* 仍只給圖稿用。
+
+   結構
+     1. 變數（戰鬥區高度、敵方 HP 色＝沿用語意色）
+     2. 戰鬥區 .stage（背景、Boss、冒險者、HUD、隊伍狀態視窗）
+     3. 戰鬥訊息列 .battle-strip（Boss HP 條＋訊息）
+     4. 戰鬥演出（傷害數字、斬擊、魔法陣、擊敗、反擊）
+     5. 舞台上的訊息視窗 .stage-win（反擊摘要、旅途奇遇、擊敗）
+     6. 劇情對話框 .dlg
+     7. 清單在戰鬥版面中的差異
+     99. 圖稿專用 .mk-dim
+   ===================================================================== */
+
+/* ---------- 1. 變數 ---------- */
+:root {
+  --stage-h: 208px;              /* 戰鬥區高度（不含瀏海安全區）；首屏清單 435px 的依據 */
+  --stage-h-compact: 56px;       /* 捲動後收合列 */
+  --strip-h: 64px;               /* Boss HP＋訊息列 */
+  --c-enemy: var(--c-danger);    /* 敵方 HP */
+  --c-enemy-lost: var(--c-ink);  /* 剛被打掉的那一段（白色閃一下再消失） */
+  --c-dmg: var(--c-gold);        /* 傷害數字 */
+  --c-heal: var(--c-ok);         /* 取消打勾時 Boss HP 退回的數字 */
+  --c-hurt: var(--c-hp-low);     /* 冒險者被反擊 */
+  --ts-num: 2px 0 0 var(--c-shadow), -2px 0 0 var(--c-shadow), 0 2px 0 var(--c-shadow), 0 -2px 0 var(--c-shadow), 2px 2px 0 var(--c-shadow);
+}
+.pix { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+
+/* ---------- 2. 戰鬥區 ---------- */
+.app--battle .app__main { padding-top: var(--sp-3); }
+.stage {
+  position: relative; flex: none;
+  height: calc(var(--safe-top) + var(--stage-h));
+  overflow: hidden;
+  border-bottom: var(--bw) solid var(--c-border);
+  background: var(--c-bg-2);
+}
+.stage__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.stage__hud {
+  position: absolute; left: 0; right: 0; top: var(--safe-top); z-index: 4;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: var(--sp-2);
+  padding: 6px var(--sp-3) 0;
+}
+.hud-left { display: grid; gap: 4px; justify-items: start; }
+.hud-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border: 1px solid var(--c-border); border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(58, 98, 208, 0.9), rgba(20, 39, 114, 0.9));
+  font-family: var(--font-pixel); font-size: var(--fs-sm); text-shadow: var(--ts); white-space: nowrap;
+}
+.hud-chip--world { border-color: var(--c-gold); color: var(--c-gold); font-size: var(--fs-xs); }
+.stage__day {
+  position: absolute; right: var(--sp-3); bottom: 6px; z-index: 3;
+  font-size: var(--fs-xs); color: var(--c-ink-dim); text-shadow: var(--ts-strong);
+}
+.stage__boss { position: absolute; left: 50%; top: calc(var(--safe-top) + 34px); z-index: 1; transform: translateX(-28%); }
+.stage__boss::after { /* 地面影子 */
+  content: ""; position: absolute; left: 14%; right: 14%; bottom: -4px; height: 10px;
+  border-radius: 50%; background: rgba(0, 0, 0, 0.35); z-index: -1;
+}
+.stage__boss.is-defeated::after { display: none; }
+.stage__hero { position: absolute; left: 14px; bottom: -40px; z-index: 2; }
+.stage__hero--attack { left: 40px; bottom: -28px; }
+.stage__hero--kneel { bottom: -14px; }
+.stage__hero--camp { bottom: -22px; }
+.zzz {
+  position: absolute; right: 18px; top: -6px;
+  font-family: var(--font-pixel); font-size: 20px; color: var(--c-ink); text-shadow: var(--ts-strong);
+  animation: zzz 2.4s steps(4) infinite;
+}
+.zzz small { font-size: 13px; margin-left: 2px; vertical-align: super; }
+@keyframes zzz { 0% { transform: translate(0, 0); opacity: 0.4; } 50% { opacity: 1; } 100% { transform: translate(6px, -10px); opacity: 0; } }
+
+/* 隊伍狀態：收起＝小按鈕（HP＋金幣），展開＝視窗（企劃書 7.2） */
+.party {
+  min-height: var(--touch); padding: 0 10px;
+  display: inline-flex; align-items: center; gap: 8px;
+  border: var(--bw) solid var(--c-border); border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--c-win-top), var(--c-win-bot));
+  color: var(--c-ink); text-shadow: var(--ts); box-shadow: 0 2px 0 var(--c-shadow);
+  font-size: var(--fs-sm);
+}
+.party__hp { color: var(--c-hp); display: inline-flex; gap: 3px; align-items: center; }
+.party__hp b { color: var(--c-ink); font-weight: 400; }
+.party__gold { color: var(--c-gold); }
+.party__arrow { font-size: 10px; color: var(--c-ink-dim); }
+.party.is-low { border-color: var(--c-hp-low); }
+.party.is-low .party__hp, .party.is-low .party__hp b { color: var(--c-hp-low); }
+.party-panel {
+  position: absolute; right: var(--sp-3); top: calc(var(--safe-top) + 6px); z-index: 5;
+  width: 232px; padding: 8px 10px;
+}
+.pp-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.pp-who { font-family: var(--font-pixel); font-size: var(--fs-md); }
+.pp-lv { font-size: var(--fs-lg); }
+.pp-gold { color: var(--c-gold); }
+.party-panel .bars { display: grid; gap: 4px; margin-top: 4px; }
+.party-panel .bar { grid-template-columns: 30px 1fr auto; font-size: var(--fs-xs); }
+.party-panel .bar__value { min-width: 46px; }
+.pp-attrs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; margin-top: 6px; font-size: var(--fs-xs); text-shadow: none; }
+.pp-attrs span { display: flex; justify-content: space-between; padding: 0 4px; border-radius: var(--radius-sm); background: rgba(0, 0, 0, 0.3); }
+.pp-attrs em { font-style: normal; }
+.pp-attrs b { font-family: var(--font-pixel); font-weight: 400; }
+.pp-close { display: block; width: 100%; min-height: var(--touch); margin-top: 4px; background: none; border: 0; border-top: 1px solid var(--c-border-dim); color: var(--c-ink-dim); font-size: var(--fs-sm); }
+
+/* 收合列：捲動清單後，戰鬥區縮成一條（Boss 仍在、傷害數字仍會跳） */
+.stage.is-compact { height: calc(var(--safe-top) + var(--stage-h-compact)); display: flex; align-items: flex-end; gap: 8px; padding: 0 var(--sp-3) 6px; }
+.stage.is-compact .stage__bg { object-position: center 40%; filter: brightness(0.7); }
+.stage__mini { position: relative; z-index: 1; flex: none; }
+.stage__minibar { position: relative; z-index: 1; flex: 1; min-width: 0; padding-bottom: 12px; }
+.stage.is-compact .party { position: relative; z-index: 1; }
+.stage.is-compact .enemy__name { font-size: var(--fs-sm); }
+
+/* ---------- 3. 戰鬥訊息列 ---------- */
+.battle-strip {
+  flex: none; height: var(--strip-h); overflow: hidden;
+  padding: 6px var(--gutter) 4px;
+  background: linear-gradient(180deg, var(--c-win-top) 0%, var(--c-win-bot) 100%);
+  border-bottom: var(--bw) solid var(--c-border);
+  text-shadow: var(--ts);
+}
+.enemy { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; }
+.enemy__name { font-family: var(--font-pixel); font-size: var(--fs-sm); }
+.enemy__bar { position: relative; height: 10px; border: 1px solid var(--c-border); border-radius: var(--radius-sm); background: rgba(0, 0, 0, 0.45); overflow: hidden; }
+.enemy__bar i { display: block; height: 100%; background: var(--c-enemy); }
+.enemy__bar b { position: absolute; top: 0; bottom: 0; background: var(--c-enemy-lost); }
+.is-playing .enemy__bar b { animation: lost 0.9s steps(3) 1 forwards; }
+@keyframes lost { to { opacity: 0; } }
+.enemy__hp { font-size: var(--fs-sm); min-width: 58px; text-align: right; }
+.enemy.is-low .enemy__bar i { animation: blinkbar 0.8s steps(2) infinite; }
+.enemy.is-low .enemy__hp { color: var(--c-hp-low); }
+@keyframes blinkbar { 50% { opacity: 0.45; } }
+.enemy--clear .enemy__name { color: var(--c-gold); }
+.battle-msg {
+  margin: 4px 0 0; font-size: var(--fs-sm); line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.battle-msg .cursor { margin-right: 2px; }
+.battle-msg b { color: var(--c-gold); font-weight: 400; font-family: var(--font-pixel); }
+.battle-msg .hurt { color: var(--c-hurt); }
+
+/* ---------- 4. 戰鬥演出 ---------- */
+.dmg {
+  position: absolute; z-index: 6; pointer-events: none;
+  font-family: var(--font-pixel); font-size: 30px; line-height: 1; color: var(--c-dmg); text-shadow: var(--ts-num);
+}
+/* 圖稿為靜態定格；實作時加上 .is-playing 才播放（播完自動移除元素） */
+.is-playing .dmg { animation: dmg 0.9s steps(6) 1 both; }
+.dmg--heal { color: var(--c-heal); font-size: 22px; }
+.dmg--hurt { color: var(--c-hurt); font-size: 24px; }
+.dmg--sm { font-size: 18px; }
+@keyframes dmg { 0% { transform: translateY(8px); opacity: 0; } 20% { transform: translateY(-6px); opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-18px); opacity: 0; } }
+.stage__boss.is-hit canvas { animation: flash 0.3s steps(2) 3; }
+@keyframes flash { 50% { filter: brightness(2.4) saturate(0); } }
+.stage.is-shake { animation: shake 0.3s steps(4) 1; }
+@keyframes shake { 25% { transform: translate(-3px, 1px); } 50% { transform: translate(3px, -1px); } 75% { transform: translate(-2px, 0); } }
+.fx-slash { position: absolute; z-index: 5; pointer-events: none; }
+.fx-circle { position: absolute; z-index: 1; pointer-events: none; }
+.fx-bolt { position: absolute; z-index: 5; pointer-events: none; }
+.fx-hurt { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: radial-gradient(ellipse at 30% 100%, rgba(255, 77, 94, 0.45), transparent 60%); }
+.fx-sweat { position: absolute; z-index: 3; font-family: var(--font-pixel); color: var(--c-exp); font-size: 14px; text-shadow: var(--ts); }
+.fx-burst { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(circle at 58% 48%, rgba(255, 255, 255, 0.75), rgba(255, 215, 94, 0.25) 28%, transparent 55%); }
+.fx-sparkle { position: absolute; z-index: 3; color: var(--c-gold); font-family: var(--font-pixel); text-shadow: var(--ts); }
+@media (prefers-reduced-motion: reduce) {
+  .zzz, .dmg, .enemy__bar b, .enemy.is-low .enemy__bar i, .stage__boss.is-hit canvas, .stage.is-shake, .dlg__next, .dlg__caret { animation: none; }
+}
+
+/* ---------- 5. 舞台上的訊息視窗（不遮清單、不擋打勾） ---------- */
+.stage-win {
+  position: absolute; left: var(--sp-3); right: var(--sp-3); bottom: 8px; z-index: 7;
+  padding: 6px 8px 6px 12px; font-size: var(--fs-xs);
+  display: grid; grid-template-columns: 1fr auto; column-gap: 8px; align-items: center;
+}
+.stage-win > .stage-win__title { grid-column: 1 / -1; }
+.stage-win__title { display: flex; align-items: center; gap: 6px; font-family: var(--font-pixel); font-size: var(--fs-md); margin: 0 0 2px; text-shadow: var(--ts-strong); }
+.stage-win__body { margin: 0; line-height: 1.45; }
+.stage-win__body .hurt { color: var(--c-hurt); font-family: var(--font-pixel); }
+.stage-win__body .gain { color: var(--c-gold); font-family: var(--font-pixel); }
+.stage-win__actions { display: flex; gap: 8px; }
+.stage-win__actions .btn { min-height: var(--touch); }
+.stage-win--hurt { border-color: var(--c-hp-low); }
+.stage-win--event { border-color: var(--c-gold); }
+.stage-win--victory { display: block; top: calc(var(--safe-top) + 10px); bottom: auto; text-align: center; border-color: var(--c-gold); }
+.victory-title { font-family: var(--font-pixel); font-size: var(--fs-2xl); color: var(--c-gold); text-shadow: var(--ts-num); margin: 0; letter-spacing: 0.1em; }
+.sign-win { position: absolute; left: 50%; top: calc(var(--safe-top) + 48px); transform: translateX(-50%); z-index: 4; text-align: center; padding: 8px 14px; white-space: nowrap; }
+.sign-win__k { font-size: var(--fs-xs); color: var(--c-ink-dim); display: block; }
+.sign-win__t { font-family: var(--font-pixel); font-size: var(--fs-lg); text-shadow: var(--ts-strong); display: block; }
+.sign-win__s { font-family: var(--font-pixel); font-size: var(--fs-sm); color: var(--c-gold); display: block; }
+
+/* ---------- 6. 劇情對話框（企劃書 7.1：逐字跳出、右下 ▼） ---------- */
+.story { position: relative; height: 100%; overflow: hidden; background: var(--c-bg); }
+.story__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.story__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(3, 6, 25, 0.55) 75%); }
+.story__skip { position: absolute; top: calc(var(--safe-top) + 8px); right: var(--sp-3); z-index: 5; }
+.story__chapter { position: absolute; top: calc(var(--safe-top) + 14px); left: var(--sp-3); z-index: 5; }
+.dlg { position: absolute; left: var(--sp-3); right: var(--sp-3); bottom: calc(var(--safe-bottom) + var(--sp-3)); z-index: 6; }
+.dlg__name {
+  position: absolute; left: 12px; top: -20px; z-index: 1;
+  padding: 2px 12px; font-family: var(--font-pixel); font-size: var(--fs-md);
+}
+.dlg__box { display: grid; grid-template-columns: 76px 1fr; gap: 12px; min-height: 168px; padding: 20px 14px 30px; position: relative; }
+.dlg__box--noface { grid-template-columns: 1fr; }
+.dlg__face { width: 76px; height: 76px; border: var(--bw) solid var(--c-border); border-radius: var(--radius); background: var(--c-win-inset); display: grid; place-items: center; overflow: hidden; }
+.dlg__face canvas { width: 72px; height: 72px; object-fit: contain; }
+.dlg__text { margin: 0; font-family: var(--font-pixel); font-size: var(--fs-lg); line-height: 1.65; letter-spacing: 0.03em; text-shadow: var(--ts); }
+.dlg__text .ghost { color: transparent; text-shadow: none; } /* 尚未跳出的字：保留排版，不讓框跳動 */
+.dlg__caret { display: inline-block; width: 0.55em; height: 1.1em; vertical-align: -0.15em; background: var(--c-ink); animation: blink 0.6s steps(2, start) infinite; }
+.dlg__next { position: absolute; right: 14px; bottom: 8px; font-size: 16px; color: var(--c-gold); animation: bob 0.8s steps(2) infinite; }
+@keyframes bob { 50% { transform: translateY(3px); } }
+.dlg__hint { position: absolute; left: 14px; bottom: 8px; font-size: var(--fs-xs); color: var(--c-ink-mute); text-shadow: none; }
+.dlg__choices { display: grid; gap: 8px; margin-top: 10px; }
+.title-card { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; text-align: center; background: rgba(3, 6, 25, 0.62); }
+.title-card__k { font-family: var(--font-pixel); color: var(--c-gold); font-size: var(--fs-md); letter-spacing: 0.3em; text-shadow: var(--ts-strong); }
+.title-card__t { font-family: var(--font-pixel); font-size: 34px; letter-spacing: 0.12em; text-shadow: var(--ts-num); margin: 6px 0; }
+.title-card__s { font-size: var(--fs-sm); color: var(--c-ink-dim); text-shadow: var(--ts); }
+.title-card__rule { width: 180px; height: 2px; margin: 10px auto; background: linear-gradient(90deg, transparent, var(--c-border), transparent); }
+
+/* ---------- 7. 清單在戰鬥版面中的差異 ---------- */
+.dmg-tag { font-family: var(--font-pixel); color: var(--c-dmg); }
+.task { position: relative; }
+.row-cursor { position: absolute; left: -16px; top: 20px; font-size: 13px; }
+.task.is-hit { background: rgba(255, 215, 94, 0.14); }
+
+/* ---------- 99. 圖稿專用 ---------- */
+.mk-dim { position: absolute; right: 0; width: 8px; z-index: 60; pointer-events: none; border: 1px dashed #ff6bd6; border-right: 0; background: rgba(255, 107, 214, 0.12); }
+.mk-dim span { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-size: 10px; color: #ff9be6; background: rgba(10, 16, 48, 0.85); padding: 1px 4px; border-radius: 3px; font-family: var(--font-body); text-shadow: none; }
+.mk-dim--list { border-color: #7be3a0; background: rgba(123, 227, 160, 0.12); }
+.mk-dim--list span { color: var(--c-ok); }
+.mk-callout { position: absolute; z-index: 61; pointer-events: none; font-size: 11px; line-height: 1.35; color: #ff9be6; background: rgba(10, 16, 48, 0.9); border: 1px dashed #ff6bd6; border-radius: 4px; padding: 3px 6px; font-family: var(--font-body); text-shadow: none; max-width: 210px; }
+.mk-keyboard { position: absolute; left: 0; right: 0; bottom: 0; height: 336px; z-index: 30; background: #3b3f52; border-top: 1px solid #5c6178; display: grid; place-items: center; color: #b7bccf; font-size: 13px; font-family: var(--font-body); text-shadow: none; }
+.mk-keyboard__keys { display: grid; grid-template-columns: repeat(10, 30px); gap: 6px 5px; }
+.mk-keyboard__keys i { height: 40px; border-radius: 5px; background: #6a7088; display: block; }
+.mk-sysdialog { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 40; width: 270px; border-radius: 14px; background: rgba(238, 238, 242, 0.96); color: #111; text-align: center; font-family: var(--font-body); text-shadow: none; overflow: hidden; }
+.mk-sysdialog p { margin: 0; padding: 16px 16px 12px; font-size: 13px; }
+.mk-sysdialog p b { display: block; font-size: 15px; margin-bottom: 4px; }
+.mk-sysdialog div { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #c8c8cc; }
+.mk-sysdialog div span { padding: 11px; color: #0a63d6; font-size: 15px; }
+.mk-sysdialog div span + span { border-left: 1px solid #c8c8cc; font-weight: 600; }
+.mk-cards { display: grid; gap: 16px; }
+.mk-card { width: 390px; max-width: 100%; padding: 12px var(--gutter); background: radial-gradient(120% 60% at 50% 0%, var(--c-bg-2) 0%, var(--c-bg) 70%); border-radius: 12px; outline: 1px solid rgba(255, 255, 255, 0.15); }

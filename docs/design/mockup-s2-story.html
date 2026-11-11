@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>劇情對話・圖稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tokens-s2.css">
+<script src="mockup-s2.js"></script>
+</head>
+<body>
+<div class="mk-page">
+
+<header class="mk-head">
+  <h1>序章／劇情對話框</h1>
+  <p>Sprint 2 G1 送審稿 v0.1（2026-11-11，design-director）。對應提案範圍 <b>#4</b> 序章＋第一章內容資料包（對話框逐字跳出、▼ 繼續，企劃書 7.1）、<b>#3</b> 擊敗／通關演出的接續。對話文字全部來自內容資料包（CLAUDE.md 規則 3），本頁文字為<b>示意</b>，正式劇情由 product-manager 撰寫。</p>
+</header>
+<nav class="mk-nav">
+  <a href="index.html">← 索引</a>
+  <a href="mockup-s2-battle.html">S2 戰鬥主畫面</a>
+  <a href="mockup-s2-story.html" class="is-on">S2 劇情對話</a>
+  <a href="mockup-s2-sprites.html">S2 像素圖</a>
+  <a href="mockup-s2-quickadd.html">S2 快速新增</a>
+  <a href="mockup-s2-reminder.html">S2 每日提醒</a>
+</nav>
+
+<section class="mk-notes" style="margin-top:0">
+  <h2>涵蓋的狀態</h2>
+  <div class="mk-table-wrap"><table>
+    <tr><th>#</th><th>狀態</th><th>何時出現</th></tr>
+    <tr><td>①</td><td>逐字跳出中（游標 ▌，尚未跳出的字保留位置）</td><td>新使用者：選職業「建立」後</td></tr>
+    <tr><td>②</td><td>一段結束（右下 ▼ 跳動，點任意處繼續）</td><td>每一段</td></tr>
+    <tr><td>③</td><td>既有使用者升級後的序章（不重選職業，第一句不同）</td><td>Sprint 1 角色升級到 v2 後第一次打開，只播一次</td></tr>
+    <tr><td>④</td><td>跳過確認</td><td>按右上「跳過 ▶▶」</td></tr>
+    <tr><td>⑤</td><td>章節標題卡「第一章・晨霧森林」</td><td>序章結束 → 進入第一章</td></tr>
+    <tr><td>⑥</td><td>Boss 登場對話（說話者換成被窩史萊姆）</td><td>標題卡後</td></tr>
+    <tr><td>⑦</td><td>擊敗後對話（歐文）</td><td>戰鬥頁 ⑩ 點 ▼</td></tr>
+    <tr><td>⑧</td><td>通關卡：「第一章 完」＋「第二章 敬請期待」</td><td>⑦ 結束 → 回到戰鬥頁 ⑪</td></tr>
+  </table></div>
+  <h2>互動規則</h2>
+  <ul>
+    <li><b>點一下</b>：逐字中 → 立刻顯示整段；整段已顯示 → 下一段。整個畫面都可點（不只 ▼）。</li>
+    <li>逐字速度約 30 字／秒（示意，放設定檔）；<code>prefers-reduced-motion</code> 時整段直接出現。</li>
+    <li>「跳過 ▶▶」44px，跳過整段劇情；看過的劇情 id 記在 <code>adventure</code>（提案 #1「看過的劇情」），不會重播。</li>
+    <li>劇情只在戰鬥畫面之外全螢幕播放；播放中不能打勾（這是唯一會擋住清單的畫面，一次性）。</li>
+    <li>離線可播放（文字在資料包、圖由程式繪製）。</li>
+  </ul>
+  <h2>尚未決定</h2>
+  <ul>
+    <li><b>S-1 跳過要不要二次確認</b>：圖稿 ④ 有確認（序章只播一次）；也可以直接跳過。— 老闆</li>
+    <li><b>S-2 看過的劇情能不能重看</b>（例如設定頁「冒險日誌」）：本 Sprint 建議不做。— product-manager</li>
+    <li><b>S-3 歐文的頭像表情</b>：目前只有一種；是否要開心／驚訝 2～3 種。— design-director（可延後）</li>
+    <li><b>S-4 劇情字型</b>：用像素字型（#8 俐方體 11 號；此稿暫用 DotGothic16，缺字退回系統字型）。字型檔大小待 #8 評估。</li>
+  </ul>
+</section>
+
+<div class="mk-legend" style="margin-top:20px">
+  <span><i></i>安全區域示意</span>
+  <span style="color:var(--c-warn)">對話文字皆為示意，正式劇情待 product-manager</span>
+</div>
+
+<div class="mk-row" id="frames"></div>
+
+<p class="mk-foot">⚠ 對話文字、日期為示意。歐文、被窩史萊姆、地名皆為原創（企劃書 4.1、4.3）。</p>
+</div>
+<script>
+(function () {
+  function phone(inner) {
+    return '<div class="mk-phone"><div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>' +
+      '<div class="story">' + inner + '</div><div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div></div>';
+  }
+  function frame(label, desc, html) { return '<section class="mk-frame"><h2 class="mk-frame__label">' + label + '</h2><p class="mk-frame__desc">' + desc + '</p>' + html + '</section>'; }
+  function bg(kind) { return '<canvas class="pix story__bg" data-bg="' + kind + '" data-w="130" data-h="282"></canvas><div class="story__scrim"></div>'; }
+  var skip = '<button class="btn btn--sm btn--ghost story__skip" style="background:rgba(10,16,48,.6)">跳過 ▶▶</button>';
+  function chap(t) { return '<span class="hud-chip story__chapter">' + t + '</span>'; }
+  var owenFace = '<div class="dlg__face"><canvas class="pix" data-sprite="owen" data-scale="3"></canvas></div>';
+  var slimeFace = '<div class="dlg__face"><canvas class="pix" data-sprite="slime" data-pose="awake" data-scale="2"></canvas></div>';
+  function dlg(name, face, text, opt) {
+    opt = opt || {};
+    return '<div class="dlg"><span class="win dlg__name">' + name + '</span><div class="win win--strong dlg__box">' + face +
+      '<p class="dlg__text">' + text + '</p>' + (opt.next ? '<span class="dlg__next" aria-hidden="true">▼</span>' : '') +
+      '<span class="dlg__hint">' + (opt.hint || '點一下繼續') + '</span></div></div>';
+  }
+  var hero = function (bottom) { return '<div style="position:absolute;left:24px;bottom:' + bottom + 'px;z-index:2"><canvas class="pix" data-sprite="hero" data-cls="warrior" data-pose="idle" data-scale="3"></canvas></div>'; };
+  var owenBig = '<div style="position:absolute;right:46px;bottom:300px;z-index:2"><canvas class="pix" data-sprite="owen" data-scale="4"></canvas></div>';
+  var F = [];
+
+  F.push(frame('① 序章・逐字跳出中', '起始之村。歐文的開場白一個字一個字跳出，游標 ▌ 在最後；後面的字先保留位置，框不會跳動。點一下＝整段立刻顯示。',
+    phone(bg('village') + chap('序章・起始之村') + skip + hero(170) +
+      dlg('歐文', owenFace, '喔喔，你就是新來的見習冒險者吧！我是歐文，這村子最<span class="dlg__caret"></span><span class="ghost">博學、也最多話的老賢者。</span>', { hint: '點一下顯示整段' }))));
+
+  F.push(frame('② 一段結束・▼ 繼續', '整段顯示完，右下 ▼ 上下跳動。點畫面任意處進入下一段。',
+    phone(bg('village') + chap('序章・起始之村') + skip + hero(170) +
+      dlg('歐文', owenFace, '王國被「怠惰之霧」籠罩了。每完成一件該做的事，你就能點亮一盞誓約之燈，把霧氣驅散一點點。', { next: true }))));
+
+  F.push(frame('③ 既有使用者：升級後的序章', 'Sprint 1 已在用的角色：升級後第一次打開播一次，不重選職業；第一段改成「你已經在冒險了」，其餘段落相同。',
+    phone(bg('village') + chap('序章・起始之村') + skip + hero(170) +
+      dlg('歐文', owenFace, '哎呀，原來你早就在默默修行了！這幾天的努力我都看到了。來，讓我把這趟冒險的來龍去脈說清楚…', { next: true }))));
+
+  F.push(frame('④ 跳過確認（S-1 待決）', '按「跳過 ▶▶」：確認後直接進入第一章戰鬥畫面。序章只播一次，所以提醒「之後不會再播」。',
+    phone(bg('village') + chap('序章・起始之村') + hero(170) +
+      dlg('歐文', owenFace, '王國被「怠惰之霧」籠罩了。每完成一件該做的事…', {}) +
+      '<div class="scrim"></div><div class="sheet" role="dialog" aria-modal="true"><div class="win win--strong"><h3 class="win__title">跳過序章？</h3><p class="sheet__lead">會直接前往第一章「晨霧森林」。序章之後不會再播放。</p><div class="sheet__actions"><button class="btn btn--ghost">繼續看</button><button class="btn btn--primary">跳過</button></div></div></div>')));
+
+  F.push(frame('⑤ 章節標題卡', '序章結束 → 「第一章・晨霧森林」標題卡（約 2 秒或點一下）。背景換成晨霧森林。',
+    phone(bg('mist') + '<div class="title-card"><div><div class="title-card__k">CHAPTER 1</div><div class="title-card__t">晨霧森林</div><div class="title-card__rule"></div><div class="title-card__s">屬性：體能　Boss：被窩史萊姆</div></div></div>')));
+
+  F.push(frame('⑥ Boss 登場', '說話者換成被窩史萊姆（頭像＝醒來姿勢）。Boss 本體出現在畫面中央。',
+    phone(bg('mist') + chap('第一章・晨霧森林') + skip +
+      '<div style="position:absolute;left:50%;top:200px;transform:translateX(-50%);z-index:2"><canvas class="pix" data-sprite="slime" data-pose="awake" data-scale="5"></canvas></div>' +
+      dlg('被窩史萊姆', slimeFace, '…吵死了。外面這麼冷，幹嘛要起床？再睡五分鐘…不，五個小時吧。', { next: true }))));
+
+  F.push(frame('⑦ 擊敗後對話', '戰鬥頁 ⑩ 點 ▼ 後播放。森林還是霧，但史萊姆已經攤平。',
+    phone(bg('mist') + chap('第一章・晨霧森林') + skip +
+      '<div style="position:absolute;left:50%;top:300px;transform:translateX(-50%);z-index:2"><canvas class="pix" data-sprite="slime" data-pose="defeated" data-scale="5"></canvas></div>' +
+      dlg('歐文', owenFace, '了不起！被窩史萊姆可不好對付。你看，晨霧森林的霧氣散了，連陽光都照進來了。', { next: true }))));
+
+  F.push(frame('⑧ 通關卡', 'D3 = a：「第一章 完」＋「第二章・沉默書塔 敬請期待」。按「回到冒險」→ 戰鬥頁 ⑪ 和平的森林。',
+    phone(bg('peace') + '<div class="title-card"><div><div class="title-card__k">CHAPTER 1 CLEAR</div><div class="title-card__t">晨霧森林・完</div><div class="title-card__s">打倒被窩史萊姆　11/24（示意）</div><div class="title-card__rule"></div>' +
+      '<div class="title-card__k" style="margin-top:14px">NEXT</div><div class="title-card__t" style="font-size:26px">第二章・沉默書塔</div><div class="title-card__s">敬請期待。打卡照常記錄，冒險不會中斷。</div>' +
+      '<button class="btn btn--primary" style="margin-top:24px;min-width:200px">回到冒險</button></div></div>')));
+
+  document.getElementById('frames').innerHTML = F.join('');
+})();
+</script>
+</body>
+</html>

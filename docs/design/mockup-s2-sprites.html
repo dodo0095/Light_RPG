@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>像素圖一覽・圖稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tokens-s2.css">
+<script src="mockup-s2.js"></script>
+<style>
+  .sp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin: 8px 0 28px; }
+  .sp-card { padding: 10px; text-align: center; }
+  .sp-card h3 { font-family: var(--font-pixel); font-size: 16px; margin: 0 0 2px; text-shadow: var(--ts-strong); }
+  .sp-card p { margin: 2px 0 0; font-size: 12px; color: var(--c-ink-dim); text-shadow: none; }
+  .sp-stage { height: 230px; display: grid; place-items: end center; border: 1px solid var(--c-border-dim); border-radius: 4px; margin: 6px 0;
+    background: repeating-conic-gradient(rgba(255,255,255,.05) 0 25%, transparent 0 50%) 0 0 / 16px 16px, var(--c-win-inset); position: relative; overflow: hidden; }
+  .sp-stage--sm { height: 120px; place-items: center; }
+  .sp-sec { font-family: var(--font-pixel); font-size: 22px; margin: 28px 0 4px; text-shadow: var(--ts-strong); }
+  .sp-lead { color: var(--c-ink-dim); margin: 0 0 8px; max-width: 900px; font-size: 14px; }
+  .sp-pal { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-top: 6px; }
+  .sp-pal i { width: 16px; height: 16px; border: 1px solid rgba(255,255,255,.3); display: block; }
+  .icon-draft { width: 120px; height: 120px; border-radius: 26px; display: grid; place-items: center; background: radial-gradient(circle at 50% 40%, #1d3590 0%, #0a1030 70%); border: 1px solid rgba(255,255,255,.2); }
+  .icon-draft--sm { width: 60px; height: 60px; border-radius: 13px; }
+  .bg-strip { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .bg-strip figure { margin: 0; }
+  .bg-strip canvas { width: 100%; aspect-ratio: 130 / 86; border: 2px solid #fff; border-radius: 4px; }
+  .bg-strip figcaption { font-size: 13px; color: var(--c-ink-dim); margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="mk-page">
+
+<header class="mk-head">
+  <h1>像素圖一覽（Boss、冒險者背影、NPC、背景）</h1>
+  <p>Sprint 2 G1 送審稿 v0.1（2026-11-11，design-director）。對應提案範圍 <b>#5</b> Boss 與通用背影（P0）、<b>#6</b> 戰士／法師外觀（P1）、<b>#12</b> 依狀態改變的姿勢（P2）、<b>#13</b> B5 App 圖示配色（P2，草案）。</p>
+  <p>全部由 <code>mockup-s2.js</code> 在低解析度格子上用矩形／橢圓／線段組合、自動加明暗與描邊後放大繪製，<b>原創，不使用任何外部素材</b>（企劃書 7.4 MVP 程式繪製；D7 = a）。企劃書 7.3 的「職業層＋裝備層」：目前只做職業層，裝備層等換裝（#11，D5）。</p>
+</header>
+<nav class="mk-nav">
+  <a href="index.html">← 索引</a>
+  <a href="mockup-s2-battle.html">S2 戰鬥主畫面</a>
+  <a href="mockup-s2-story.html">S2 劇情對話</a>
+  <a href="mockup-s2-sprites.html" class="is-on">S2 像素圖</a>
+  <a href="mockup-s2-quickadd.html">S2 快速新增</a>
+  <a href="mockup-s2-reminder.html">S2 每日提醒</a>
+</nav>
+
+<section class="mk-notes" style="margin-top:0">
+  <h2>涵蓋的狀態</h2>
+  <ul>
+    <li><b>被窩史萊姆</b>：待機（睡覺）、醒來（反擊／取消打勾時）、受擊、HP 低、擊敗（共 5 種；提案要求的待機／受擊／擊敗 3 種之外，多 2 種讓反擊與 HP 低看得出差別）。</li>
+    <li><b>通用背影</b>（僧侶、遊俠共用，D4 = a）：待機、攻擊（短劍突刺）、單膝跪地、營火休息。</li>
+    <li><b>戰士</b>：待機（劍扛肩）、攻擊（舉劍斬擊＋畫面震動）、單膝跪地（以劍撐地）、營火休息。</li>
+    <li><b>法師</b>：待機（法杖高舉、長袍拖地）、攻擊（詠唱，魔法陣亮起再發射）、單膝跪地、營火休息。</li>
+    <li><b>嚮導歐文</b>頭像、<b>營火</b>（兩格動畫）、<b>誓約之燈</b>（App 圖示草案）、四種背景。</li>
+  </ul>
+  <h2>尚未決定</h2>
+  <ul>
+    <li><b>品質是否足夠</b>（提案第 5 節最大風險）：G1 請老闆看實圖決定；不夠就提前討論 D7 (b) 素材包或 (c) 委託。</li>
+    <li><b>動畫格數</b>：圖稿每個動作 1 格定格＋CSS 位移／閃白／震動；要不要畫 2～4 格逐格動畫，等 tech-lead 的繪製方式與 iPhone spike 結果。</li>
+    <li><b>連續 7 天微光</b>（#12 P2）：建議用 CSS 外光暈（金色 drop-shadow）而不是另畫一套，未繪製。</li>
+    <li><b>App 圖示</b>（B5）：草案用誓約之燈；是否換成史萊姆或其他，老闆決定。</li>
+  </ul>
+</section>
+
+<h2 class="sp-sec">被窩史萊姆（Boss・第一章）</h2>
+<p class="sp-lead">裹著粉／米色拼布被的水色史萊姆，「賴床」擬人化。被子是牠的盔甲：HP 低時被子破洞，擊敗時被子攤平在一灘史萊姆上。放大倍率 4×（184×160px）。</p>
+<div class="sp-grid">
+  <div class="win sp-card"><h3>待機（睡覺）</h3><div class="sp-stage"><canvas class="pix" data-sprite="slime" data-pose="idle" data-scale="4"></canvas><span class="zzz" style="right:20px;top:40px">z<small>z</small></span></div><p>閉眼‿、口水、Zzz 緩慢飄</p></div>
+  <div class="win sp-card"><h3>醒來（得意）</h3><div class="sp-stage"><canvas class="pix" data-sprite="slime" data-pose="awake" data-scale="4"></canvas></div><p>換日反擊、取消打勾時</p></div>
+  <div class="win sp-card"><h3>受擊</h3><div class="sp-stage"><canvas class="pix" data-sprite="slime" data-pose="hit" data-scale="4"></canvas><span class="dmg" style="left:110px;top:30px">16</span></div><p>壓扁、&gt;&lt; 眼、張嘴；閃白 3 次</p></div>
+  <div class="win sp-card"><h3>HP 低</h3><div class="sp-stage"><canvas class="pix" data-sprite="slime" data-pose="low" data-scale="4"></canvas></div><p>顏色變灰、怒眉、汗、被子破洞＋OK 繃</p></div>
+  <div class="win sp-card"><h3>擊敗</h3><div class="sp-stage"><canvas class="pix" data-sprite="slime" data-pose="defeated" data-scale="4"></canvas></div><p>攤平成一灘、× 眼、被子蓋在上面</p></div>
+</div>
+<div class="win sp-card" style="max-width:460px;text-align:left"><h3>調色盤</h3>
+  <div class="sp-pal" style="justify-content:flex-start"><i style="background:#7cc7e8"></i><i style="background:#d6f3ff"></i><i style="background:#4a8fc0"></i><i style="background:#f4a5bd"></i><i style="background:#c9768f"></i><i style="background:#ffe9c7"></i><i style="background:#d9bf98"></i><i style="background:#a8566f"></i><i style="background:#f58fae"></i><i style="background:#1b1f3d"></i><i style="background:#1a1530"></i></div>
+  <p>本體水色 3 階、拼布粉 2 階＋米 2 階、縫線、腮紅、五官、描邊。</p></div>
+
+<h2 class="sp-sec">冒險者背影（第一人稱背後視角）</h2>
+<p class="sp-lead">企劃書 7.3「職業決定骨架和動作」：通用＝米色短披風；戰士＝寬肩、肩甲、紅短披風、紅頭巾、劍扛肩；法師＝紫長袍拖地、兜帽、法杖高舉。放大倍率 3×（120×168px）；戰鬥畫面只露出腰部以上。</p>
+<div id="heroes"></div>
+
+<h2 class="sp-sec">NPC、道具、App 圖示草案</h2>
+<div class="sp-grid">
+  <div class="win sp-card"><h3>嚮導歐文（頭像）</h3><div class="sp-stage sp-stage--sm" style="height:160px"><canvas class="pix" data-sprite="owen" data-scale="5"></canvas></div><p>話很多的老賢者：圓眼鏡、白長鬍、粗白眉、青綠披肩（原創）。對話框頭像用 3×。</p></div>
+  <div class="win sp-card"><h3>營火（2 格）</h3><div class="sp-stage sp-stage--sm" style="height:160px;display:flex;justify-content:center;gap:24px;align-items:center"><canvas class="pix" data-sprite="fire" data-frame="0" data-scale="5"></canvas><canvas class="pix" data-sprite="fire" data-frame="1" data-scale="5"></canvas></div><p>兩格交替（每 0.4 秒），旅館畫面用。</p></div>
+  <div class="win sp-card"><h3>App 圖示草案（B5）</h3><div class="sp-stage sp-stage--sm" style="height:160px;display:flex;justify-content:center;gap:20px;align-items:center"><div class="icon-draft"><canvas class="pix" data-sprite="lantern" data-scale="4"></canvas></div><div class="icon-draft icon-draft--sm"><canvas class="pix" data-sprite="lantern" data-scale="2"></canvas></div></div><p>誓約之燈（企劃書 4.1）＋底色 <code>--c-bg #0a1030</code>，與 theme-color 一致。待老闆決定。</p></div>
+</div>
+
+<h2 class="sp-sec">背景（130×86 低解析度，放大鋪滿戰鬥區）</h2>
+<div class="bg-strip">
+  <figure><canvas class="pix" data-bg="mist" data-w="130" data-h="86"></canvas><figcaption>晨霧森林（第一章，一般）：冷色、霧帶、朦朧太陽</figcaption></figure>
+  <figure><canvas class="pix" data-bg="peace" data-w="130" data-h="86"></canvas><figcaption>和平的森林（通關後，D3 = a）：晴天、陽光、花</figcaption></figure>
+  <figure><canvas class="pix" data-bg="night" data-w="130" data-h="86"></canvas><figcaption>營火夜（旅館）：星空、月、營火暖光</figcaption></figure>
+  <figure><canvas class="pix" data-bg="village" data-w="130" data-h="86"></canvas><figcaption>起始之村（序章）：日出、屋頂、街燈</figcaption></figure>
+</div>
+
+<section class="mk-notes">
+  <h2>實作備註</h2>
+  <ul>
+    <li>像素圖一律 <code>image-rendering: pixelated</code>、整數倍放大；Retina 下以 CSS px 計的 3×／4× 已足夠清楚，不需另出 2x 圖。</li>
+    <li>造型資料（格子、調色盤）建議跟職業一起放進內容資料包或 <code>src/render/</code> 的資料檔，不寫死在元件（CLAUDE.md 規則 3，#9 職業圖示同理）。</li>
+    <li>描邊色 <code>#1a1530</code> 統一，避免不同角色看起來像不同遊戲。</li>
+    <li>背景用 Bayer 4×4 抖色，放大後仍是像素感；若改成預先輸出的 PNG，單張約 2～5 KB。</li>
+  </ul>
+</section>
+
+<p class="mk-foot">⚠ 傷害數字為示意。所有角色、怪物、名稱、造型皆為原創。</p>
+</div>
+<script>
+(function () {
+  var cls = [['generic', '通用背影（僧侶・遊俠）'], ['warrior', '戰士'], ['mage', '法師']];
+  var poses = [['idle', '待機'], ['attack', '攻擊'], ['kneel', '單膝跪地（P2）'], ['camp', '營火休息']];
+  var note = {
+    'generic-attack': '短劍突刺（通用）', 'warrior-idle': '劍扛肩', 'warrior-attack': '舉劍斬擊＋畫面震動',
+    'warrior-kneel': '以劍撐地', 'mage-idle': '法杖高舉', 'mage-attack': '詠唱：魔法陣亮起再發射', 'mage-kneel': '長袍攤開跪坐'
+  };
+  var circle = '<svg style="position:absolute;left:50%;bottom:6px;transform:translateX(-50%)" width="150" height="44" viewBox="0 0 75 22" aria-hidden="true"><ellipse cx="37.5" cy="11" rx="35" ry="9" fill="rgba(126,240,255,.15)" stroke="#7ef0ff" stroke-width="1.2"/><ellipse cx="37.5" cy="11" rx="25" ry="6" fill="none" stroke="#7ef0ff" stroke-width=".8"/></svg>';
+  var h = '';
+  cls.forEach(function (c) {
+    h += '<h3 style="font-family:var(--font-pixel);margin:12px 0 4px;text-shadow:var(--ts)">' + c[1] + '</h3><div class="sp-grid">';
+    poses.forEach(function (p) {
+      var k = c[0] + '-' + p[0];
+      h += '<div class="win sp-card"><h3>' + p[1] + '</h3><div class="sp-stage">' + (k === 'mage-attack' ? circle : '') +
+        (p[0] === 'camp' ? '<div style="position:absolute;right:16px;bottom:10px"><canvas class="pix" data-sprite="fire" data-scale="3"></canvas></div>' : '') +
+        '<canvas class="pix" data-sprite="hero" data-cls="' + c[0] + '" data-pose="' + p[0] + '" data-scale="3" style="position:relative"></canvas></div><p>' + (note[k] || p[1]) + '</p></div>';
+    });
+    h += '</div>';
+  });
+  document.getElementById('heroes').innerHTML = h;
+})();
+</script>
+</body>
+</html>

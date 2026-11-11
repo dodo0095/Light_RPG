@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>快速新增・圖稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tokens-s2.css">
+<script src="mockup-s2.js"></script>
+<style>
+  /* 與 src/ui/styles/app.css 現行實作相同（qa-*） */
+  .qa-result { margin-top: var(--sp-3); }
+  .qa-row { margin-top: var(--sp-2); }
+  .qa-reason { margin: 0 0 var(--sp-1); }
+  .qa-alt { margin-top: var(--sp-3); }
+  .qa-small { display: block; font-size: var(--fs-xs); margin-bottom: var(--sp-1); }
+  .sheet--kb { bottom: calc(336px + var(--sp-3)); }
+  /* 鍵盤升起時可用高度不足：sheet 最高到瀏海下方，內容在框內捲動（輸入框固定在最上面） */
+  .sheet--kb .win { max-height: calc(844px - 336px - var(--safe-top) - var(--sp-3) * 2); overflow-y: auto; }
+</style>
+</head>
+<body>
+<div class="mk-page">
+
+<header class="mk-head">
+  <h1>快速新增 sheet（補圖）</h1>
+  <p>Sprint 2 G1 送審稿 v0.1（2026-11-11，design-director）。對應提案範圍 <b>#10</b>（backlog <b>B4</b>：Sprint 1 T20 已實作但沒有圖稿，老闆 2026-10-24 已接受）。<b>依現行實作畫</b>：<code>src/ui/components/quick-add-sheet.tsx</code>＋<code>src/ui/state/quick-add.ts</code>，元件沿用 tokens 的 <code>.sheet／.scrim／.seg／.chip／.banner</code>；背景換成 Sprint 2 戰鬥主畫面（右下「＋」位置不變）。</p>
+</header>
+<nav class="mk-nav">
+  <a href="index.html">← 索引</a>
+  <a href="mockup-s2-battle.html">S2 戰鬥主畫面</a>
+  <a href="mockup-s2-story.html">S2 劇情對話</a>
+  <a href="mockup-s2-sprites.html">S2 像素圖</a>
+  <a href="mockup-s2-quickadd.html" class="is-on">S2 快速新增</a>
+  <a href="mockup-s2-reminder.html">S2 每日提醒</a>
+</nav>
+
+<section class="mk-notes" style="margin-top:0">
+  <h2>涵蓋的狀態（對照實作 <code>QuickAddVM.status</code>）</h2>
+  <div class="mk-table-wrap"><table>
+    <tr><th>#</th><th>狀態</th><th>實作對應</th></tr>
+    <tr><td>①</td><td>剛打開：空白，輸入框自動聚焦、鍵盤升起</td><td><code>status: 'empty'</code>；兩個按鈕停用</td></tr>
+    <tr><td>②</td><td>判斷成功：依關鍵字帶入類型／屬性／難度／迷你版，列出「其他可能」</td><td><code>status: 'matched'</code>，<code>reason</code>、<code>alternatives</code></td></tr>
+    <tr><td>③</td><td>手動調整（收起鍵盤後改屬性、難度）</td><td><code>override</code></td></tr>
+    <tr><td>④</td><td>無法判斷：錯誤橫幅＋「手動選擇」（名稱已帶入進階編輯）</td><td><code>status: 'unknown'</code></td></tr>
+    <tr><td>⑤</td><td>建立中</td><td><code>busy 'task:new'</code>，建立按鈕 <code>is-loading</code></td></tr>
+    <tr><td>⑥</td><td>建立完成：sheet 關閉，Toast「已新增」，新項目出現在清單</td><td><code>store.notify</code></td></tr>
+  </table></div>
+  <h2>尚未決定／實機待確認</h2>
+  <ul>
+    <li><b>Q-1 鍵盤遮住 sheet（iPhone 實機待確認）</b>：現行 <code>.sheet</code> 貼在畫面底部（<code>bottom: safe-bottom + 12px</code>）。iOS 主畫面 App 鍵盤升起時版面高度不一定縮小，sheet 可能被鍵盤蓋住或整頁被推上去。圖稿 ①② 畫的是<b>建議行為：sheet 停在鍵盤上方</b>（用 <code>visualViewport</code> 高度計算），判斷結果較長時 sheet 最高只到瀏海下方、框內捲動（②，「建立」要捲到才看得到；也可改成按鍵盤「完成」直接建立——實作已支援 Enter 建立）。請 qa-lead 在 iPhone 實測後由 tech-lead 決定是否修。</li>
+    <li><b>Q-2 新項目要不要直接造成傷害</b>：不會，新增不是完成；新項目出現在清單，打勾才攻擊（⑥）。</li>
+    <li>其餘行為照 Sprint 1 實作，不改。</li>
+  </ul>
+</section>
+
+<div class="mk-legend" style="margin-top:20px">
+  <span><i></i>安全區域示意</span>
+  <span>灰色區塊＝iOS 鍵盤（示意，高度 336px 含 Home 條）</span>
+  <span style="color:var(--c-warn)">預設庫內容取自 habit_library.json；數字為示意</span>
+</div>
+
+<div class="mk-row" id="frames"></div>
+
+<p class="mk-foot">⚠ 數字為示意。關鍵字與模板來自內容資料包 <code>src/content/habit_library.json</code>（程式不寫關鍵字）。</p>
+</div>
+<script>
+(function () {
+  function frame(label, desc, html) { return '<section class="mk-frame"><h2 class="mk-frame__label">' + label + '</h2><p class="mk-frame__desc">' + desc + '</p>' + html + '</section>'; }
+  var kb = '<div class="mk-keyboard"><div><div class="mk-keyboard__keys">' + new Array(31).join('<i></i>') + '</div><p style="text-align:center;margin:10px 0 0">鍵盤（示意）</p></div></div>';
+  function seg(items, on) { return items.map(function (t) { return '<button type="button" aria-pressed="' + (t === on) + '">' + t + '</button>'; }).join(''); }
+  function chips(on) { return [['fitness', '體能'], ['wisdom', '智慧'], ['spirit', '心靈'], ['bond', '連結']].map(function (a) { return '<button type="button" class="' + (a[0] === on ? 'chip chip--' + a[0] + ' is-on' : 'chip') + '" aria-pressed="' + (a[0] === on) + '">' + a[1] + '</button>'; }).join(''); }
+  function sheet(o) {
+    var body = '';
+    if (o.status === 'empty') body = '<p class="field__hint">輸入一句話，會依預設庫的關鍵字判斷類型、屬性與難度。</p>';
+    if (o.status === 'unknown') body = '<div class="banner banner--error qa-result" role="status"><span class="banner__icon">?</span><div class="banner__body"><span class="banner__title">無法判斷類型</span>按「手動選擇」到進階編輯選類型與屬性，名稱已幫你填好。</div></div>';
+    if (o.status === 'matched') body = '<div class="qa-result" role="status"><p class="field__hint qa-reason">✦ 依關鍵字「早睡」・預設庫：23:30 前上床</p>' +
+      '<div class="seg qa-row" role="group" aria-label="類型">' + seg(['每日討伐', '修行', '公會委託'], '每日討伐') + '</div>' +
+      '<div class="chips qa-row" role="group" aria-label="屬性">' + chips(o.attr || 'fitness') + '</div>' +
+      '<div class="seg qa-row" role="group" aria-label="難度">' + seg(['簡單', '普通', '困難'], o.diff || '普通') + '</div>' +
+      '<p class="field__hint">迷你版：24:00 前上床</p>' +
+      '<div class="qa-alt"><span class="mute qa-small">其他可能：</span><div class="chips"><button type="button" class="chip">每日討伐・早上 7 點前起床</button></div></div></div>';
+    return '<div class="scrim"></div><div class="sheet' + (o.kb ? ' sheet--kb' : '') + '" role="dialog" aria-modal="true" aria-labelledby="qa-title"><div class="win win--strong">' +
+      '<h3 class="win__title" id="qa-title">快速新增</h3>' +
+      '<input class="input" placeholder="例如：每天喝水、睡前不滑手機" aria-label="用一句話描述要新增的項目" value="' + (o.text || '') + '"' + (o.focus ? ' style="border-color:var(--c-focus);box-shadow:0 0 0 2px rgba(255,215,94,.35)"' : '') + '>' +
+      body + '<div class="sheet__actions"><button type="button" class="btn btn--ghost"' + (o.status === 'empty' ? ' disabled' : '') + '>' + (o.status === 'unknown' ? '手動選擇' : '進階編輯') + '</button>' +
+      '<button type="button" class="btn btn--primary' + (o.loading ? ' is-loading' : '') + '"' + (o.status !== 'matched' || o.loading ? ' disabled' : '') + '>建立</button></div></div></div>' + (o.kb ? kb : '');
+  }
+  var base = { boss: 'idle', enemy: { hp: '184/200', pct: 92 }, msg: '<span class="cursor">▶</span>被窩史萊姆還在被窩裡打呼。完成今天的討伐，把牠叫醒吧！', list: S2.list({ cursor: 2 }) };
+  function bp(extra) { var o = {}; for (var k in base) o[k] = base[k]; for (k in extra) o[k] = extra[k]; return S2.battlePhone(o); }
+  var F = [];
+  F.push(frame('① 剛打開（空白）', '今天頁右下「＋」打開。輸入框自動聚焦、鍵盤升起；sheet 停在鍵盤上方（Q-1）。沒有輸入時「進階編輯」「建立」都停用。',
+    bp({ fab: false, after: sheet({ status: 'empty', focus: true, kb: true }) })));
+  F.push(frame('② 判斷成功（輸入中）', '輸入「早睡早起」：命中關鍵字「早睡」→ 每日討伐／體能／普通，帶入迷你版。同分的「早起」列在「其他可能」，點一下改用。',
+    bp({ fab: false, after: sheet({ status: 'matched', text: '早睡早起', focus: true, kb: true }) })));
+  F.push(frame('③ 手動調整', '點分段或晶片時鍵盤收起，sheet 回到底部。改了屬性（心靈）和難度（簡單）後照樣可以建立；名稱保留使用者原文。',
+    bp({ fab: false, after: sheet({ status: 'matched', text: '早睡早起', attr: 'spirit', diff: '簡單' }) })));
+  F.push(frame('④ 無法判斷', '輸入「整理冰箱」比不到任何關鍵字：顯示錯誤橫幅；「建立」停用，左邊按鈕變成「手動選擇」→ 進階編輯（名稱已填好）。',
+    bp({ fab: false, after: sheet({ status: 'unknown', text: '整理冰箱' }) })));
+  F.push(frame('⑤ 建立中', '按「建立」後按鈕顯示轉圈並停用，避免重複新增。',
+    bp({ fab: false, after: sheet({ status: 'matched', text: '早睡早起', loading: true }) })));
+  F.push(frame('⑥ 建立完成', 'sheet 關閉；Toast「已新增」出現在分頁列上方（顯示期間取代「＋」，同 Sprint 1）。新項目進每日討伐清單，沒有 ⚔，打勾後才攻擊。',
+    bp({ fab: false, list: S2.list({ dailies: ['wake', 'water', 'run', 'stretch', { t: '早睡早起', attr: 'fitness', diff: '普通', mini: '24:00 前上床' }], count: '2/5', cursor: 2 }),
+      toast: '<div class="toast" role="status"><span aria-hidden="true">✓</span><div><b class="px">已新增</b><br>「早睡早起」已加入今天。</div></div>' })));
+  document.getElementById('frames').innerHTML = F.join('');
+})();
+</script>
+</body>
+</html>

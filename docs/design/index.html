@@ -29,6 +29,22 @@
   <p>本 Sprint 不做 RPG 視覺包裝（提案書第 1、2 節）：沒有戰鬥畫面、角色像素圖、Boss；只沿用企劃書 7.1 的「藍色漸層視窗＋白色邊框＋深藍文字陰影」當介面外框，做成 <code>tokens.css</code> 的共用變數與元件，供 Sprint 2 延續。</p>
 </header>
 
+<h2 class="mk-frame__label" style="font-size:20px;margin-top:16px">Sprint 2 圖稿（G1 送審稿 v0.1，2026-11-11）</h2>
+<p style="color:var(--c-ink-dim);margin:4px 0 8px;font-size:14px">新增 <code>tokens-s2.css</code>（戰鬥區、訊息列、對話框元件，只用 tokens.css 的變數）與 <code>mockup-s2.js</code>（程式繪製的原創像素圖與背景）。</p>
+<div class="ix-grid">
+  <a class="win ix-card" href="mockup-s2-battle.html"><h2>⑤ 戰鬥主畫面</h2><p>#3、#5、#6、#7、#12</p>
+    <ul><li>一般／隊伍狀態展開</li><li>打勾受擊（戰士）／取消退回／法師攻擊</li><li>換日 Boss 反擊</li><li>世界狀態＋旅途奇遇</li><li>捲動收合</li><li>Boss HP 低／擊敗／通關後和平森林</li><li>旅館營火／HP 低跪地</li><li>版面方案 A／B／C 比較</li></ul></a>
+  <a class="win ix-card" href="mockup-s2-story.html"><h2>⑥ 劇情對話</h2><p>#4</p>
+    <ul><li>逐字跳出中／▼ 繼續</li><li>既有使用者的序章</li><li>跳過確認</li><li>章節標題卡、Boss 登場</li><li>擊敗後對話、通關卡</li></ul></a>
+  <a class="win ix-card" href="mockup-s2-sprites.html"><h2>⑦ 像素圖一覽</h2><p>#5、#6、#12、B5</p>
+    <ul><li>被窩史萊姆 5 種姿勢</li><li>通用／戰士／法師 × 待機、攻擊、跪地、營火</li><li>歐文、營火、App 圖示草案</li><li>4 種背景</li></ul></a>
+  <a class="win ix-card" href="mockup-s2-quickadd.html"><h2>⑧ 快速新增</h2><p>#10（B4，依現行實作補圖）</p>
+    <ul><li>空白／判斷成功／手動調整</li><li>無法判斷／建立中／建立完成</li></ul></a>
+  <a class="win ix-card" href="mockup-s2-reminder.html"><h2>⑨ 每日提醒（設定頁）</h2><p>#14（待 tech-push 確認）</p>
+    <ul><li>關閉／詢問權限／已開啟／儲存中</li><li>伺服器連不上／權限被拒／不支援</li><li>通知長相</li></ul></a>
+</div>
+
+<h2 class="mk-frame__label" style="font-size:20px">Sprint 1 圖稿</h2>
 <div class="ix-grid">
   <a class="win ix-card" href="mockup-class-select.html"><h2>① 選職業</h2><p>T13・feature-spec F2</p>
     <ul><li>未選</li><li>已選某職業（可互動切換四職業）</li><li>確認中（確認面板）</li><li>建立中</li><li>四職業套組對照表</li><li>不適用：空狀態、已完成、已結算、旅館、HP 低（附原因）</li></ul></a>

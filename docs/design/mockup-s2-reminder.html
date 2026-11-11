@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>每日提醒設定・圖稿</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="tokens-s2.css">
+<script src="mockup-s2.js"></script>
+<style>
+  /* 與 src/ui/styles/app.css 設定頁現行樣式一致的部分（settings-*） */
+  .settings-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: var(--touch); }
+  .settings-inline { display: flex; gap: 8px; }
+  .settings-inline .input { flex: 1; }
+  .settings-banner { margin: 4px 0 8px; }
+  .switch--btn { width: 100%; background: none; border: 0; padding: 0; text-align: left; }
+  .switch__label { margin: 0; }
+  .settings-win { padding: var(--sp-2) var(--sp-3) !important; }
+  .lock { position: relative; height: 300px; border-radius: 12px; overflow: hidden; background: linear-gradient(180deg, #2a2f6b, #0a1030); font-family: var(--font-body); text-shadow: none; }
+  .lock__time { text-align: center; color: #fff; font-size: 54px; font-weight: 300; margin-top: 30px; }
+  .lock__date { text-align: center; color: rgba(255,255,255,.8); font-size: 15px; }
+  .lock__note { position: absolute; left: 10px; right: 10px; top: 170px; display: grid; grid-template-columns: 38px 1fr; gap: 10px; padding: 10px 12px; border-radius: 16px; background: rgba(245,245,250,.82); color: #111; }
+  .lock__icon { width: 38px; height: 38px; border-radius: 9px; display: grid; place-items: center; background: radial-gradient(circle at 50% 40%, #1d3590 0%, #0a1030 70%); }
+  .lock__note b { font-size: 14px; display: flex; justify-content: space-between; }
+  .lock__note b small { font-weight: 400; color: #666; font-size: 12px; }
+  .lock__note p { margin: 2px 0 0; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="mk-page">
+
+<header class="mk-head">
+  <h1>設定頁「每日提醒」區塊</h1>
+  <p>Sprint 2 G1 送審稿 v0.1（2026-11-11，design-director）。對應提案範圍 <b>#14</b> 每日推播（P1，D1 = b 部署機推播服務）。依 <code>proposal/sprint2-tech-push.md</code>（<b>待老闆確認，確認前 #14 不開工</b>）：設定頁新增「每日提醒」開關＋時間（預設 08:00）；開啟時才請求通知權限；伺服器連不上時顯示提示，其他功能完全不受影響。</p>
+  <p>沿用 Sprint 1 設定頁元件（<code>.section</code>＋<code>.win</code> 群組、<code>.switch</code>、<code>.field</code>、<code>.banner</code>），放在「換日時間」之後。</p>
+</header>
+<nav class="mk-nav">
+  <a href="index.html">← 索引</a>
+  <a href="mockup-s2-battle.html">S2 戰鬥主畫面</a>
+  <a href="mockup-s2-story.html">S2 劇情對話</a>
+  <a href="mockup-s2-sprites.html">S2 像素圖</a>
+  <a href="mockup-s2-quickadd.html">S2 快速新增</a>
+  <a href="mockup-s2-reminder.html" class="is-on">S2 每日提醒</a>
+</nav>
+
+<section class="mk-notes" style="margin-top:0">
+  <h2>涵蓋的狀態</h2>
+  <ol>
+    <li>關閉（預設）— 手機框顯示在設定頁中的位置</li>
+    <li>開啟中：按下開關 → iOS 系統詢問通知權限</li>
+    <li>已開啟：提醒時間可改、顯示「伺服器已連線」</li>
+    <li>儲存中（送出時間到伺服器）</li>
+    <li><b>伺服器連不上</b>：「伺服器沒開，暫時無法設定提醒」；其他功能不受影響</li>
+    <li>通知權限被拒（需到 iPhone 設定開啟）</li>
+    <li>不支援：從 Safari 分頁開啟、或 iOS 16.4 以下（需加入主畫面）</li>
+    <li>通知長相（鎖定畫面示意）</li>
+  </ol>
+  <h2>尚未決定</h2>
+  <ul>
+    <li><b>R-1 通知文字</b>：圖稿用「被窩史萊姆還在打呼…」帶 Boss 狀態，但伺服器不存遊戲資料（tech-push 第 37 行），所以只能是<b>固定文字</b>或幾句輪替。— product-manager</li>
+    <li><b>R-2 「今天已完成就不提醒」</b>（tech-push 第 49 行，會讓伺服器知道一點遊玩狀態）：圖稿未畫此選項，等老闆決定。</li>
+    <li><b>R-3 要不要「傳送測試通知」按鈕</b>：方便試用時確認有通；圖稿 ③ 有畫（虛線＝可選）。— tech-lead</li>
+    <li>預設時間 08:00 依 tech-push 第 63 行待老闆確認。</li>
+  </ul>
+</section>
+
+<div class="mk-row" style="margin-top:20px">
+  <section class="mk-frame">
+    <h2 class="mk-frame__label">① 設定頁・關閉（預設）</h2>
+    <p class="mk-frame__desc">「每日提醒」群組在「換日時間」之後。關閉時只有開關與說明，時間欄位不出現。</p>
+    <div class="mk-phone">
+      <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+      <div class="app">
+        <div class="app__top"><div class="topbar"><span></span><div class="topbar__title">設定</div><span></span></div></div>
+        <main class="app__main">
+          <section class="section"><div class="section__head"><h3 class="section__title">換日時間<small>Day reset</small></h3></div>
+            <div class="win settings-win"><div class="settings-row"><span>目前換日時間</span><b class="num">04:00</b></div>
+              <div class="field" style="margin:0"><label class="field__label">改成</label><div class="settings-inline"><input class="input" value="04:00"><button class="btn btn--sm">儲存</button></div><p class="field__hint">改了不會立刻換日，從下一個遊戲日起生效。</p></div></div></section>
+          <section class="section mk-hot"><div class="section__head"><h3 class="section__title">每日提醒<small>Reminder</small></h3><span class="tag tag--ok" style="color:var(--c-warn);border-color:var(--c-warn)">NEW</span></div>
+            <div class="win settings-win">
+              <button type="button" role="switch" aria-checked="false" class="switch switch--btn"><span class="field__label switch__label">每天提醒我打開冒險<span class="opt">需要網路</span></span><span class="switch__ui"></span></button>
+              <p class="field__hint">開啟後，每天在你選的時間收到一則通知。只有推播訂閱與提醒時間會存到伺服器，遊戲資料不會離開這支手機。</p>
+            </div></section>
+          <section class="section"><div class="section__head"><h3 class="section__title">旅館<small>Inn</small></h3></div>
+            <div class="win settings-win"><button type="button" class="switch switch--btn"><span class="field__label switch__label">入住旅館<span class="opt">生病、出差時使用</span></span><span class="switch__ui"></span></button></div></section>
+        </main>
+        <nav class="tabbar"><a><span class="ico">☀</span>今天</a><a><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a class="is-on"><span class="ico">⚙</span>設定</a></nav>
+      </div>
+      <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+    </div>
+  </section>
+
+  <section class="mk-frame">
+    <h2 class="mk-frame__label">② 開啟中：系統詢問權限</h2>
+    <p class="mk-frame__desc">按下開關才請求權限（iOS 規定要由使用者點擊觸發）。等待回覆時開關顯示轉圈、不可再按。</p>
+    <div class="mk-phone">
+      <div class="mk-safe mk-safe--top"><span>安全區・瀏海 47px</span></div><div class="mk-island"></div><div class="mk-clock">9:41</div>
+      <div class="app">
+        <div class="app__top"><div class="topbar"><span></span><div class="topbar__title">設定</div><span></span></div></div>
+        <main class="app__main">
+          <section class="section"><div class="section__head"><h3 class="section__title">每日提醒<small>Reminder</small></h3></div>
+            <div class="win settings-win">
+              <button type="button" role="switch" aria-checked="true" class="switch switch--btn" disabled><span class="field__label switch__label">每天提醒我打開冒險<span class="opt">設定中…</span></span><span class="btn btn--sm btn--ghost is-loading" style="border:0;min-width:52px"></span></button>
+              <p class="field__hint">請在系統視窗選「允許」。</p>
+            </div></section>
+        </main>
+        <div class="scrim" style="background:rgba(3,6,25,.35)"></div>
+        <div class="mk-sysdialog"><p><b>「晨光之誓」想要傳送通知給您</b>通知可能包含提示、聲音和圖像標記。這些可以在「設定」中設定。</p><div><span>不允許</span><span>允許</span></div></div>
+        <nav class="tabbar"><a><span class="ico">☀</span>今天</a><a><span class="ico">▤</span>預設庫</a><a><span class="ico">◆</span>獎勵</a><a class="is-on"><span class="ico">⚙</span>設定</a></nav>
+      </div>
+      <div class="mk-safe mk-safe--bottom"><span>安全區・Home 條 34px</span></div><div class="mk-homebar"></div>
+    </div>
+  </section>
+
+  <section class="mk-frame">
+    <h2 class="mk-frame__label">③～⑧ 區塊各狀態</h2>
+    <p class="mk-frame__desc">只畫「每日提醒」群組本身（寬 390，與設定頁相同）。</p>
+    <div class="mk-cards">
+      <div class="mk-card"><p class="mk-frame__label" style="font-size:14px">③ 已開啟</p>
+        <div class="win settings-win">
+          <button type="button" role="switch" aria-checked="true" class="switch switch--btn"><span class="field__label switch__label">每天提醒我打開冒險</span><span class="switch__ui is-on"></span></button>
+          <div class="field" style="margin:4px 0 0"><label class="field__label" for="rt">提醒時間</label><div class="settings-inline"><input id="rt" type="time" class="input" value="08:00"><button class="btn btn--sm">儲存</button></div>
+            <p class="field__hint"><span style="color:var(--c-ok)">● 伺服器已連線</span>・每天 08:00（台灣時間）送出</p></div>
+          <button class="link-btn" style="outline:1px dashed var(--c-border-dim);outline-offset:-4px">傳送測試通知（R-3 可選）</button>
+        </div></div>
+
+      <div class="mk-card"><p class="mk-frame__label" style="font-size:14px">④ 儲存中</p>
+        <div class="win settings-win">
+          <button type="button" role="switch" aria-checked="true" class="switch switch--btn"><span class="field__label switch__label">每天提醒我打開冒險</span><span class="switch__ui is-on"></span></button>
+          <div class="field" style="margin:4px 0 0"><label class="field__label">提醒時間</label><div class="settings-inline"><input type="time" class="input" value="07:30"><button class="btn btn--sm is-loading" disabled>儲存</button></div><p class="field__hint">正在告訴伺服器新的時間…</p></div>
+        </div></div>
+
+      <div class="mk-card"><p class="mk-frame__label" style="font-size:14px">⑤ 伺服器連不上</p>
+        <div class="win settings-win">
+          <div class="banner banner--error settings-banner" role="status"><span class="banner__icon">⚠</span><div class="banner__body"><span class="banner__title">伺服器沒開，暫時無法設定提醒</span>打卡、戰鬥、劇情都照常可以用。伺服器開了之後再回來設定一次。</div></div>
+          <button type="button" role="switch" aria-checked="false" class="switch switch--btn" disabled style="opacity:.55"><span class="field__label switch__label">每天提醒我打開冒險</span><span class="switch__ui"></span></button>
+          <div class="settings-row"><span class="mute" style="font-size:13px">上次嘗試 09:41</span><button class="btn btn--sm btn--ghost">重試</button></div>
+        </div>
+        <p class="field__hint" style="margin-top:6px">已開啟過提醒、之後伺服器才關掉時：開關維持開啟，只在時間欄位下方顯示「⚠ 伺服器沒開，改時間暫時無法儲存；通知也可能暫停」。</p></div>
+
+      <div class="mk-card"><p class="mk-frame__label" style="font-size:14px">⑥ 通知權限被拒</p>
+        <div class="win settings-win">
+          <div class="banner banner--danger settings-banner"><span class="banner__icon">🔕</span><div class="banner__body"><span class="banner__title">通知被關閉了</span>請到 iPhone「設定」→「通知」→「晨光之誓」開啟「允許通知」，再回來打開開關。</div></div>
+          <button type="button" role="switch" aria-checked="false" class="switch switch--btn"><span class="field__label switch__label">每天提醒我打開冒險</span><span class="switch__ui"></span></button>
+        </div></div>
+
+      <div class="mk-card"><p class="mk-frame__label" style="font-size:14px">⑦ 不支援（Safari 分頁／iOS 16.4 以下）</p>
+        <div class="win settings-win">
+          <div class="banner settings-banner"><span class="banner__icon">📲</span><div class="banner__body"><span class="banner__title">要從主畫面開啟才能提醒</span>在 Safari 按「分享」→「加入主畫面」，再從主畫面的晨光之誓打開。iOS 需要 16.4 以上。</div></div>
+          <button type="button" role="switch" aria-checked="false" class="switch switch--btn" disabled style="opacity:.55"><span class="field__label switch__label">每天提醒我打開冒險</span><span class="switch__ui"></span></button>
+        </div></div>
+
+      <div class="mk-card"><p class="mk-frame__label" style="font-size:14px">⑧ 通知長相（鎖定畫面示意）</p>
+        <div class="lock"><div class="lock__time">8:00</div><div class="lock__date">11月12日 星期四</div>
+          <div class="lock__note"><span class="lock__icon"><canvas class="pix" data-sprite="lantern" data-scale="1"></canvas></span><div><b>晨光之誓 <small>現在</small></b><p>早安，冒險者！今天的討伐清單在等你。</p></div></div></div>
+        <p class="field__hint" style="margin-top:6px">固定文字（R-1）；圖示用 App 圖示（B5 草案：誓約之燈）。點通知直接打開戰鬥主畫面。</p></div>
+    </div>
+  </section>
+</div>
+
+<p class="mk-foot">⚠ 推播架構依 <code>proposal/sprint2-tech-push.md</code>（待老闆確認）；文案為示意。</p>
+</div>
+</body>
+</html>
