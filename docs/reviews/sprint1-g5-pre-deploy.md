@@ -3,7 +3,7 @@
 **環境**: production（部署機 `deploy/serve.mjs` → Caddy → `rpg.starklab.tw`）
 **日期**: 2026-11-11
 **執行**: tech-lead（`/pre-deploy production`）
-**結果**: 草稿 — CI 項目待 B8／B9 修正合併後，在最終 commit 重跑
+**結果**: 自動檢查全部 PASS（`1f050a4`）；待 G3 通過與部署機自動啟動確認後提交 G5。若 G3 期間再改程式碼，CI 項目需在新 commit 重跑
 
 > 依流程 G5 在 G3 之後提交；本報告先把能自動檢查的部分做完，G3 通過後補上最終 commit 的 CI 結果即可提交。
 
@@ -11,10 +11,10 @@
 
 | # | 項目 | 結果 | 備註 |
 |---|------|------|------|
-| 1 | lint | ⏳ | 待最終 commit 重跑（`725b622` 時為 0 錯誤） |
-| 2 | type-check | ⏳ | 同上（`725b622` 時為 0 錯誤） |
-| 3 | 單元＋整合測試 | ⏳ | 同上（`725b622` 時 1329／1329、部署伺服器 11／11） |
-| 4 | build | ⏳ | 同上（`725b622` 時成功，precache 9 個檔案） |
+| 1 | lint | ✅ | `1f050a4`：`pnpm lint` 0 錯誤 |
+| 2 | type-check | ✅ | `1f050a4`：`tsc --noEmit` 0 錯誤 |
+| 3 | 單元＋整合測試 | ✅ | `1f050a4`：Vitest 44 檔 1340／1340；部署伺服器 11／11 |
+| 4 | build | ✅ | `1f050a4`：成功，precache 9 個檔案（423.02 KiB） |
 | 5 | 環境變數 | ✅ N/A | 前端沒有任何 `import.meta.env`；只有 `deploy/serve.mjs` 讀 `RPG_PORT`／`RPG_HOST`／`RPG_DIST`，三者皆有預設值，已列在 `deploy/README.md` 第二節表格。無機密，不需要 `.env.example` |
 | 6 | 資料庫遷移 | ✅ | 無伺服器資料庫；IndexedDB 帶 `schemaVersion`，遷移與遷移前備份由 T21 整合測試涵蓋 |
 | 7 | Docker | ✅ N/A | 不使用 Docker |

@@ -56,3 +56,7 @@
 | 🟡 Minor | 頻率切到「自訂」時星期全空；Daily／To-do 的「⋯」無障礙標籤沒帶項目名稱 | 列入 B9 |
 
 **結論**：沒有 Blocker、Major，也沒有 Critical／High。桌機能確認的項目全部通過，不需要先修再部署；部署機起來後直接照 `sprint1-iphone-checklist.md` 做實機驗收。
+
+## 後續
+
+2026-11-11 兩項 Minor 已由 frontend-developer 修正，tech-lead Review 通過，並在瀏覽器確認（`1f050a4`）：已刪除的「喝 2000cc 水」在事件紀錄顯示名稱；平日任務切到自訂預填一～五、每天任務預填全部；「⋯」按鈕標籤為「編輯：{項目名稱}」。

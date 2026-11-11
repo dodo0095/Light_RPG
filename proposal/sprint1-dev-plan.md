@@ -290,6 +290,7 @@ T2 → X6 → T3 ─┬→ T4 ────────────────�
 | UI 圖稿 Review | 2026-10-24 | 通過 | fresh-context agent 對照第 3 節圖稿驗收標準：首輪 2 Blocker（today 缺 To-do 迷你版、Daily 檢查清單）＋6 小修，修正後複驗 8 項全過、無剩餘 Blocker；圖稿 `docs/design/`（分支 agent/design-director/2026-10-23） |
 | 實作 Review（G2 第一輪，獨立審查員） | 2026-10-24 | 不通過 | `docs/reviews/sprint1-g2-review-round1.md`（0 Blocker／1 Major：匯入驗證不足／9 Minor） |
 | 實作 Review（G2 第二輪複驗，同一獨立審查員） | 2026-10-24 | 通過 | `docs/reviews/sprint1-g2-review-round2.md`（0 Blocker／0 Major／3 Minor：n1 救援優先下載舊快照→G2 提交前修正；n2 忽略；n3 排 S2 backlog） |
+| G2 後追加修正 Review（B8、B9，tech-lead） | 2026-11-11 | 通過 | 桌機預檢發現 2 Minor（`docs/acceptance/sprint1-desktop-prescreen.md`），frontend-developer 修正；L1 對程式碼＋對規範：0 Blocker／0 Major。lint／typecheck 0 錯誤、Vitest 1340／1340、部署 11／11、build 成功；瀏覽器確認已刪除項目名稱、自訂頻率預填、編輯按鈕標籤（`1f050a4`） |
 | 測試 Review | | | |
 
 ### Gate 紀錄
