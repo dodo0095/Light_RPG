@@ -1,6 +1,7 @@
 # Sprint 2：目前進度與接續步驟
 
 > **更新**: 2026-11-11（tech-lead）
+> **G1 ✅ 通過（2026-11-11）**；下一步：開發計畫書 → 任務拆解 → 先做繪圖與推播兩個 spike
 > **Sprint 1 的進度**另見 `proposal/sprint1-next-steps.md`（G3 附條件通過：D1／D2 隔日補確認；G5 待部署機自動啟動）
 
 ## 目前進度
@@ -9,13 +10,13 @@
 |------|------|------|
 | G0 提案 | ✅ 調整後通過（2026-11-11） | `proposal/sprint2-proposal.md`（第 12 節末：老闆決策 D1～D8） |
 | 推播技術決策 | ✅ 老闆選 A：併入 `serve.mjs`；預設提醒 08:00 | `proposal/sprint2-tech-push.md` |
-| 戰鬥與事件數值 | ✅ v1.1 定案；🟡 14.13 補欄位 v1.2 草案（Boss 階段門檻、低血提示、預設提醒時間、待決規則），**待老闆 G1 確認** | `.knowledge/decision-tables.md` 第 14 節 |
-| 劇情與事件文案 | 🟡 草稿 v0.2，**G1 時請老闆一起看** | `docs/content/sprint2-story-draft.md` |
-| UI 圖稿 | ✅ L1 獨立審查三輪通過（第一輪 6 Major 已修；390×844 headless 實測），**待老闆 G1** | `docs/design/index.html` 入口；battle 17 格、story 9 格、sprites、quickadd 6 格、reminder 8 格 |
-| 資料模型 v2＋遷移設計 | ✅ L1 獨立審查三輪通過，可定案（第 13 節 #5 回滾策略待老闆） | `.knowledge/data-model.md` 第 12、13 節；`day-rollover.md` v2 註記；backlog B10 |
-| 開發計畫書 | ⬜ G1 通過後產出 | 將產出 `proposal/sprint2-dev-plan.md` |
+| 戰鬥與事件數值 | ✅ v1.1 定案；✅ 14.13 v1.2 定案（G1） | `.knowledge/decision-tables.md` 第 14 節 |
+| 劇情與事件文案 | ✅ v0.2 語氣定稿（G1 照草稿） | `docs/content/sprint2-story-draft.md` |
+| UI 圖稿 | ✅ G1 通過（2026-11-11；L1 獨立審查三輪） | `docs/design/index.html` 入口 |
+| 資料模型 v2＋遷移設計 | ✅ 定案（L1 獨立審查三輪；回滾策略 G1 同意） | `.knowledge/data-model.md` 第 12、13 節 |
+| 開發計畫書 | 🟡 起草中（tech-lead），完成後獨立審查 → `/task-delegation` | `proposal/sprint2-dev-plan.md` |
 
-### G1 請老闆決定（附建議）
+### G1 決定（✅ 2026-11-11 老闆回覆「繼續」＝照建議；#3、#8 為 tech-lead 預設，老闆可再改）
 
 1. G1-1 戰鬥版面：**建議 A**（固定 208px 戰鬥區，清單捲動後收成 56px 條）
 2. G1-9 已完成的 Daily 排到未完成之後：**建議排後面**（不排的話 4 項做完 3 項時，下一項掉出首屏）

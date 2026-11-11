@@ -60,10 +60,10 @@
   </ol>
   <h2>尚未決定／已定案</h2>
   <ul>
-    <li><b>R-1 通知文字（待老闆選一句）</b>：伺服器不存遊戲資料（tech-push「推播內容」），只能是<b>固定文字</b>，不能帶 Boss 狀態。候選：(a)「早安，冒險者！今天的討伐清單在等你。」（⑧ 畫面採用）；(b)「被窩史萊姆還在等你，今天的冒險開始了嗎？」（tech-push 範例；但打倒 Boss 後仍會照送，與和平的森林不符）；(c)「誓約之燈在等你點亮，今天也出發吧。」— 老闆</li>
+    <li><b>R-1 通知文字：✅ 採 (a)（G1，tech-lead 預設，老闆可改）</b>：「早安，冒險者！今天的討伐清單在等你。」（⑧ 畫面採用）。老闆 2026-11-11 回覆「繼續」＝照建議；本項沒有單一建議，由 tech-lead 取預設，老闆可再改。伺服器不存遊戲資料（tech-push「推播內容」），只能是<b>固定文字</b>，不能帶 Boss 狀態。未採用的候選：(b)「被窩史萊姆還在等你，今天的冒險開始了嗎？」（tech-push 範例；但打倒 Boss 後仍會照送，與和平的森林不符）；(c)「誓約之燈在等你點亮，今天也出發吧。」</li>
     <li><b>R-2 「今天已完成就不提醒」：已定案，本 Sprint 不做</b>（tech-push「之後可以再加（本 Sprint 不做）」）。圖稿不畫此選項。</li>
     <li><b>R-3 要不要「傳送測試通知」按鈕</b>：方便試用時確認有通；圖稿 ③ 有畫（虛線＝可選）。— tech-lead</li>
-    <li><b>預設時間 08:00：已定案為暫用預設值</b>（tech-push 末段：老闆未另行指定，暫用 08:00；值放設定檔，之後要改不用動程式）。</li>
+    <li><b>預設時間 08:00：✅ G1 定案</b>（決策表 v1.2 14.13.1 <code>defaults.reminderTime</code>；值放設定檔，之後要改不用動程式）。</li>
   </ul>
 </section>
 
@@ -156,12 +156,12 @@
       <div class="mk-card"><p class="mk-frame__label" style="font-size:14px">⑧ 通知長相（鎖定畫面示意）</p>
         <div class="lock"><div class="lock__time">8:00</div><div class="lock__date">11月12日 星期四</div>
           <div class="lock__note"><span class="lock__icon"><canvas class="pix" data-sprite="lantern" data-scale="1"></canvas></span><div><b>晨光之誓 <small>現在</small></b><p>早安，冒險者！今天的討伐清單在等你。</p></div></div></div>
-        <p class="field__hint" style="margin-top:6px">固定文字，採 R-1 候選 (a)；圖示用 App 圖示（B5 草案：誓約之燈）。點通知直接打開戰鬥主畫面。</p></div>
+        <p class="field__hint" style="margin-top:6px">固定文字，R-1 ✅ 採 (a)（G1，tech-lead 預設，老闆可改）；圖示用 App 圖示（B5 ✅ G1 照建議：誓約之燈）。點通知直接打開戰鬥主畫面。</p></div>
     </div>
   </section>
 </div>
 
-<p class="mk-foot">⚠ 推播架構依 <code>proposal/sprint2-tech-push.md</code>（老闆 2026-11-11 選 A）；通知文字待 R-1 選定。</p>
+<p class="mk-foot">⚠ 推播架構依 <code>proposal/sprint2-tech-push.md</code>（老闆 2026-11-11 選 A）；通知文字 R-1 ✅ 採 (a)（G1 2026-11-11，tech-lead 預設，老闆可改）。</p>
 </div>
 </body>
 </html>

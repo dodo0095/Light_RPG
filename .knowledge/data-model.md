@@ -1,7 +1,7 @@
 # 晨光之誓 — 資料模型
 
 > 層級：🔴 規範
-> 版本：**v0.2（schemaVersion 2 設計）**｜更新日：**2026-11-11**｜狀態：**草案，待 tech-lead 審**（第 12～13 節為 Sprint 2 新增；第 1～11 節為 v1 現況，v2 有變更處以「🆕 v2」標記並指向第 12 節）
+> 版本：**v0.2（schemaVersion 2 設計）**｜更新日：**2026-11-11**｜狀態：**✅ 定案（2026-11-11：L1 獨立審查三輪通過，G1 照建議）**（第 12～13 節為 Sprint 2 新增；第 1～11 節為 v1 現況，v2 有變更處以「🆕 v2」標記並指向第 12 節）
 > 前版：v0.1 草案（2026-10-23，tech-lead，Sprint 1 設計步驟 D2）— 已依 Sprint 1 實作（`src/storage/`、`src/core/types.ts`）落地
 > 命名：資料欄位一律 camelCase；內容資料包 id 一律 snake_case（依 `CLAUDE.md`）
 > **數值**：本文件不含任何遊戲數值。所有數值都以「設定檔欄位」表示，實際數字以 `.knowledge/decision-tables.md`（product-manager 產出）為準。
@@ -441,7 +441,7 @@ migrate_v1_to_v2(backup: BackupV1): BackupV2
 
 ## 12. 🆕 v2（schemaVersion 2）：Sprint 2 戰鬥、劇情、隨機事件、推播
 
-> 狀態：**草案，待 tech-lead 審**（2026-11-11，backend-architect）
+> 狀態：**✅ 定案**（2026-11-11，backend-architect 起草；L1 獨立審查三輪通過；第 13 節待決已於 G1 定案）
 > 依據：`proposal/sprint2-proposal.md` 第 2 節 #1、#2、#4、#7、#14、#15，第 6、8 節，第 12 節末老闆決策 D1～D8；`proposal/sprint2-tech-push.md`（老闆選 A）；`.knowledge/decision-tables.md` 第 14 節（v1.1 定案）；`.knowledge/day-rollover.md` 第 3.4 節；`docs/content/sprint2-story-draft.md`（scene id）
 > 現況真相來源（已讀）：`src/storage/schema.ts`（`CURRENT_SCHEMA_VERSION = 1`、`SCHEMA_V1`）、`src/storage/upgrade.ts`、`src/storage/export-import.ts`、`src/storage/backup-file.ts`、`src/storage/migrations/index.ts`、`src/core/types.ts`、`src/core/check-in/check-in.ts`、`src/core/settlement/plan.ts`、`src/services/settlement-service.ts`、`src/services/bootstrap.ts`
 > **數值**：本節不寫任何數字，一律以決策表欄位名稱表示。
@@ -542,7 +542,7 @@ migrate_v1_to_v2(backup: BackupV1): BackupV2
 - **章節順序用資料包的明確欄位 `nextChapterId`**，不依陣列順序（tech-lead 2026-11-11 決定）。
 - `'chapter_prologue'` 是**固定契約 id**（同 `format: "morning-oath-backup"` 的性質）：遷移函式與選職業都直接用它當初值，所以遷移仍然不需要讀資料包；內容驗證（`src/content/validate.ts`）必須檢查資料包裡有這個章節、且 `kind = 'prologue'`。
 - 「序章期間」＝目前章節的 `kind = 'prologue'`（資料包欄位，12.7）。
-- 既有使用者：Boss 從滿血開始（`damageTaken = 0`），升級前的打卡不補算（決策表 14.3）。序章完成前的打卡不造成傷害（第 13 節 #8，PM 建議待 G1 確認）。
+- 既有使用者：Boss 從滿血開始（`damageTaken = 0`），升級前的打卡不補算（決策表 14.3）。序章完成前的打卡不造成傷害（第 13 節 #8，✅ G1 照建議定案 2026-11-11）。
 
 ### 12.4 隨機事件：`dailyDraws`（抽籤紀錄）與 `worldStates`（世界狀態）
 
@@ -781,7 +781,7 @@ v2 匯出檔：
 | v2 App 匯入 **v1 檔** | 外框驗證 → 自動備份目前資料（`pre_import`）→ `migrate_v1_to_v2` → 換成本機 `installId`／`lastBackupAt`／`pushReminder` → `assertBackupV2` → 單一 transaction 清空寫入。匯入後 `adventure.prologueVariant = 'returning'`，會再看一次「既有玩家」序章，Boss 從滿血開始（v1 檔本來就沒有冒險進度） |
 | v1 App 匯入 v2 檔 | 現有程式已會拒絕（`newer_version`，`importAll` 第 1 步），提示更新 App |
 | v2 App 開啟 v1 資料庫 | 走 App 升級流程（12.10） |
-| v1 App 開啟 v2 資料庫（程式回滾） | 現有程式拋 `newer_version`，**打不開**；見 12.10.4 與待決 #5 |
+| v1 App 開啟 v2 資料庫（程式回滾） | 現有程式拋 `newer_version`，**打不開**；所以回滾版本保留 v2 儲存層，見 12.10.4 與第 13 節 #5（✅ G1 定案） |
 | experiment-tracker 統計 | 新增可統計：Boss 累計傷害（`adventure.boss.damageTaken`）、每日打開（`dailyDraws`）、事件出現次數（`dailyDraws`、`encounter_resolved`、`world_state_started`）、劇情跳過率（`seenScenes.skipped`） |
 
 #### 12.9.1 驗證分兩層、v2 內容參照的降級規則（M2，tech-lead 2026-11-11 決定）
@@ -860,7 +860,7 @@ v2 參照：`adventure.chapterId`、`adventure.boss.bossId`、`adventure.seenSce
 | 遷移函式拋錯／驗證失敗 | 不開 v2，資料庫維持 v1；備份保留 | 錯誤頁；「下載目前資料」＋「下載自動備份」 |
 | versionchange 寫入失敗（例：unique 衝突） | transaction abort，維持 v1；備份保留 | 同上 |
 | 遷移成功但發現資料不對（提案書第 8 節判斷標準） | 用 `pre_migration` 快照或老闆手動匯出的 v1 JSON，**在 v2 App 裡匯入**（v2 會再跑一次遷移）→ 修正程式後重新部署 | 設定頁「匯入備份」 |
-| 必須把**程式**退回 v1 | v1 程式打不開 v2 資料庫（`newer_version`），App 內也沒有「清除資料」功能。可行做法：(a) 回滾版本保留 v2 儲存層（`CURRENT_SCHEMA_VERSION = 2`、v2 schema 與遷移），只退回 UI／戰鬥邏輯（**建議**）；(b) iPhone「設定 → Safari → 進階 → 網站資料」刪除 `rpg.starklab.tw` 後，v1 App 重新開始並匯入老闆手動匯出的 v1 JSON | 見待決 #5 |
+| 必須把**程式**退回 v1 | v1 程式打不開 v2 資料庫（`newer_version`），App 內也沒有「清除資料」功能。可行做法：(a) 回滾版本保留 v2 儲存層（`CURRENT_SCHEMA_VERSION = 2`、v2 schema 與遷移），只退回 UI／戰鬥邏輯（**✅ 老闆 G1 同意採用**）；(b) 最後手段：iPhone「設定 → Safari → 進階 → 網站資料」刪除 `rpg.starklab.tw` 後，v1 App 重新開始並匯入老闆手動匯出的 v1 JSON（會一併刪除自動備份快照與推播訂閱） | 見第 13 節 #5（✅ G1 定案） |
 
 #### 12.10.5 測試案例清單（遷移與相容）
 
@@ -965,8 +965,8 @@ v2 參照：`adventure.chapterId`、`adventure.boss.bossId`、`adventure.seenSce
 | `battle.miniDamageRatio` | 迷你版傷害倍率（與 `miniVariantRatio` 分開） | 14.2 |
 | `skills.prayer.{triggerAttribute,healPerTrigger,maxTriggersPerDay}` | 僧侶祈禱 | 14.6 |
 | `randomEvents.{maxPerDay,encounterDailyChance,worldStateDailyChance,worldStateCooldownDays,luckHpLossMaxPerDay}` | 隨機事件 | 14.7 |
-| `defaults.reminderTime` | 每日提醒預設時間（台灣時間，12.8 `meta.pushReminder.time` 第一次開啟時的預設值） | 14.13.1（v1.2 草案） |
-| `battle.finishHintMaxTasks` | 「再約 N 項就能打倒」最多顯示到幾項；只是畫面提示，不寫事件、不入 IndexedDB | 14.13.1、14.13.2（v1.2 草案） |
+| `defaults.reminderTime` | 每日提醒預設時間（台灣時間，12.8 `meta.pushReminder.time` 第一次開啟時的預設值） | 14.13.1（v1.2 定案） |
+| `battle.finishHintMaxTasks` | 「再約 N 項就能打倒」最多顯示到幾項；只是畫面提示，不寫事件、不入 IndexedDB | 14.13.1、14.13.2（v1.2 定案） |
 
 Boss `maxHp`、`phases[].hpPercent`、`lowHpPercent`、世界狀態與奇遇的效果數字放內容資料包（決策表 14.1 第二張表、14.13.1），不放 `balance.json`。
 
@@ -976,17 +976,17 @@ Boss `maxHp`、`phases[].hpPercent`、`lowHpPercent`、世界狀態與奇遇的�
 
 | # | 問題 | 建議 | 由誰決定 |
 |---|------|------|---------|
-| 1 | 有選項的旅途奇遇（`enc_fog_fork`、`enc_slime_trail`）當天沒選，過了換日怎麼辦？ | 🟡 **PM 建議，待老闆 G1 確認**（決策表 14.13.3 #1）：過了換日就過期、沒有效果；隔天不再顯示、不補、不提示；不佔隔天的 `maxPerDay`。本文件已照此設計（12.4.1 第 4 點） | 老闆（G1） |
-| 2 | 世界狀態冷卻 `worldStateCooldownDays` 怎麼數？ | 🟡 **PM 建議，待老闆 G1 確認**（決策表 14.13.3 #2）：遊戲日 `d` 可開始新狀態的條件＝`d > endDayKey + worldStateCooldownDays`（結束後完整空出 N 天；例：11/17 結束、N＝3 → 最早 11/21） | 老闆（G1） |
-| 3 | 每日提醒預設時間放哪 | 🟡 **PM 已補欄位，待老闆 G1 確認**（決策表 14.13.1）：`balance.json` `defaults.reminderTime`（台灣時間），與 `defaults.rolloverTime` 並列；已列入 12.11 | 老闆（G1） |
+| 1 | 有選項的旅途奇遇（`enc_fog_fork`、`enc_slime_trail`）當天沒選，過了換日怎麼辦？ | ✅ **G1 照建議定案（2026-11-11）**（決策表 14.13.3 #1）：過了換日就過期、沒有效果；隔天不再顯示、不補、不提示；不佔隔天的 `maxPerDay`。本文件已照此設計（12.4.1 第 4 點） | 老闆（G1） |
+| 2 | 世界狀態冷卻 `worldStateCooldownDays` 怎麼數？ | ✅ **G1 照建議定案（2026-11-11）**（決策表 14.13.3 #2）：遊戲日 `d` 可開始新狀態的條件＝`d > endDayKey + worldStateCooldownDays`（結束後完整空出 N 天；例：11/17 結束、N＝3 → 最早 11/21） | 老闆（G1） |
+| 3 | 每日提醒預設時間放哪 | ✅ **G1 照建議定案（2026-11-11）**（決策表 14.13.1）：`balance.json` `defaults.reminderTime`（台灣時間），與 `defaults.rolloverTime` 並列；已列入 12.11 | 老闆（G1） |
 | 4 | ~~老闆真實匯出檔放哪？（含個人資料，不可進 GitHub）~~ | ✅ **tech-lead 已決（2026-11-11）**：放 `tests/fixtures/private/`，該目錄加進 `.gitignore`（實作時加，本次只寫文件）；測試偵測不到檔案時略過；演練結果只附摘要 | — |
-| 5 | 部署 v2 後若要退回 v1 程式：v1 打不開 v2 資料庫 | 定為「儲存層只往前」：回滾版本保留 v2 儲存層，只退 UI／戰鬥邏輯；Safari 刪網站資料＋匯入 v1 JSON 只作最後手段——**注意：在 Safari 刪除 `rpg.starklab.tw` 的網站資料，會一併刪除 `morning-oath-backup` 裡的自動備份快照與這台裝置的推播訂閱**（之後只能靠老闆手動匯出的 JSON 還原，推播要重新開啟）。需更新提案書第 8 節 Rollback 計畫 | 老闆（tech-lead 提案） |
-| 6 | 試用中把 Boss `maxHp` 調到比已造成的累計傷害還低 | 🟡 **PM 建議，待老闆 G1 確認**（決策表 14.13.3 #6）：下次打開 App 時判定擊敗，寫 `boss_defeated`（`causeType: 'content_change'`、`causeEventId: null`），照常播擊敗＋通關；沒播過的血量階段台詞**不補播**。transaction 見 12.6.1 T-CC，測試 TC-V2-BS-06～08 | 老闆（G1） |
+| 5 | 部署 v2 後若要退回 v1 程式：v1 打不開 v2 資料庫 | ✅ **老闆 G1 同意（2026-11-11）**：儲存層只往前，回滾只退畫面與戰鬥邏輯（回滾版本保留 v2 儲存層）；最後手段 Safari 刪網站資料＋匯入 v1 匯出檔（會一併刪除自動備份快照與推播訂閱）——**注意：在 Safari 刪除 `rpg.starklab.tw` 的網站資料，會一併刪除 `morning-oath-backup` 裡的自動備份快照與這台裝置的推播訂閱**（之後只能靠老闆手動匯出的 JSON 還原，推播要重新開啟）。提案書第 8 節 Rollback 已同步 | 老闆（tech-lead 提案） |
+| 6 | 試用中把 Boss `maxHp` 調到比已造成的累計傷害還低 | ✅ **G1 照建議定案（2026-11-11）**（決策表 14.13.3 #6）：下次打開 App 時判定擊敗，寫 `boss_defeated`（`causeType: 'content_change'`、`causeEventId: null`），照常播擊敗＋通關；沒播過的血量階段台詞**不補播**。transaction 見 12.6.1 T-CC，測試 TC-V2-BS-06～08 | 老闆（G1） |
 | 7 | ~~進行中的世界狀態，效果倍率要「開始時鎖定」還是「讀資料包最新值」？~~ | ✅ **tech-lead 已決（2026-11-11）**：採**即時倍率**（讀資料包最新值，試用時調資料包立即生效）；**長度鎖定**（開始時存 `endDayKey`，避免冷卻跟著變）。見 12.4.4 | — |
-| 8 | 升級後到序章看完之前的打卡（同一天）不造成 Boss 傷害，可以嗎？ | 🟡 **PM 建議，待老闆 G1 確認**（決策表 14.13.3 #8）：不造成 Boss 傷害（金幣、經驗照給），也不補算 | 老闆（G1） |
-| 9 | Boss 血量階段台詞：取消打卡讓 HP 回到門檻以上、再跌破時要不要再播？ | 🟡 **PM 建議，待老闆 G1 確認**（決策表 14.13.3 #9）：每個階段只播一次，不重播；與 tech-lead 設計一致（12.3 `seenScenes.bossPhase`，在造成傷害的 transaction 內寫入） | 老闆（G1） |
+| 8 | 升級後到序章看完之前的打卡（同一天）不造成 Boss 傷害，可以嗎？ | ✅ **G1 照建議定案（2026-11-11）**（決策表 14.13.3 #8）：不造成 Boss 傷害（金幣、經驗照給），也不補算 | 老闆（G1） |
+| 9 | Boss 血量階段台詞：取消打卡讓 HP 回到門檻以上、再跌破時要不要再播？ | ✅ **G1 照建議定案（2026-11-11）**（決策表 14.13.3 #9）：每個階段只播一次，不重播；與 tech-lead 設計一致（12.3 `seenScenes.bossPhase`，在造成傷害的 transaction 內寫入） | 老闆（G1） |
 | 10 | ~~章節／劇情進度放 `adventure` 還是 `worldStates`~~ | ✅ **tech-lead 已決（2026-11-11）**：放 `adventure`（依提案書 #1，12.1 說明） | — |
 | 11（d） | ~~已有 `pending` 奇遇時進旅館或 Boss 被擊敗，選項效果怎麼處理？~~ | ✅ **已決（tech-lead 2026-11-11 採 PM 方案，決策表 14.13.3 (d)）**：奇遇當天仍可選；選擇當下 Boss 不在場（已擊敗、旅館）時，`effect.bossDamage > 0` 的選項停用，只能選其他選項；不含 Boss 傷害的奇遇照常。見 12.4.1 第 6 點、12.6.1 T-ENC、TC-V2-EN-05／07／08 | — |
 
 > 已由 tech-lead 決定、直接寫進本文件（不列待決）：M2 驗證分層與降級規則（12.9.1）、M3 序章即章節 `chapter_prologue`＋`nextChapterId`（12.3.3）、Boss 不在場時含 Boss 傷害的選項停用（12.4.1 第 6 點，取代先前的「傷害記 0」）。
-> 第 13 節標 🟡 的項目：本文件已照 PM 建議設計，老闆 G1 若改決定，再回改對應段落。
+> G1（2026-11-11）：老闆 2026-11-11 回覆「繼續」＝照建議 → #1、#2、#3、#5、#6、#8、#9 定案（原標 🟡，本文件已照建議設計，不需回改）。G1 清單中 #3 像素圖維持、#8 推播文字 (a) 為 tech-lead 預設（老闆可再改），與本文件無關。

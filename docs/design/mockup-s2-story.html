@@ -37,7 +37,7 @@
     <tr><td>④</td><td>跳過確認</td><td>按右上「跳過 ▶▶」</td></tr>
     <tr><td>⑤</td><td>章節標題卡「第一章・晨霧森林」</td><td>序章結束 → 進入第一章</td></tr>
     <tr><td>⑥</td><td>Boss 登場對話（說話者換成被窩史萊姆）</td><td>標題卡後</td></tr>
-    <tr><td>⑥-2</td><td>旁白對話框（無說話者：不顯示名牌與頭像）</td><td>戰鬥頁 ⑩ 點 ▼，擊敗劇情第 1 框</td></tr>
+    <tr><td>⑥-2</td><td>旁白對話框（無說話者：不顯示名牌與頭像）；旁白框樣式示意</td><td>戰鬥頁 ⑩ 點 ▼ 後，擊敗劇情從 4.1 第 2 框接續（第 1 框已在 ⑩ 訊息列出現，不重播）</td></tr>
     <tr><td>⑦</td><td>擊敗後對話（歐文）</td><td>戰鬥頁 ⑩ 點 ▼</td></tr>
     <tr><td>⑧</td><td>通關卡：「晨霧森林　已解放」＋「第二章・沉默書塔　敬請期待」</td><td>⑦ 結束 → 回到戰鬥頁 ⑪</td></tr>
   </table></div>
@@ -51,7 +51,7 @@
   </ul>
   <h2>尚未決定</h2>
   <ul>
-    <li><b>S-1 跳過要不要二次確認</b>：圖稿 ④ 有確認（序章只播一次）；也可以直接跳過。— 老闆</li>
+    <li><b>S-1 跳過要不要二次確認：✅ 要確認（G1 2026-11-11，老闆回覆「繼續」＝照建議）</b>：照圖稿 ④（序章只播一次）。</li>
     <li><b>S-2 看過的劇情能不能重看</b>（例如設定頁「冒險日誌」）：本 Sprint 建議不做。— product-manager</li>
     <li><b>S-3 歐文的頭像表情</b>：目前只有一種；是否要開心／驚訝 2～3 種。— design-director（可延後）</li>
     <li><b>S-4 劇情字型</b>：用像素字型（#8 俐方體 11 號；此稿暫用 DotGothic16，缺字退回系統字型）。字型檔大小待 #8 評估。</li>
@@ -102,7 +102,7 @@
     phone(bg('village') + chap('序章・起始之村') + skip + hero(170) +
       dlg('歐文', owenFace, '哎呀，是你！這幾天你在村子裡練得很勤嘛，我都看在眼裡。', { next: true }))));
 
-  F.push(frame('④ 跳過確認（S-1 待決）', '按「跳過 ▶▶」：確認後直接進入第一章戰鬥畫面。序章只播一次，所以提醒「之後不會再播」。',
+  F.push(frame('④ 跳過確認（S-1 ✅ G1 定案：要確認）', '按「跳過 ▶▶」：確認後直接進入第一章戰鬥畫面。序章只播一次，所以提醒「之後不會再播」。',
     phone(bg('village') + chap('序章・起始之村') + hero(170) +
       dlg('歐文', owenFace, '你看外面那片灰灰的東西——那就是「怠惰之霧」。', {}) +
       '<div class="scrim"></div><div class="sheet" role="dialog" aria-modal="true"><div class="win win--strong"><h3 class="win__title">跳過序章？</h3><p class="sheet__lead">會直接前往第一章「晨霧森林」。序章之後不會再播放。</p><div class="sheet__actions"><button class="btn btn--ghost">繼續看</button><button class="btn btn--primary">跳過</button></div></div></div>')));
@@ -115,7 +115,7 @@
       '<div style="position:absolute;left:50%;top:200px;transform:translateX(-50%);z-index:2"><canvas class="pix" data-sprite="slime" data-pose="awake" data-scale="5"></canvas></div>' +
       dlg('被窩史萊姆', slimeFace, '外面好冷喔……你要不要也進來躺一下下？裡面暖暖的……', { next: true }))));
 
-  F.push(frame('⑥-2 旁白對話框（無頭像）', '說話者為空＝旁白／系統（劇情草稿 0.1）：不顯示名牌與頭像，文字佔滿整框（.dlg__box--noface）。戰鬥頁 ⑩ 點 ▼ 後，劇情從這一框開始播。台詞：boss_bed_slime_defeat（4.1）第 1 框。',
+  F.push(frame('⑥-2 旁白對話框（無頭像）', '說話者為空＝旁白／系統（劇情草稿 0.1）：不顯示名牌與頭像，文字佔滿整框（.dlg__box--noface）。旁白框樣式示意；實際播放時第 1 框已在 ⑩ 訊息列出現，劇情從 4.1 第 2 框接續（戰鬥頁 ⑩ 點 ▼ 後）。示意台詞：boss_bed_slime_defeat（4.1）第 1 框。',
     phone(bg('mist') + chap('第一章・晨霧森林') + skip +
       '<div style="position:absolute;left:50%;top:300px;transform:translateX(-50%);z-index:2"><canvas class="pix" data-sprite="slime" data-pose="defeated" data-scale="5"></canvas></div>' +
       dlg('', '', '最後一擊！被窩史萊姆被晨光照得透亮——', { next: true }))));

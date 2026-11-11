@@ -2,7 +2,7 @@
 
 > 層級：🔴 規範
 > 狀態：**v1.0 定案（2026-10-23 老闆確認，第 13 節 6 項照建議通過）**— T9 阻斷解除
-> Sprint 2：第 14 節「戰鬥與事件」**v1.1 定案（2026-11-11 老闆回覆「繼續」，14.12 十項照 product-manager 建議；G1 前仍可調整）**— Sprint 2 #2 阻斷解除；第 1～13 節數值不變；14.13 為 **v1.2 草案（待老闆 G1 確認）**
+> Sprint 2：第 14 節「戰鬥與事件」**v1.1 定案（2026-11-11 老闆回覆「繼續」，14.12 十項照 product-manager 建議；G1 前仍可調整）**— Sprint 2 #2 阻斷解除；第 1～13 節數值不變；14.13 為 **v1.2 定案（G1，2026-11-11：老闆 2026-11-11 回覆「繼續」＝照建議；#3、#8 為 tech-lead 預設，老闆可再改）**
 > 對應：`src/config/balance.json`；欄位路徑與 `.knowledge/data-model.md` 第 5 節一一對應（新增欄位見第 11 節）
 > 依據：企劃書 v0.2 第 3、5 節；提案書第 2 節 #6、第 6 節；`day-rollover.md` v0.3 已拍板事項
 > 原則：**數字只寫在這份文件與 `balance.json`**，程式碼與測試都不得寫死（測試用 `tests/fixtures/balance.test.json`）
@@ -585,16 +585,17 @@ K = 3 時，Daily 稍微多一點的人只要出差回來就會「一打開就�
 | 9 | 打倒 Boss 後隨機事件要不要繼續 | **繼續**（排除跟 Boss 有關的），讓和平的森林每天還有一點變化 | 擊敗後停掉事件 |
 | 10 | 劇情語氣與村名 | 歐文「話很多、愛離題、會自己打斷自己」的老賢者；村子沿用企劃書「起始之村」 | 看過草稿後調整 |
 
-### 14.13 v1.2 草案：補欄位與規則（⏳ 待老闆 G1 確認）
+### 14.13 v1.2 定案：補欄位與規則（✅ G1 照建議定案，2026-11-11）
 
+> ✅ 老闆 2026-11-11 回覆「繼續」＝照建議（G1 送審清單 `proposal/sprint2-next-steps.md` 第 9 項）→ 本節全部照 product-manager 建議定案。G1 清單中沒有單一建議的 #3（像素圖維持程式繪製，D7 不重議）、#8（推播文字採 (a)）為 tech-lead 預設，老闆可再改；兩項都不影響本節數值。
 > 來源：Sprint 2 G1 圖稿 L1 複驗（`docs/design/mockup-s2-battle.html` ⑨）＋ data-model v2 設計審查（`.knowledge/data-model.md` 第 13 節待決 #1、#2、#3、#6、#8、#9、(d)）。
-> 只補欄位與規則；14.1～14.12 的數值不變。老闆確認前，實作先照本節建議（G1 前仍可調整）。
+> 只補欄位與規則；14.1～14.12 的數值不變。
 
 #### 14.13.1 新增欄位
 
 | 位置 | 欄位（建議） | 值 | 說明 |
 |------|------------|----|------|
-| `balance.json` | `defaults.reminderTime` | `"08:00"` | 每日提醒預設時間（台灣時間），與 `defaults.rolloverTime` 並列；使用者可在設定頁改。老闆未另行指定，依 `proposal/sprint2-tech-push.md` 暫用（data-model 待決 #3） |
+| `balance.json` | `defaults.reminderTime` | `"08:00"` | 每日提醒預設時間（台灣時間），與 `defaults.rolloverTime` 並列；使用者可在設定頁改。依 `proposal/sprint2-tech-push.md`；✅ G1 照建議定案（data-model 第 13 節 #3） |
 | `balance.json` | `battle.finishHintMaxTasks` | `3` | Boss HP 低時「再約 N 項就能打倒」的 N 最多顯示到幾；N 超過或算不出來時改用不帶數字的句子；設 `0` ＝永遠不顯示項數（14.13.2） |
 | `boss` 資料包 | `items[].phases[]` | 被窩史萊姆 `[{ hpPercent: 75 }, { hpPercent: 50 }, { hpPercent: 25 }]`（各帶 `sceneId`） | 血量階段台詞門檻（劇情草稿 3.7）；與 data-model 第 12 節資料包表 `phases: { hpPercent, sceneId }[]` 同一欄位 |
 | `boss` 資料包 | `items[].lowHpPercent` | 被窩史萊姆 `25` | Boss「HP 低」畫面（破被子、冒汗、HP 條紅色閃爍，圖稿 ⑨）的門檻；建議與最後一個階段同值，但分開一欄，試用時可單獨調 |
@@ -612,9 +613,9 @@ K = 3 時，Daily 稍微多一點的人只要出差回來就會「一打開就�
 
 例（圖稿 ⑨）：Boss HP 20，未完成「運動 30 分鐘」15、「伸展 5 分鐘」5 → 15＋5＝20 ≥ 20 → N＝2。
 
-#### 14.13.3 data-model v2 待決（product-manager 部分）的建議規則
+#### 14.13.3 data-model v2 待決（product-manager 部分）的規則（✅ G1 照建議定案）
 
-| 待決 | 建議規則 | 理由 |
+| 待決 | 規則 | 理由 |
 |------|---------|------|
 | #1 有選項的奇遇當天沒選 | 過了換日就**過期、沒有效果**；隔天不再顯示、不補、不提示；不佔隔天的 `maxPerDay` | 與「事件不補抽」（14.7.1）一致；隔天不會一次跳兩則 |
 | #2 世界狀態冷卻怎麼數 | 遊戲日 `d` 可開始新狀態的條件＝`d > endDayKey + worldStateCooldownDays`（結束後完整空出 N 天）。例：11/17 結束、N＝3 → 11/18～11/20 空，最早 11/21 | 「冷卻 3 天」照字面就是中間完整空 3 天，玩家與測試都好懂 |
@@ -672,7 +673,8 @@ T9 開工時照這份建立 `src/config/balance.json`（schema 調整見第 11 �
 
 | 版本 | 日期 | 變更 | 作者 |
 |------|------|------|------|
-| v1.2-draft | 2026-11-11 | ⏳ **待老闆 G1 確認**。新增 14.13：`defaults.reminderTime`、`battle.finishHintMaxTasks`、`boss` 資料包 `phases[].hpPercent`／`lowHpPercent`；「再約 N 項」算法；data-model v2 待決 #1、#2、#6、#8、#9、(d) 建議規則（來源：G1 圖稿 L1 複驗＋data-model v2 審查）；14.1～14.12 數值不變 | product-manager |
+| v1.2 | 2026-11-11 | G1：老闆 2026-11-11 回覆「繼續」＝照建議，14.13 定案（`defaults.reminderTime` 08:00、`finishHintMaxTasks` 3、`phases` 75／50／25、`lowHpPercent` 25、待決 #1、#2、#6、#8、#9、(d) 規則）；數值與草案相同。G1 清單 #3（像素圖維持）、#8（推播文字 (a)）為 tech-lead 預設，老闆可再改 | product-manager |
+| v1.2-draft | 2026-11-11 | 新增 14.13：`defaults.reminderTime`、`battle.finishHintMaxTasks`、`boss` 資料包 `phases[].hpPercent`／`lowHpPercent`；「再約 N 項」算法；data-model v2 待決 #1、#2、#6、#8、#9、(d) 建議規則（來源：G1 圖稿 L1 複驗＋data-model v2 審查）；14.1～14.12 數值不變 | product-manager |
 | v1.1 | 2026-11-11 | 老闆回覆「繼續」＝14.12 十項照 product-manager 建議，第 14 節定案（G1 前仍可調整）；標題同步（tech-lead 依 L1 圖稿審查指出） | product-manager |
 | v1.1-draft | 2026-11-11 | 新增第 14 節「Sprint 2 戰鬥與事件」草案（傷害、Boss HP、擊敗取消、僧侶祈禱、隨機事件）；第 1～13 節不變 | product-manager |
 | v1.0 | 2026-10-23 | 老闆確認第 13 節 6 項照建議通過，定案 | product-manager |
