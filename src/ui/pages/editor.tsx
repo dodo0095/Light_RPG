@@ -9,6 +9,7 @@ import { Banner, EmptyState } from '../components/common';
 import type { AppStore } from '../state/app-store';
 import {
   buildEditorVM,
+  changeScheduleKind,
   errorCount,
   findTask,
   formFromTask,
@@ -414,7 +415,7 @@ function EditorBody({
                   key={o.key}
                   type="button"
                   aria-pressed={o.on}
-                  onClick={() => set({ scheduleKind: o.key })}
+                  onClick={() => set(changeScheduleKind(form, o.key))}
                 >
                   {o.label}
                 </button>

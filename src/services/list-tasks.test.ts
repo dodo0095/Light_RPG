@@ -53,6 +53,36 @@ describe('listTasks', () => {
   });
 });
 
+describe('listEventSubjects', () => {
+  it('含已刪除的任務與獎勵、今天沒排到的 Daily（事件紀錄對照名稱用）', async () => {
+    const { service } = await boot(new FakeClock(TUE));
+    services.push(service);
+    await service.selectClass('test_class_a');
+    const daily = (await service.listTasks()).find((t) => t.type === 'daily')!;
+    expect((await service.deleteTask(daily.id)).ok).toBe(true);
+    const reward = (await service.getRewardsView())!.rewards[0]!;
+    expect((await service.deleteReward(reward.id)).ok).toBe(true);
+
+    const subjects = await service.listEventSubjects();
+    const deletedTask = subjects.tasks.find((t) => t.id === daily.id);
+    expect(deletedTask?.deletedAt).not.toBeNull();
+    expect(deletedTask?.title).toBe(daily.title);
+    const deletedReward = subjects.rewards.find((r) => r.id === reward.id);
+    expect(deletedReward?.deletedAt).not.toBeNull();
+    expect(deletedReward?.title).toBe(reward.title);
+    expect(subjects.tasks.map((t) => t.sourceTemplateId).sort()).toEqual([
+      'test_daily_b',
+      'test_habit_a',
+    ]);
+  });
+
+  it('尚未選職業 → 空清單', async () => {
+    const { service } = await boot(new FakeClock(TUE));
+    services.push(service);
+    expect(await service.listEventSubjects()).toEqual({ tasks: [], rewards: [] });
+  });
+});
+
 describe('getClassSelectedDayKey', () => {
   it('選職業前為 null；選職業後為那天的遊戲日', async () => {
     const { service } = await boot(new FakeClock(TUE));

@@ -40,6 +40,7 @@ import {
   type CheckInView,
   type CompletedTodoView,
   type DaySummaryView,
+  type EventSubjectsView,
   type ExportResult,
   type RolloverScheduleView,
   type ImportFailure,
@@ -283,6 +284,15 @@ export async function listRecentEvents(ctx: ServiceContext): Promise<GameEvent[]
   const all = await ctx.storage.events.listByOccurredAt();
   const n = ctx.balance.eventLog.visibleCount;
   return all.slice(-n).reverse();
+}
+
+/** 所有任務與獎勵（含已軟刪除），給事件紀錄對照名稱。唯讀、不日結。 */
+export async function listEventSubjects(ctx: ServiceContext): Promise<EventSubjectsView> {
+  const [tasks, rewards] = await Promise.all([
+    ctx.storage.tasks.list({ includeDeleted: true }),
+    ctx.storage.rewards.list({ includeDeleted: true }),
+  ]);
+  return { tasks, rewards };
 }
 
 async function metaValue(ctx: ServiceContext, key: string): Promise<unknown> {

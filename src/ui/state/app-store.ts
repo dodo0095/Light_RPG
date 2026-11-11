@@ -16,6 +16,7 @@ import type {
   AppService,
   BootstrapResult,
   DaySummaryView,
+  EventSubjectsView,
   NewTaskInput,
   ExportResult,
   GameEvent,
@@ -92,6 +93,8 @@ export function createAppStore(deps: AppStoreDeps) {
   const rewards = signal<RewardsView | null>(null);
   /** 最近事件紀錄（T19；只在設定頁時讀取） */
   const recentEvents = signal<GameEvent[] | null>(null);
+  /** 事件紀錄對照名稱用的所有任務與獎勵（含已刪除；與 recentEvents 一起讀取） */
+  const eventSubjects = signal<EventSubjectsView | null>(null);
   /** 這次啟動實際取得的持久儲存狀態（匯入會覆蓋 meta，所以以啟動結果為準） */
   const persistence = signal<PersistenceRecord | null>(null);
   /** 進行中的動作（防連點），key 例如 `daily:<id>` */
@@ -121,18 +124,20 @@ export function createAppStore(deps: AppStoreDeps) {
       const days = rolloverDayKeys.value;
       const first = days[0];
       const last = days[days.length - 1];
-      const [settingsView, scheduleView, summaries, taskList, classDay, rewardsView, events] =
+      const [settingsView, scheduleView, summaries, taskList, classDay, rewardsView, eventLog] =
         await Promise.all([
-        svc.getSettingsView(),
-        svc.getRolloverSchedule(),
-        first !== undefined && last !== undefined
-          ? svc.getDaySummaries(first, last)
-          : Promise.resolve([]),
-        view === null ? Promise.resolve(null) : svc.listTasks(),
-        view === null ? Promise.resolve(null) : svc.getClassSelectedDayKey(),
-        svc.getRewardsView(),
-        page.value === 'settings' ? svc.listRecentEvents() : Promise.resolve(null),
-      ]);
+          svc.getSettingsView(),
+          svc.getRolloverSchedule(),
+          first !== undefined && last !== undefined
+            ? svc.getDaySummaries(first, last)
+            : Promise.resolve([]),
+          view === null ? Promise.resolve(null) : svc.listTasks(),
+          view === null ? Promise.resolve(null) : svc.getClassSelectedDayKey(),
+          svc.getRewardsView(),
+          page.value === 'settings'
+            ? Promise.all([svc.listRecentEvents(), svc.listEventSubjects()])
+            : Promise.resolve(null),
+        ]);
       batch(() => {
         today.value = view;
         tasks.value = taskList;
@@ -141,7 +146,10 @@ export function createAppStore(deps: AppStoreDeps) {
         schedule.value = scheduleView;
         daySummaries.value = summaries;
         rewards.value = rewardsView;
-        if (events !== null) recentEvents.value = events;
+        if (eventLog !== null) {
+          recentEvents.value = eventLog[0];
+          eventSubjects.value = eventLog[1];
+        }
         if (phase.value.kind === 'error') return;
         phase.value = view === null ? { kind: 'onboarding' } : { kind: 'ready' };
       });
@@ -411,6 +419,7 @@ export function createAppStore(deps: AppStoreDeps) {
     actions,
     rewards,
     recentEvents,
+    eventSubjects,
     persistence,
     rewardActions,
     settingsActions,

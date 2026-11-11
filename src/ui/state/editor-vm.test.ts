@@ -15,6 +15,7 @@ import { bootstrap } from '../../services';
 import { createAppStore, type AppStore } from './app-store';
 import {
   buildEditorVM,
+  changeScheduleKind,
   defaultDifficulty,
   errorCount,
   findTask,
@@ -139,6 +140,32 @@ describe('新增表單初值與選項', () => {
     expect(show('habit')).toEqual({ buttons: true, schedule: false, checklist: false, due: false });
     expect(show('daily')).toEqual({ buttons: false, schedule: true, checklist: true, due: false });
     expect(show('todo')).toEqual({ buttons: false, schedule: false, checklist: true, due: true });
+  });
+});
+
+describe('頻率切到自訂（B9）', () => {
+  it.each([
+    ['everyday', [0, 1, 2, 3, 4, 5, 6]],
+    ['weekdays', [1, 2, 3, 4, 5]],
+    ['weekends', [0, 6]],
+  ] as const)('%s → 自訂：預填目前頻率的星期', (kind, days) => {
+    const next = changeScheduleKind(blank({ scheduleKind: kind, days: [] }), 'custom');
+    expect(next).toEqual({ scheduleKind: 'custom', days });
+    expect(validateForm({ ...blank(), ...next }).days).toBeUndefined();
+  });
+
+  it('本來就是自訂 → 星期保持不變', () => {
+    expect(changeScheduleKind(blank({ scheduleKind: 'custom', days: [2, 4] }), 'custom')).toEqual({
+      scheduleKind: 'custom',
+      days: [2, 4],
+    });
+  });
+
+  it('切到每天／平日／週末 → 只換頻率，不動已選星期', () => {
+    expect(changeScheduleKind(blank({ scheduleKind: 'custom', days: [3] }), 'weekdays')).toEqual({
+      scheduleKind: 'weekdays',
+      days: [3],
+    });
   });
 });
 

@@ -164,6 +164,7 @@ describe('設定頁', () => {
     await store.refresh();
     expect(store.recentEvents.value).toHaveLength(fixtureBalance.eventLog.visibleCount);
     expect(store.recentEvents.value![0]!.type).toBe('inn_checked_out');
+    expect(store.eventSubjects.value).not.toBeNull();
   });
 
   it.each([

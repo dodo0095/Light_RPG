@@ -1,15 +1,22 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion -- 測試資料必定存在 */
 import { describe, expect, it } from 'vitest';
-import type { GameEvent, RolloverScheduleView, SettingsView } from '../../services';
+import type {
+  EventSubjectsView,
+  GameEvent,
+  RolloverScheduleView,
+  SettingsView,
+} from '../../services';
 import {
   buildEventRows,
   buildPersistenceVM,
   buildRolloverVM,
   buildSettingsVM,
+  buildSubjectTitles,
   importErrorText,
   lastBackupText,
   normalizeTimeInput,
 } from './settings-vm';
+import type { DailyTask, HabitTask, TodoTask } from './types';
 
 const schedule = (upcoming: RolloverScheduleView['upcoming'] = []): RolloverScheduleView => ({
   dayKey: '2026-10-26',
@@ -190,5 +197,96 @@ describe('最近事件紀錄', () => {
     ]);
     expect(rows[2]!.dayText).toBe('10/25');
     expect(rows[0]!.time).toMatch(/^\d{2}\/\d{2} \d{2}:\d{2}$/);
+  });
+});
+
+describe('事件紀錄的名稱對照（B8）', () => {
+  const T = '2026-10-26T02:00:00.000Z';
+  const taskBase = {
+    createdAt: T,
+    updatedAt: T,
+    deletedAt: null,
+    notes: '',
+    mini: null,
+    difficulty: 'normal',
+    attribute: 'fitness' as const,
+    tags: [],
+    sourceTemplateId: null,
+    sortOrder: 0,
+    createdDayKey: '2026-10-01',
+  };
+  // 週一（2026-10-26）的事件紀錄：週末才做的 Daily 今天不在今天頁
+  const weekendDaily: DailyTask = {
+    ...taskBase,
+    id: 'd_weekend',
+    type: 'daily',
+    title: '週末大掃除',
+    schedule: { kind: 'weekends', daysOfWeek: [] },
+    checklist: [],
+    streak: 0,
+  };
+  const deletedHabit: HabitTask = {
+    ...taskBase,
+    id: 'h_deleted',
+    type: 'habit',
+    title: '爬樓梯',
+    deletedAt: T,
+    allowUp: true,
+    allowDown: false,
+  };
+  const deletedTodo: TodoTask = {
+    ...taskBase,
+    id: 't_deleted',
+    type: 'todo',
+    title: '繳電費',
+    deletedAt: T,
+    checklist: [],
+    dueDayKey: null,
+    completedAt: T,
+  };
+  const subjects: EventSubjectsView = {
+    tasks: [weekendDaily, deletedHabit, deletedTodo],
+    rewards: [
+      {
+        id: 'r_deleted',
+        createdAt: T,
+        updatedAt: T,
+        deletedAt: T,
+        title: '看一集劇',
+        cost: 30,
+        sourceTemplateId: null,
+        sortOrder: 0,
+      },
+    ],
+  };
+  const zero = { gold: 0, exp: 0, hp: 0, attributeExp: {} };
+  const event = (id: string, type: GameEvent['type'], ref: Partial<GameEvent>): GameEvent => ({
+    id,
+    type,
+    createdAt: T,
+    occurredAt: T,
+    dayKey: '2026-10-26',
+    configVersion: 'cfg',
+    deltas: zero,
+    ...ref,
+  });
+  const subjectOf = (e: GameEvent) => buildEventRows([e], buildSubjectTitles(subjects))[0]!.subject;
+
+  it('已刪除的任務仍顯示名稱', () => {
+    expect(subjectOf(event('e1', 'habit_up', { taskId: 'h_deleted' }))).toBe('爬樓梯');
+    expect(subjectOf(event('e2', 'todo_completed', { taskId: 't_deleted' }))).toBe('繳電費');
+  });
+
+  it('今天不需要做的 Daily 仍顯示名稱', () => {
+    expect(subjectOf(event('e3', 'daily_checked', { taskId: 'd_weekend' }))).toBe('週末大掃除');
+  });
+
+  it('已刪除的獎勵仍顯示名稱', () => {
+    expect(subjectOf(event('e4', 'reward_redeemed', { rewardId: 'r_deleted' }))).toBe('看一集劇');
+  });
+
+  it('尚未讀取（null）或找不到 id → 不顯示名稱', () => {
+    expect(buildSubjectTitles(null).size).toBe(0);
+    expect(subjectOf(event('e5', 'daily_checked', { taskId: 'unknown' }))).toBeNull();
   });
 });

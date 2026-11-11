@@ -7,7 +7,12 @@
  * - 編輯既有任務只送「有改的欄位」；services 會更新 `updatedAt`。
  * - 難度選項來自設定檔 `difficulties`，屬性選項依 `settings.enabledAttributes`。
  */
-import type { NewTaskInput, TaskPatch, TodayView } from '../../services';
+import {
+  scheduleIncludes,
+  type NewTaskInput,
+  type TaskPatch,
+  type TodayView,
+} from '../../services';
 import { formatMonthDay } from './format';
 import { ATTRIBUTE_LABELS, SECTION_NAMES, classIcon, difficultyLabel } from './labels';
 import { enabledSet } from './library-vm';
@@ -170,6 +175,22 @@ function cleanChecklist(items: readonly ChecklistDraft[]) {
   return items
     .map((item) => ({ ...item, text: item.text.trim() }))
     .filter((item) => item.text !== '');
+}
+
+/**
+ * 切換頻率。從「每天／平日／週末」切到「自訂」時，預填目前頻率包含的星期
+ * （每天→全選、平日→一到五、週末→六日）；本來就是自訂則保持不變。
+ */
+export function changeScheduleKind(
+  form: EditorForm,
+  kind: ScheduleKind,
+): Pick<EditorForm, 'scheduleKind' | 'days'> {
+  if (kind !== 'custom' || form.scheduleKind === 'custom') {
+    return { scheduleKind: kind, days: form.days };
+  }
+  const current = { kind: form.scheduleKind, daysOfWeek: [] };
+  const days = WEEKDAY_OPTIONS.map((o) => o.day).filter((day) => scheduleIncludes(current, day));
+  return { scheduleKind: kind, days };
 }
 
 function scheduleOf(form: EditorForm) {

@@ -20,4 +20,6 @@ export {
   type RescueSource,
   type RescueSources,
 } from './rescue';
+/** Daily 頻率是否包含某個星期（core 的唯一定義；進階編輯預填自訂星期用） */
+export { scheduleIncludes } from '../core/settlement';
 export * from './types';

@@ -17,6 +17,7 @@ import type {
   HabitTask,
   PendingRolloverTime,
   Reward,
+  Task,
   TodoTask,
 } from '../core/types';
 import type { ContentPacks } from '../content/validate';
@@ -278,6 +279,15 @@ export interface RewardsView {
   rewards: Reward[];
   /** 今天兌換、尚未取消的（依最後兌換時間由舊到新）；今天未結算，全部可以取消 */
   redeemedToday: RewardRedemptionView[];
+}
+
+/**
+ * 事件紀錄可能提到的所有任務與獎勵（含已軟刪除、今天沒排到的 Daily），給設定頁顯示名稱。
+ * 唯讀，不日結。
+ */
+export interface EventSubjectsView {
+  tasks: Task[];
+  rewards: Reward[];
 }
 
 export interface SettingsView {

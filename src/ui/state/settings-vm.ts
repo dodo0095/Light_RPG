@@ -6,6 +6,7 @@
  * 事件筆數由設定檔 `eventLog.visibleCount` 決定（services 已截好），這裡只做顯示文字。
  */
 import type {
+  EventSubjectsView,
   GameEvent,
   PersistenceRecord,
   RolloverScheduleView,
@@ -160,7 +161,18 @@ function deltasText(event: GameEvent): string {
 }
 
 /**
- * `titles`：任務／獎勵 id → 名稱（取自畫面已有的資料；找不到時不顯示名稱）。
+ * 任務／獎勵 id → 名稱。涵蓋所有任務與獎勵（含已軟刪除、今天沒排到的 Daily），
+ * 讓事件紀錄裡的舊項目也顯示名稱；尚未讀取（null）時為空對照。
+ */
+export function buildSubjectTitles(subjects: EventSubjectsView | null): Map<string, string> {
+  const titles = new Map<string, string>();
+  for (const task of subjects?.tasks ?? []) titles.set(task.id, task.title);
+  for (const reward of subjects?.rewards ?? []) titles.set(reward.id, reward.title);
+  return titles;
+}
+
+/**
+ * `titles`：任務／獎勵 id → 名稱（見 buildSubjectTitles；找不到時不顯示名稱）。
  */
 export function buildEventRows(
   events: readonly GameEvent[],

@@ -13,6 +13,7 @@ import { formatIsoMonthDay } from '../state/format';
 import {
   buildEventRows,
   buildSettingsVM,
+  buildSubjectTitles,
   importErrorText,
   normalizeTimeInput,
 } from '../state/settings-vm';
@@ -177,17 +178,8 @@ export function SettingsPage({ store }: { store: AppStore }) {
     }
   };
 
-  const titles = new Map<string, string>([
-    ...today.dailies.map((d) => [d.task.id, d.task.title] as const),
-    ...today.habits.map((h) => [h.task.id, h.task.title] as const),
-    ...today.todos.map((t) => [t.id, t.title] as const),
-    ...today.completedTodos.map((t) => [t.task.id, t.task.title] as const),
-    ...(store.rewards.value?.rewards ?? []).map((r) => [r.id, r.title] as const),
-    ...(store.rewards.value?.redeemedToday ?? []).map(
-      (r) => [r.reward.id, r.reward.title] as const,
-    ),
-  ]);
-  const eventRows = events === null ? null : buildEventRows(events, titles);
+  const eventRows =
+    events === null ? null : buildEventRows(events, buildSubjectTitles(store.eventSubjects.value));
   const visibleRows = eventRows && !showAllEvents ? eventRows.slice(0, EVENT_PREVIEW) : eventRows;
 
   return (

@@ -106,7 +106,12 @@ export function TaskRow(props: {
         )}
       </div>
       {props.showMore !== false && (
-        <button type="button" class="task__more" aria-label="編輯" onClick={handlers.onMore}>
+        <button
+          type="button"
+          class="task__more"
+          aria-label={`編輯：${row.title}`}
+          onClick={handlers.onMore}
+        >
           ⋯
         </button>
       )}
