@@ -2,7 +2,7 @@
 
 > 層級：🔴 規範
 > 狀態：**v1.0 定案（2026-10-23 老闆確認，第 13 節 6 項照建議通過）**— T9 阻斷解除
-> Sprint 2：第 14 節「戰鬥與事件」**v1.1 定案（2026-11-11 老闆回覆「繼續」，14.12 十項照 product-manager 建議；G1 前仍可調整）**— Sprint 2 #2 阻斷解除；第 1～13 節數值不變；14.13 為 **v1.2 定案（G1，2026-11-11：老闆 2026-11-11 回覆「繼續」＝照建議；#3、#8 為 tech-lead 預設，老闆可再改）**
+> Sprint 2：第 14 節「戰鬥與事件」**v1.1 定案（2026-11-11 老闆回覆「繼續」，14.12 十項照 product-manager 建議；G1 前仍可調整）**— Sprint 2 #2 阻斷解除；第 1～13 節數值不變；14.13 為 **v1.2 定案（G1，2026-11-11：老闆 2026-11-11 回覆「繼續」＝照建議；#3、#8 為 tech-lead 預設，老闆可再改）**；v1.2.1（2026-11-12）於 14.13.1 補 `story.charsPerSecond`
 > 對應：`src/config/balance.json`；欄位路徑與 `.knowledge/data-model.md` 第 5 節一一對應（新增欄位見第 11 節）
 > 依據：企劃書 v0.2 第 3、5 節；提案書第 2 節 #6、第 6 節；`day-rollover.md` v0.3 已拍板事項
 > 原則：**數字只寫在這份文件與 `balance.json`**，程式碼與測試都不得寫死（測試用 `tests/fixtures/balance.test.json`）
@@ -599,7 +599,9 @@ K = 3 時，Daily 稍微多一點的人只要出差回來就會「一打開就�
 | `balance.json` | `battle.finishHintMaxTasks` | `3` | Boss HP 低時「再約 N 項就能打倒」的 N 最多顯示到幾；N 超過或算不出來時改用不帶數字的句子；設 `0` ＝永遠不顯示項數（14.13.2） |
 | `boss` 資料包 | `items[].phases[]` | 被窩史萊姆 `[{ hpPercent: 75 }, { hpPercent: 50 }, { hpPercent: 25 }]`（各帶 `sceneId`） | 血量階段台詞門檻（劇情草稿 3.7）；與 data-model 第 12 節資料包表 `phases: { hpPercent, sceneId }[]` 同一欄位 |
 | `boss` 資料包 | `items[].lowHpPercent` | 被窩史萊姆 `25` | Boss「HP 低」畫面（破被子、冒汗、HP 條紅色閃爍，圖稿 ⑨）的門檻；建議與最後一個階段同值，但分開一欄，試用時可單獨調 |
+| `balance.json` | `story.charsPerSecond` | `30` | 🆕 v1.2.1：劇情對話框逐字顯示速度（字／秒）。規則見下方；story 圖稿 ①② |
 
+- **逐字顯示（`story.charsPerSecond`，v1.2.1）**：對話框每秒跳出 `charsPerSecond` 個字；點一下＝先顯示整段，整段已出現時再點＝下一段（story 圖稿 ①②）。系統開啟 `prefers-reduced-motion` 時**不逐字、整段直接出現**（不讀本欄位）。只影響畫面，不寫事件、不入 IndexedDB。程式不得寫死 30。
 - **「在門檻以下」的判斷**：`Boss 目前 HP × 100 ≤ maxHp × hpPercent`（整數比較，不用小數）。被窩史萊姆 300：75%＝225、50%＝150、25%＝75。
 - 所有門檻都從資料包讀，程式不寫 75／50／25 或 0.25。
 
@@ -634,11 +636,12 @@ K = 3 時，Daily 稍微多一點的人只要出差回來就會「一打開就�
     "taskTypeDamageMultiplier": { "daily": 1.0, "todo": 1.0, "habitUp": 0.4 },
     "miniDamageRatio": 0.5,
     "finishHintMaxTasks": 3
-  }
+  },
+  "story": { "charsPerSecond": 30 }
 }
 ```
 
-> 只列有變動的區塊；其他欄位同 14.8／附錄 A。`boss` 資料包的 `phases`、`lowHpPercent` 不在 `balance.json`。
+> 只列有變動的區塊；其他欄位同 14.8／附錄 A。`boss` 資料包的 `phases`、`lowHpPercent` 不在 `balance.json`。`story.charsPerSecond` 為 v1.2.1 補入：T4 尚未實作，同一個 `configVersion` `1.2.0` 內補欄位，不另升版本。
 
 ## 附錄 A：`balance.json` 完整內容
 
@@ -673,6 +676,7 @@ T9 開工時照這份建立 `src/config/balance.json`（schema 調整見第 11 �
 
 | 版本 | 日期 | 變更 | 作者 |
 |------|------|------|------|
+| v1.2.1 | 2026-11-12 | tech-lead 2026-11-12 依開發計畫第 8 節 #2 補欄位：14.13.1 新增 `story.charsPerSecond`（預設 30 字／秒；`prefers-reduced-motion` 時整段直接出現），14.13.4 片段同步。`configVersion` 維持 `1.2.0`（T4 尚未實作，同版本內補欄位）；其他數值不變 | product-manager |
 | v1.2 | 2026-11-11 | G1：老闆 2026-11-11 回覆「繼續」＝照建議，14.13 定案（`defaults.reminderTime` 08:00、`finishHintMaxTasks` 3、`phases` 75／50／25、`lowHpPercent` 25、待決 #1、#2、#6、#8、#9、(d) 規則）；數值與草案相同。G1 清單 #3（像素圖維持）、#8（推播文字 (a)）為 tech-lead 預設，老闆可再改 | product-manager |
 | v1.2-draft | 2026-11-11 | 新增 14.13：`defaults.reminderTime`、`battle.finishHintMaxTasks`、`boss` 資料包 `phases[].hpPercent`／`lowHpPercent`；「再約 N 項」算法；data-model v2 待決 #1、#2、#6、#8、#9、(d) 建議規則（來源：G1 圖稿 L1 複驗＋data-model v2 審查）；14.1～14.12 數值不變 | product-manager |
 | v1.1 | 2026-11-11 | 老闆回覆「繼續」＝14.12 十項照 product-manager 建議，第 14 節定案（G1 前仍可調整）；標題同步（tech-lead 依 L1 圖稿審查指出） | product-manager |

@@ -52,7 +52,7 @@
 2. **tech-lead 設計**（可與圖稿並行）：
    - `data-model.md` v2：`adventure`（建議記累計傷害，HP＝maxHp−累計）、`worldStates`、隨機事件抽籤紀錄、新事件類型、打卡事件 `payload`（Boss 傷害、`prayerHeal`）、v1→v2 遷移
    - 繪製方式（Canvas vs DOM／CSS）＋ iPhone 繪圖 spike
-   - 推播：`serve.mjs` 的 `/api/push/*`、`web-push`、VAPID 金鑰 `.env`、自訂 Service Worker（`injectManifest`，需回歸測試更新提示）
+   - 推播：`serve.mjs` 的 `/api/v1/push/*`、`web-push`、VAPID 金鑰 `.env`、自訂 Service Worker（`injectManifest`，需回歸測試更新提示）
 3. `/dev-plan` 產出 Sprint 2 開發計畫書 → `/task-delegation` 拆任務
 4. 實作 → G2 → 測試（含用老闆真實匯出檔演練遷移）→ G3 → 部署 → G5
 

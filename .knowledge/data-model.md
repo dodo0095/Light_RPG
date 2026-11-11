@@ -736,9 +736,11 @@ migrate_v1_to_v2(backup: BackupV1): BackupV2
 
 | 位置 | 存什麼 | 不存什麼 |
 |------|-------|---------|
-| 部署機（`deploy/data/`，不進版控） | 推播訂閱（endpoint＋加密金鑰）、每天提醒時間 | **任何遊戲資料**；也不送 `installId`、角色名、打卡狀態 |
+| 部署機（`deploy/data/`，不進版控） | 推播訂閱（endpoint＋加密金鑰）、每天提醒時間；推播運作欄位 `created_at`、`updated_at`、`last_sent_date`（欄位白名單見 `.knowledge/specs/api-design.md` 第 4 節） | **任何遊戲資料**；也不送 `installId`、角色名、打卡狀態 |
 | 瀏覽器 PushManager | 訂閱本身（`pushManager.getSubscription()` 可隨時取得） | — |
 | IndexedDB `meta.pushReminder` 🆕 | 下表 | 訂閱的 endpoint／金鑰（不重複存，避免外洩面擴大） |
+
+- **伺服器白名單註記（2026-11-12）**：伺服器檔案只允許 `endpoint`、`keys.p256dh`、`keys.auth`、`reminder_time`，以及運作欄位 `created_at`、`updated_at`、`last_sent_date`。這三個運作欄位是**推播運作資料**（記錄訂閱建立／更新時間與「今天已送過」以達成每天最多一次），**不是遊戲資料**，不含任何角色、任務、打卡資訊，符合 `CLAUDE.md` 規則 1；T20 以測試斷言檔案內沒有白名單外的欄位。
 
 `meta.pushReminder`（key-value，value 如下；不存在＝從未設定＝關閉）：
 
@@ -895,7 +897,7 @@ v2 參照：`adventure.chapterId`、`adventure.boss.bossId`、`adventure.seenSce
 2. 跑 `migrate_v1_to_v2` → `assertBackupV2` 通過。
 3. 比對升級前後：角色（`totalExp`、等級、`attributeExp`、`hp`、`gold`、`classId`、`inn`）、任務數與每筆內容、事件數與每筆內容、`daySummaries` 完全一致（MG-03 的斷言套在真實資料上）。
 4. 在 `fake-indexeddb` 匯入 v1 檔到 v2 App（MG-10 流程），接著：跑一次日結、打勾一次、取消一次、完成序章 → 沒有錯誤，角色數值變化符合 Sprint 1 規則＋戰鬥規則。
-5. 結果（指令＋輸出摘要）附在 G2（提案書第 3 節「遷移演練」）。
+5. 結果（指令＋輸出摘要）附在 G3 前（提案書第 3 節原寫 G2；tech-lead 2026-11-12 改為 G3：演練 T23 排在 G2 之後的測試階段，見 `proposal/sprint2-dev-plan.md` 阻斷規則 5）；未完成不得部署。
 
 #### 12.10.6 戰鬥／抽籤／換日的資料層測試（`CLAUDE.md` 規則 4：跨午夜、多日未開、旅館期間）
 
@@ -967,6 +969,7 @@ v2 參照：`adventure.chapterId`、`adventure.boss.bossId`、`adventure.seenSce
 | `randomEvents.{maxPerDay,encounterDailyChance,worldStateDailyChance,worldStateCooldownDays,luckHpLossMaxPerDay}` | 隨機事件 | 14.7 |
 | `defaults.reminderTime` | 每日提醒預設時間（台灣時間，12.8 `meta.pushReminder.time` 第一次開啟時的預設值） | 14.13.1（v1.2 定案） |
 | `battle.finishHintMaxTasks` | 「再約 N 項就能打倒」最多顯示到幾項；只是畫面提示，不寫事件、不入 IndexedDB | 14.13.1、14.13.2（v1.2 定案） |
+| `story.charsPerSecond` | 劇情逐字顯示速度；`prefers-reduced-motion` 時整段直接出現；只是畫面，不寫事件、不入 IndexedDB | 14.13.1（v1.2.1，2026-11-12 補） |
 
 Boss `maxHp`、`phases[].hpPercent`、`lowHpPercent`、世界狀態與奇遇的效果數字放內容資料包（決策表 14.1 第二張表、14.13.1），不放 `balance.json`。
 
