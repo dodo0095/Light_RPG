@@ -1,12 +1,14 @@
 # Sprint 1：目前進度與接續步驟
 
-> **更新**: 2026-10-24（tech-lead）
+> **更新**: 2026-11-11（tech-lead）
 > **最新 commit**: 見 GitHub `dodo0095/Light_RPG` 的 `main`
 
 ## 目前進度
 
 - Gate：G0 ✅、G1 ✅、G2 ✅（2026-10-24）；下一關 **G3 測試驗收**，再來 **G5 部署就緒**
 - 任務：T1～T21 全部完成；**T22 正式部署**進行中；**T23 iPhone 實機驗收**未開始
+- 2026-11-11：`rpg.starklab.tw` 回 502（Caddy 正常，`127.0.0.1:5810` 沒在跑）→ 需在部署機重新啟動 `deploy/serve.mjs`，建議同時設定開機自動啟動
+- 2026-11-11：已在開發機完成桌機預檢，桌機能確認的項目全部通過，無 Blocker／Major（`docs/acceptance/sprint1-desktop-prescreen.md`）
 - 規格、審查報告、待辦：
   - 開發計畫書：`proposal/sprint1-dev-plan.md`（第 10 節有所有任務、Review、Gate 紀錄）
   - G2 審查報告：`docs/reviews/sprint1-g2-review-round1.md`、`round2.md`
