@@ -37,3 +37,6 @@ build 產物發佈到老闆電腦、確認 Cloudflare 未快取 `sw.js`、iPhone
 
 ### 2026-10-24T04:29:53.140Z — 狀態變更 → in_progress
 G2 通過（老闆 2026-10-24），開始正式部署：老闆在部署機 git pull＋install＋build
+
+### 2026-11-11 — 部署機重新啟動，正式網址恢復
+老闆在部署機 pull `6788c4f`＋build＋啟動 `serve.mjs`。tech-lead 驗證：`https://rpg.starklab.tw/` 200、`/sw.js` 200＋`Cache-Control: no-cache`、`/manifest.webmanifest` 200；線上 bundle 版本字串 `0.0.0+6788c4f.202611111019`，與 `sw.js` precache 的 `assets/index-BhALD2mR.js` 一致。待 iPhone 確認全螢幕與更新提示（驗收標準 1、2）。
