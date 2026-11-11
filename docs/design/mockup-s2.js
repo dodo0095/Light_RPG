@@ -426,9 +426,9 @@
   var ATTR = { fitness: '體能', wisdom: '智慧', spirit: '心靈', bond: '連結', finance: '財務' };
   S2.ROWS = {
     wake: { t: '早上 7 點前起床', attr: 'fitness', diff: '普通', state: 'done', reward: '+6金 +10EXP', dmg: 10 },
-    water: { t: '喝 2000cc 水', attr: 'fitness', diff: '簡單', state: 'mini', miniT: '喝一杯水', reward: '+2金 +3EXP', dmg: 2 },
+    water: { t: '喝 2000cc 水', attr: 'fitness', diff: '簡單', state: 'mini', miniT: '喝一杯水', reward: '+2金 +3EXP', dmg: 3 },
     run: { t: '運動 30 分鐘', attr: 'fitness', diff: '困難', streak: '連續 4 天', mini: '運動 10 分鐘' },
-    runDone: { t: '運動 30 分鐘', attr: 'fitness', diff: '困難', state: 'done', reward: '+10金 +16EXP', dmg: 16, hit: true },
+    runDone: { t: '運動 30 分鐘', attr: 'fitness', diff: '困難', state: 'done', reward: '+10金 +16EXP', dmg: 15, hit: true },
     stretch: { t: '伸展 5 分鐘', attr: 'fitness', diff: '簡單' },
     stretchDone: { t: '伸展 5 分鐘', attr: 'fitness', diff: '簡單', state: 'done', reward: '+3金 +5EXP', dmg: 5 },
     sleep: { t: '23:30 前上床', attr: 'fitness', diff: '普通' }
@@ -442,23 +442,25 @@
       (r.streak ? '<span>' + r.streak + '</span>' : '') +
       (r.reward ? '<span class="reward-line">' + r.reward + '</span>' : '') +
       (r.dmg != null ? '<span class="dmg-tag">⚔' + r.dmg + '</span>' : '');
-    var act = r.state ? (r.lock ? '<span class="tag tag--lock">' + r.lock + '</span>' : '<button class="link-btn">↶ 取消</button>')
+    /* 決策表 14.5 擊敗確定制：已完成列一律可取消（含擊敗那一下）；r.note 為取消鈕旁的短提示 */
+    var act = r.state ? '<button class="link-btn">↶ 取消</button>' + (r.note ? '<span class="mute">' + r.note + '</span>' : '')
       : (r.mini ? '<button class="mini-btn">只做迷你版：' + r.mini + '</button>' : '');
     return '<div class="task' + (r.state ? ' is-done' : '') + (r.hit ? ' is-hit' : '') + '">' +
       (cursor ? '<span class="cursor row-cursor" aria-hidden="true">▶</span>' : '') + check +
       '<div class="task__body"><div class="task__title">' + r.t + '</div><div class="task__meta">' + meta + '</div>' +
       (act ? '<div class="task__actions">' + act + '</div>' : '') + '</div><button class="task__more" aria-label="編輯「' + r.t + '」">⋯</button></div>';
   }
-  /* cfg: { dailies:[key|obj], cursor:key, count:'2/4', countLow:bool, habits:bool, todos:bool, extraTop:html, newRow:obj } */
+  /* cfg: { dailies:[key|obj], cursor:key, count:'2/4', countLow:bool, habits:bool, todos:bool, extraTop:html, newRow:obj, noDmg:bool（和平森林／旅館：修行列不顯示 ⚔）, freshDay:bool（換日後剛打開：修行今天 ＋0） } */
+  /* G1-9 建議排序：未完成在前、已完成在後（打勾後動畫結束才移位）；預設清單照此排序 */
   S2.list = function (cfg) {
-    var rows = (cfg.dailies || ['wake', 'water', 'run', 'stretch']).map(function (k) { return typeof k === 'string' ? S2.ROWS[k] : k; });
+    var rows = (cfg.dailies || ['run', 'stretch', 'wake', 'water']).map(function (k) { return typeof k === 'string' ? S2.ROWS[k] : k; });
     var h = (cfg.extraTop || '') +
       '<div class="section"><div class="section__head"><h3 class="section__title">每日討伐<small>Dailies</small></h3>' +
       '<span class="section__count' + (cfg.countLow ? ' is-low' : '') + '">' + (cfg.count || '2/4') + '</span></div>' +
       '<div class="win">' + rows.map(function (r, i) { return taskRow(r, cfg.cursor === i); }).join('') + '</div></div>';
     if (cfg.habits !== false) {
       h += '<div class="section"><div class="section__head"><h3 class="section__title">修行<small>Habits</small></h3></div><div class="win">' +
-        '<div class="task task--habit"><button class="hbtn hbtn--none" tabindex="-1" aria-hidden="true">－</button><div class="task__body"><div class="task__title">喝一杯水</div><div class="task__meta"><span class="tag tag--fitness">體能</span><span class="num">今天 ＋3</span><span class="dmg-tag">⚔3</span></div></div><button class="hbtn hbtn--up" aria-label="＋喝一杯水">＋</button></div>' +
+        '<div class="task task--habit"><button class="hbtn hbtn--none" tabindex="-1" aria-hidden="true">－</button><div class="task__body"><div class="task__title">喝一杯水</div><div class="task__meta"><span class="tag tag--fitness">體能</span><span class="tag">簡單</span><span class="num">今天 ＋' + (cfg.freshDay ? 0 : 3) + '</span>' + (cfg.noDmg || cfg.freshDay ? '' : '<span class="dmg-tag">⚔6</span>') + '</div></div><button class="hbtn hbtn--up" aria-label="＋喝一杯水">＋</button></div>' +
         '<div class="task task--habit"><button class="hbtn hbtn--down" aria-label="－吃宵夜">－</button><div class="task__body"><div class="task__title">吃宵夜</div><div class="task__meta"><span class="tag tag--fitness">體能</span><span class="num">今天 ＋0</span></div></div><button class="hbtn hbtn--none" tabindex="-1" aria-hidden="true">＋</button></div>' +
         '</div></div>';
     }
@@ -481,7 +483,7 @@
       '<div class="pp-row"><span class="pp-who">見習冒險者</span><span class="tag">' + (o.clsTag || '⚔️ 戰士') + '</span></div>' +
       '<div class="pp-row"><span class="pp-lv num">Lv 3</span><span class="pp-gold num">◆' + (p.gold || 128) + '</span></div>' +
       '<div class="bars"><div class="bar' + (p.low ? ' bar--low' : '') + '"><span class="bar__label">HP</span><span class="bar__track"><span class="bar__fill" style="width:' + pct + '%"></span></span><span class="bar__value">' + hp + '</span></div>' +
-      '<div class="bar bar--exp"><span class="bar__label">EXP</span><span class="bar__track"><span class="bar__fill" style="width:60%"></span></span><span class="bar__value">120/200</span></div></div>' +
+      '<div class="bar bar--exp"><span class="bar__label">EXP</span><span class="bar__track"><span class="bar__fill" style="width:60%"></span></span><span class="bar__value">72/120</span></div></div>' +
       '<div class="pp-attrs"><span><em class="attr-fitness">體能</em><b>46</b></span><span><em class="attr-wisdom">智慧</em><b>12</b></span><span><em class="attr-spirit">心靈</em><b>8</b></span><span><em class="attr-bond">連結</em><b>5</b></span></div>' +
       '<button class="pp-close" aria-label="收起隊伍狀態">▴ 收起</button></div>';
     var e = o.enemy;
@@ -520,7 +522,7 @@
     if (compact) return '<div class="mk-dim" style="top:47px;height:56px"><span>收合列 56</span></div>';
     return '<div class="mk-dim" style="top:47px;height:208px"><span>戰鬥區 208</span></div>' +
       '<div class="mk-dim" style="top:255px;height:64px"><span>訊息＋Boss HP 64</span></div>' +
-      '<div class="mk-dim mk-dim--list" style="top:319px;height:435px"><span>今日清單 435（首屏可直接打勾）</span></div>' +
-      '<div class="mk-dim" style="top:754px;height:56px"><span>分頁列 56</span></div>';
+      '<div class="mk-dim mk-dim--list" style="top:319px;height:433px"><span>今日清單 433（首屏可直接打勾）</span></div>' +
+      '<div class="mk-dim" style="top:752px;height:58px"><span>分頁列 56＋上框 2</span></div>';
   };
 })();

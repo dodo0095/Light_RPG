@@ -16,7 +16,7 @@
 
 <header class="mk-head">
   <h1>戰鬥主畫面（今天頁改版）</h1>
-  <p>Sprint 2 G1 送審稿 v0.1（2026-11-11，design-director）。打開 App 的第一個畫面：上半部第一人稱背後視角的戰鬥區，下半部接 Sprint 1 的今日清單，<b>打勾即攻擊</b>。對應提案範圍 <b>#3</b> 戰鬥主畫面、<b>#5</b> Boss／通用背影、<b>#6</b> 戰士／法師外觀、<b>#7</b> 事件提示、<b>#12</b> HP 低姿勢（P2）。</p>
+  <p>Sprint 2 G1 送審稿 v0.2（2026-11-11，design-director；依 L1 審查意見修正）。打開 App 的第一個畫面：上半部第一人稱背後視角的戰鬥區，下半部接 Sprint 1 的今日清單，<b>打勾即攻擊</b>。對應提案範圍 <b>#3</b> 戰鬥主畫面、<b>#5</b> Boss／通用背影、<b>#6</b> 戰士／法師外觀、<b>#7</b> 事件提示、<b>#12</b> HP 低姿勢（P2）。</p>
   <p>手機框為<b>固定高度 390×844</b>（不展開），用來證明「打開就看得到清單、能直接打勾」；右側粉紅／綠色虛線為首屏尺寸標註。像素圖全部由 <code>mockup-s2.js</code> 程式繪製（原創），造型細節見 <a href="mockup-s2-sprites.html">像素圖一覽</a>。</p>
 </header>
 <nav class="mk-nav">
@@ -35,14 +35,18 @@
     <tr><th>#</th><th>狀態</th><th>提案範圍</th><th>驗收標準（提案第 9 節）</th></tr>
     <tr><td>①</td><td>一般：早上打開，Boss 待機（睡覺），隊伍狀態收起；附首屏尺寸標註</td><td>#3、#5</td><td>第一個畫面就是戰鬥；不需點擊就能打勾</td></tr>
     <tr><td>②</td><td>隊伍狀態視窗展開（Lv／HP／EXP／四屬性／金幣）</td><td>#3</td><td>—</td></tr>
-    <tr><td>③</td><td>打勾受擊：戰士斬擊、畫面震動、傷害數字、HP 條減少（白色段＝剛打掉）、訊息框</td><td>#3、#6</td><td>打勾造成傷害</td></tr>
+    <tr><td>③</td><td>打勾受擊：戰士斬擊、畫面震動、傷害數字、HP 條減少（白色段＝剛打掉）、訊息框；清單採 G1-9 建議排序</td><td>#3、#6</td><td>打勾造成傷害</td></tr>
     <tr><td>④</td><td>取消打勾：Boss HP 退回原本的傷害（綠色數字）</td><td>#3</td><td>取消打勾 HP 退回</td></tr>
     <tr><td>⑤</td><td>法師攻擊：魔法陣亮起再發射</td><td>#6</td><td>戰士、法師各有攻擊動作</td></tr>
     <tr><td>⑥</td><td>換日後第一次打開：Boss 反擊（漏掉的每日討伐＝扣血）</td><td>#3</td><td>漏打卡以「Boss 反擊」呈現</td></tr>
-    <tr><td>⑦</td><td>世界狀態標示（左上名稱＋剩餘天數）＋旅途奇遇提示</td><td>#7</td><td>左上顯示狀態名稱與剩餘天數</td></tr>
+    <tr><td>⑥-2</td><td>多日未開：回來時只顯示一則反擊摘要（提案第 6 節）</td><td>#3</td><td>漏打卡以「Boss 反擊」呈現</td></tr>
+    <tr><td>⑦</td><td>世界狀態開始提示＋左上標籤（名稱＋效果＋剩餘天數）</td><td>#7</td><td>左上顯示狀態名稱與剩餘天數</td></tr>
+    <tr><td>⑦-2</td><td>旅途奇遇（單一效果）：路邊的舊木箱</td><td>#7</td><td>—</td></tr>
+    <tr><td>⑦-3</td><td>旅途奇遇（兩個選項）：霧中的岔路，金幣不足時 A 停用</td><td>#7</td><td>—</td></tr>
     <tr><td>⑧</td><td>捲動清單後：戰鬥區收合成 56px 小戰鬥列</td><td>#3</td><td>—</td></tr>
     <tr><td>⑨</td><td>Boss HP 低</td><td>#3、#5</td><td>—</td></tr>
     <tr><td>⑩</td><td>擊敗演出（最後一擊）</td><td>#3、#4、#5</td><td>擊敗後播放擊敗與通關對話</td></tr>
+    <tr><td>⑩-2</td><td>擊敗後取消打勾：金幣／經驗退回，Boss 不復活（決策表 14.5）</td><td>#2、#3</td><td>取消打勾 HP 退回（擊敗後例外，見 14.5）</td></tr>
     <tr><td>⑪</td><td>通關後：和平的森林＋「第二章敬請期待」（D3 = a）</td><td>#4</td><td>通關後畫面符合 D3</td></tr>
     <tr><td>⑫</td><td>旅館：營火休息，沒有 Boss</td><td>#3</td><td>旅館期間顯示營火畫面</td></tr>
     <tr><td>⑬</td><td>HP 低：冒險者單膝跪地（P2）</td><td>#12</td><td>HP 低時背影單膝跪地</td></tr>
@@ -52,19 +56,20 @@
 <div class="mk-legend" style="margin-top:20px">
   <span><i></i>安全區域／尺寸標註</span>
   <span>示意職業：戰士（⑤ 為法師）</span>
-  <span style="color:var(--c-warn)">所有數字（傷害、Boss HP、獎勵、事件效果）皆為「示意」，正式值待 product-manager 訂入 decision-tables.md</span>
+  <span style="color:var(--c-warn)">數值依 decision-tables.md 第 14 節 v1.1（Boss HP 300；傷害 簡單 5／普通 10／困難 15，迷你版 ×0.5，修行「＋」×0.4）；反擊扣血＝Sprint 1 第 2 節 missedDailyHpPenalty。文案取自 docs/content/sprint2-story-draft.md</span>
 </div>
 
 <div class="mk-row" id="frames"></div>
 
 <section class="mk-notes">
   <h2>版面方案：戰鬥區與今日清單怎麼分（G1 請老闆決定）</h2>
-  <p><b style="color:var(--c-ok)">建議方案 A「固定戰鬥區 208px＋捲動收合」</b>：戰鬥區（瀏海下方 208px）＋ Boss HP／訊息列 64px 固定在上方，今日清單從 y=319 開始，首屏有 435px 給清單（約 3～5 列每日討伐：未完成列約 64px、已完成含「取消」約 120px；▶ 指的第一個未完成項目一定在首屏，因為已完成列建議排到後面——見 G1-9）；往下捲清單時戰鬥區收合成 56px 小戰鬥列（⑧），清單可用高度變成 608px。</p>
+  <p><b style="color:var(--c-ok)">建議方案 A「固定戰鬥區 208px＋捲動收合」</b>：戰鬥區（瀏海下方 208px）＋ Boss HP／訊息列 64px 固定在上方，今日清單從 y=319 開始，首屏有 <b>433px</b> 給清單（到分頁列上框為止：844 − Home 條 34 − 分頁列 56 − 上框 2 − 319）。未完成列約 64px、已完成含「取消」約 120px，所以首屏約放得下 3～5 列每日討伐；往下捲清單時戰鬥區收合成 56px 小戰鬥列（⑧），清單可用高度變成 649px（844 − Home 條 34 − 分頁列 56 − 上框 2 −（瀏海 47＋收合列 56））。</p>
+  <p><b>「▶ 第一個未完成項目一定在首屏」的前提</b>：清單採 <b>G1-9 建議排序（未完成在前、已完成在後）</b>。此時 ▶ 一定是每日討伐第一列，位置固定在 y≈360，與已完成幾項無關。若 G1-9 改回 Sprint 1 排序，這句話<b>不成立</b>：前面已完成 3 列（3×120＋區塊標題約 40＝400px）就會把第一個未完成項目推出 433px 的首屏。</p>
   <div class="mk-table-wrap"><table>
     <tr><th>方案</th><th>首屏清單高度</th><th>優點</th><th>缺點</th><th>結論</th></tr>
-    <tr><td><b>A 固定 208＋捲動收合（建議）</b></td><td>435px（約 3～5 列）</td><td>打開就同時看到 Boss 與清單，零點擊打勾；捲下去時戰鬥區讓位，Boss HP 與傷害數字仍在收合列上</td><td>戰鬥區比企劃書 7.2「上半部全版」小；需要實作捲動收合</td><td>✅ 建議</td></tr>
+    <tr><td><b>A 固定 208＋捲動收合（建議）</b></td><td>433px（約 3～5 列）</td><td>打開就同時看到 Boss 與清單，零點擊打勾；捲下去時戰鬥區讓位，Boss HP 與傷害數字仍在收合列上</td><td>戰鬥區比企劃書 7.2「上半部全版」小；需要實作捲動收合</td><td>✅ 建議</td></tr>
     <tr><td>B 戰鬥區半版（約 400px）＋清單從下方拉起</td><td>約 260px（不到 2 列，或要先拉）</td><td>最接近企劃書 7.2 的戰鬥氣氛</td><td>每日討伐多時第一個未完成項目可能不在首屏，等於多一步；違反驗收「不需額外點擊」的精神</td><td>✗</td></tr>
-    <tr><td>C 戰鬥區可手動開關（預設收合 56px）</td><td>608px</td><td>打卡速度與 Sprint 1 完全相同</td><td>打開 App 看不到「敵人在正前方」，回到老闆說的「沒有敵人」</td><td>✗</td></tr>
+    <tr><td>C 戰鬥區可手動開關（預設收合 56px）</td><td>649px（844−34−56−2−(47+56)）</td><td>打卡速度與 Sprint 1 完全相同</td><td>打開 App 看不到「敵人在正前方」，回到老闆說的「沒有敵人」</td><td>✗</td></tr>
   </table></div>
   <p>理由：Sprint 2 的目的是「打開就看到敵人」，Sprint 1 的核心價值是「打卡快」。A 讓兩者都在首屏成立；208px 足夠放下 Boss（184×160）、冒險者上半身、左上章節與右上隊伍狀態，並以 <code>--stage-h</code> 一個變數控制，實機若覺得擠可在 G3 前調整。</p>
 
@@ -73,7 +78,7 @@
     <tr><th>Sprint 1 元素</th><th>Sprint 2 位置</th><th>說明</th></tr>
     <tr><td>狀態列（名稱、職業、Lv、HP、EXP、四屬性、金幣）</td><td>右上隊伍狀態視窗（②）</td><td>收起時只剩 HP＋金幣（企劃書 7.2）。收起是預設，展開狀態記在本機（下次打開維持）。</td></tr>
     <tr><td>遊戲日列（遊戲日、換日時間）</td><td>戰鬥區右下角小字</td><td>旅館中改顯示在左上世界狀態位置（⑫）。</td></tr>
-    <tr><td>換日提示橫幅</td><td>舞台上的反擊視窗（⑥）</td><td>漏打卡＝反擊；全勤時改為「被窩史萊姆沒能反擊！」同一視窗。多日未開：一則摘要「這 3 天史萊姆反擊了 2 次，共 −10 HP；略過 4 天」，不逐日播放（提案第 6 節）。</td></tr>
+    <tr><td>換日提示橫幅</td><td>舞台上的反擊視窗（⑥）</td><td>漏打卡＝反擊；全勤時改用劇情草稿 3.8「全部完成、沒有反擊」的句子，同一視窗。多日未開只顯示一則摘要（⑥-2），不逐日播放（提案第 6 節）。</td></tr>
     <tr><td>HP 低橫幅</td><td>隊伍狀態變紅＋冒險者跪地（⑬）＋訊息列文字</td><td>P2 姿勢沒做時，只保留變紅＋訊息列文字。</td></tr>
     <tr><td>旅館橫幅</td><td>營火畫面（⑫）＋訊息列</td><td>—</td></tr>
     <tr><td>全勤橫幅</td><td>訊息列「★ 今天的討伐全部完成！」</td><td>史萊姆縮回被窩（待機姿勢），換日不會反擊。</td></tr>
@@ -83,129 +88,186 @@
   <h2>互動規則</h2>
   <div class="mk-table-wrap"><table>
     <tr><th>元素</th><th>規則</th></tr>
-    <tr><td>打勾即攻擊</td><td>每日討伐、修行「＋」、公會委託都會造成傷害（D2 = b）；迷你版傷害比例待決策表。動畫只在打勾當下播放約 0.9 秒，<b>不鎖清單</b>：連續快速打勾時，傷害數字依序疊加，不排隊等動畫。修行「－」不攻擊（只照 Sprint 1 扣 HP）。</td></tr>
+    <tr><td>打勾即攻擊</td><td>每日討伐、修行「＋」、公會委託都會造成傷害（D2 = b）。傷害＝round(難度 bossDamage × 類型倍率 × 迷你倍率 × 世界狀態倍率)：簡單 5／普通 10／困難 15；迷你版 ×0.5（<code>battle.miniDamageRatio</code>）；修行「＋」×0.4，同一項第 5 次起傷害 0（決策表 14.2）。動畫只在打勾當下播放約 0.9 秒，<b>不鎖清單</b>：連續快速打勾時，傷害數字依序疊加，不排隊等動畫。修行「－」不攻擊（只照 Sprint 1 扣 HP）。</td></tr>
     <tr><td>▶ 游標</td><td>停在第一個未完成的每日討伐（企劃書 7.2），只是提示，不影響點擊。</td></tr>
-    <tr><td>列上的 ⚔ 數字</td><td>完成後與金幣／經驗並列顯示「對 Boss 的實際傷害」，取消時照這個數字退回（提案第 6 節：傷害記在事件 payload）。</td></tr>
-    <tr><td>舞台訊息視窗（反擊、奇遇）</td><td>疊在戰鬥區下緣，<b>不加遮罩、不擋清單</b>；按「知道了／收下」關閉。一天最多兩則，依序出現：先反擊、再奇遇。</td></tr>
+    <tr><td>清單排序（G1-9 建議）</td><td>未完成在前、已完成在後；已完成區內維持原本順序。打勾的列等 0.9 秒動畫結束才移到已完成區，避免手指下的列突然跳走；取消時移回未完成區原位置。</td></tr>
+    <tr><td>列上的 ⚔ 數字</td><td>每日討伐／公會委託：完成後與金幣／經驗並列顯示「對 Boss 的實際傷害」，取消時照這個數字退回（提案第 6 節：傷害記在事件 payload）。修行列：顯示今天累計傷害（例：今天＋3、簡單每次 2 → ⚔6）。和平森林、旅館期間打的卡沒有傷害，不顯示 ⚔。</td></tr>
+    <tr><td>舞台訊息視窗（反擊、世界狀態、奇遇）</td><td>疊在戰鬥區下緣，<b>不加遮罩、不擋清單</b>；按「知道了／收下」關閉。一天最多兩則事件（決策表 14.7.1），依序出現：先反擊、再世界狀態、再奇遇。</td></tr>
+    <tr><td>兩選項奇遇（⑦-3）</td><td>沿用 <code>.dlg__choices</code>，加 <code>.dlg__choices--row</code> 讓兩個選項左右並排（按鈕高 ≥44px，只佔一列）。視窗<b>以戰鬥區下緣為底往上長</b>，<b>上限＝HUD 下緣（safe-top＋50）</b>（<code>.stage-win--choice</code>，最高 208−50−8＝150px），<b>不蓋右上隊伍狀態按鈕</b>（safe-top＋6～＋50），也<b>不往下蓋到訊息列與清單</b>。二擇一採「限高＋並排」，不採「選擇期間收起隊伍狀態」。超過 150px 時框內捲動（保險）。⚠ 黏答答的足跡（enc_slime_trail，草稿 6.8）的 A 選項文字更長（含 HP 與傷害兩個數字），並排時按鈕可能要 3 行；正式字型（#8 俐方體）要在實作時實測，若超過上限，改為把內文移到訊息列。沒有「關閉」：一定要選一個（選項不能取消，14.7.1），但未選之前清單照常可以打勾。金幣不足 <code>goldCost</code> 時 A 停用（灰色）並在按鈕內寫原因（14.7.3）。</td></tr>
     <tr><td>隊伍狀態</td><td>收起按鈕 44px 高；展開視窗只疊在戰鬥區內，不推動清單。點「▴ 收起」或點舞台空白處收起。</td></tr>
     <tr><td>收合列</td><td>清單捲動超過 40px 就收合；點收合列捲回頂部並展開。</td></tr>
     <tr><td>減少動態</td><td><code>prefers-reduced-motion</code> 時：不震動、不閃白、傷害數字直接出現 0.9 秒後消失。</td></tr>
+  </table></div>
+
+  <h2>次要狀態：沿用元件、不另畫</h2>
+  <div class="mk-table-wrap"><table>
+    <tr><th>狀態</th><th>沿用</th><th>文案（劇情草稿）</th></tr>
+    <tr><td>換日後全勤、沒有反擊</td><td>⑥ 的舞台視窗，邊框改金色（<code>.stage-win--event</code>）</td><td>3.8「全部完成、沒有反擊時」</td></tr>
+    <tr><td>迷你版、公會委託、修行「＋」打勾</td><td>③ 的演出（數字較小）</td><td>3.2／3.5／3.3</td></tr>
+    <tr><td>修行「＋」第 5 次起（無傷害）</td><td>③ 但不跳數字、不震動；訊息列換句</td><td>3.4</td></tr>
+    <tr><td>Boss 血量跌破 75％／50％／25％</td><td>訊息列第二句，各出現一次</td><td>3.7</td></tr>
+    <tr><td>僧侶祈禱（自動觸發）</td><td>訊息列＋隊伍狀態 HP 跳綠色數字（<code>.dmg--heal</code>）</td><td>3.10</td></tr>
+    <tr><td>其他世界狀態（濃霧瀰漫、獵人之月）開始／結束</td><td>⑦ 的視窗與左上標籤</td><td>7.2、7.3 標籤格式同 7.1</td></tr>
+    <tr><td>黏答答的足跡（兩選項）</td><td>⑦-3</td><td>6.8</td></tr>
+    <tr><td>其他單一效果奇遇（婆婆、小貓、歐文往事、陷阱、安靜的早晨）</td><td>⑦-2；HP 增加用 <code>.gain</code>，傷害 Boss 時同時播 ③ 的 Boss 受擊</td><td>6.2～6.6</td></tr>
+    <tr><td>和平森林的日結（霧氣侵蝕）</td><td>⑥ 的視窗，標題改「☾ 霧氣又飄回來了」</td><td>第 5 節</td></tr>
+    <tr><td>旅館入住／退房</td><td>⑫ 的訊息列</td><td>3.9</td></tr>
   </table></div>
 
   <h2>尚未決定（G1 請決定或指定負責人）</h2>
   <div class="mk-table-wrap"><table>
     <tr><th>#</th><th>議題</th><th>圖稿做法</th><th>建議由誰決定</th></tr>
     <tr><td>G1-1</td><td>版面方案 A／B／C</td><td>A（固定 208＋收合）</td><td>老闆</td></tr>
-    <tr><td>G1-2</td><td>擊敗那一下能不能取消（提案第 6 節失敗模式）</td><td>⑩ 最後一擊的列顯示「🔒 決勝一擊」，不給取消；其他列照常可取消</td><td>tech-lead 提方案、老闆確認</td></tr>
-    <tr><td>G1-3</td><td>旅館期間打勾是否仍對 Boss 造成傷害</td><td>⑫ 不造成傷害、Boss 不在畫面，金幣經驗照常；列上不顯示 ⚔</td><td>product-manager</td></tr>
-    <tr><td>G1-4</td><td>Boss HP 低時要不要顯示「再約 N 項就能打倒」</td><td>⑨ 顯示（示意），讓每天的進度看得出來（提案風險表）</td><td>product-manager</td></tr>
+    <tr><td>G1-4</td><td>Boss HP 低時要不要顯示「再約 N 項就能打倒」</td><td>⑨ 顯示，讓每天的進度看得出來（提案風險表）；N＝依剩餘未完成每日討伐的傷害估算</td><td>product-manager</td></tr>
     <tr><td>G1-5</td><td>分頁列「今天」要不要改名「冒險」</td><td>維持「今天」；企劃書 7.2 主選單完整版不在本 Sprint</td><td>老闆</td></tr>
     <tr><td>G1-6</td><td>隊伍狀態展開時是否顯示「目前裝備」</td><td>不顯示（換裝 #11 待 D5）</td><td>D5 決定後再補</td></tr>
-    <tr><td>G1-7</td><td>旅途奇遇的內容與效果（⑦ 蘑菇圈、豐收祭）</td><td>示意文字與數字</td><td>product-manager（事件資料包）</td></tr>
-    <tr><td>G1-9</td><td>已完成的每日討伐要不要自動排到未完成之後（每日討伐 6 項以上、前面都做完時，第一個未完成項目可能掉出首屏）</td><td>圖稿維持 Sprint 1 的排序（① 中第 3 列仍在首屏）；建議：已完成列排到後面</td><td>老闆（影響 Sprint 1 既有習慣）</td></tr>
     <tr><td>G1-8</td><td>Boss 名稱旁要不要顯示 Lv／屬性</td><td>只顯示名稱</td><td>design-director（可延後）</td></tr>
+    <tr><td>G1-9</td><td>已完成的每日討伐要不要排到未完成之後（前面已完成 3 列時，第一個未完成項目會掉出首屏）</td><td>
+      <b>圖稿全部採推薦方案：已完成排到未完成之後</b>（③ 起所有畫面）。<br>
+      <b>替代案</b>：維持 Sprint 1 排序，但已完成列壓成約 64px（獎勵、⚔、「↶ 取消」放同一行）。<br>
+      取捨：推薦方案讓 ▶ 永遠在第一列、首屏一定能打勾，但會改變 Sprint 1 使用者熟悉的固定順序（列會移動）；替代案順序不變，但每日討伐 7 項以上且前面都做完時仍可能掉出首屏，而且單行放不下長名稱＋獎勵＋⚔＋取消，「↶ 取消」觸控區要縮到列右側 44×44。</td><td>老闆（影響 Sprint 1 既有習慣）</td></tr>
+  </table></div>
+
+  <h2>已定案（不再列為待決）</h2>
+  <div class="mk-table-wrap"><table>
+    <tr><th>#</th><th>議題</th><th>決定</th><th>依據</th></tr>
+    <tr><td>G1-2</td><td>擊敗那一下能不能取消</td><td>擊敗確定制：⑩ 擊敗那一列照常可取消；⑩-2 取消後金幣／經驗退回，Boss 不復活、不退傷害，顯示提示</td><td>決策表 14.5、14.12 #4</td></tr>
+    <tr><td>G1-3</td><td>旅館期間打勾是否傷害 Boss</td><td>不傷害：住旅館時整場戰鬥暫停，金幣、經驗照給；⑫ 列上不顯示 ⚔</td><td>決策表 14.2、14.12 #5</td></tr>
+    <tr><td>G1-7</td><td>旅途奇遇、世界狀態的內容與效果</td><td>第一批 8 則奇遇、3 則世界狀態，效果與機率照決策表；文案照劇情草稿第 6、7 節</td><td>決策表 14.7、14.12 #7 #8</td></tr>
   </table></div>
 </section>
 
-<p class="mk-foot">⚠ 畫面上所有數字（傷害、Boss HP 200、獎勵、反擊扣血、事件倍率）皆為「示意」。正式數值以 <code>.knowledge/decision-tables.md</code> 為準（product-manager 訂定中）。劇情與事件文字為示意，正式文字由 product-manager 提供。</p>
+<p class="mk-foot">⚠ 畫面上的 Boss HP（300）、傷害、獎勵、反擊扣血、事件效果皆依 <code>.knowledge/decision-tables.md</code>（第 2 節、第 14 節 v1.1）計算；對話與訊息取自 <code>docs/content/sprint2-story-draft.md</code> v0.1（各格說明註明段落）。日期、角色金幣／HP 為情境設定。</p>
 </div>
 
 <script>
 (function () {
   var R = S2.ROWS;
+  var MAX = 300; // 被窩史萊姆 maxHp（決策表 14.3，資料包欄位）
   function frame(label, desc, html) {
     return '<section class="mk-frame"><h2 class="mk-frame__label">' + label + '</h2><p class="mk-frame__desc">' + desc + '</p>' + html + '</section>';
   }
   function copy(r, extra) { var o = {}; for (var k in r) o[k] = r[k]; for (k in extra) o[k] = extra[k]; return o; }
-  var E = function (hp, pct, lost, low) { return { hp: hp + '/200', pct: pct, lost: lost || 0, low: !!low }; };
+  /* hp＝目前 HP；lost＝剛打掉的傷害（白色段） */
+  var E = function (hp, lost, low) { return { hp: hp + '/' + MAX, pct: Math.round(hp / MAX * 1000) / 10, lost: Math.round((lost || 0) / MAX * 1000) / 10, low: !!low }; };
+  var undone = function (r) { return copy(r, { state: null, reward: null, dmg: null, hit: false }); };
   var slash = '<svg class="fx-slash" style="left:178px;top:92px" width="140" height="120" viewBox="0 0 28 24" shape-rendering="crispEdges" aria-hidden="true"><path d="M1 23 L27 1" stroke="#ffffff" stroke-width="2"/><path d="M4 23 L27 4" stroke="#ffd75e" stroke-width="1"/><path d="M1 19 L22 1" stroke="#ffffff" stroke-width="1" opacity=".6"/></svg>';
   var circle = '<svg class="fx-circle" style="left:2px;bottom:4px" width="150" height="44" viewBox="0 0 75 22" shape-rendering="crispEdges" aria-hidden="true"><ellipse cx="37.5" cy="11" rx="35" ry="9" fill="rgba(126,240,255,.15)" stroke="#7ef0ff" stroke-width="1.2"/><ellipse cx="37.5" cy="11" rx="25" ry="6" fill="none" stroke="#7ef0ff" stroke-width=".8"/><g fill="#e8ffff"><rect x="10" y="10" width="2" height="2"/><rect x="63" y="10" width="2" height="2"/><rect x="36" y="2" width="2" height="2"/><rect x="36" y="18" width="2" height="2"/><rect x="20" y="4" width="1.5" height="1.5"/><rect x="54" y="4" width="1.5" height="1.5"/><rect x="20" y="16.5" width="1.5" height="1.5"/><rect x="54" y="16.5" width="1.5" height="1.5"/></g></svg>';
   var bolt = '<svg class="fx-bolt" style="left:96px;top:72px" width="150" height="80" viewBox="0 0 30 16" shape-rendering="crispEdges" aria-hidden="true"><g fill="#7ef0ff"><rect x="1" y="13" width="2" height="2"/><rect x="5" y="11" width="2" height="2"/><rect x="9" y="10" width="2" height="2"/><rect x="13" y="8" width="2" height="2"/><rect x="17" y="7" width="2" height="2"/></g><g fill="#ffffff"><rect x="21" y="4" width="4" height="4"/><rect x="20" y="5" width="6" height="2"/><rect x="22" y="3" width="2" height="6"/></g></svg>';
   var fire = '<div style="position:absolute;left:150px;bottom:14px;z-index:2"><canvas class="pix" data-sprite="fire" data-scale="4"></canvas></div><span class="fx-sparkle" style="left:178px;bottom:100px">·</span><span class="fx-sparkle" style="left:166px;bottom:118px">˙</span>';
+  var sign = '<div class="win sign-win"><span class="sign-win__k">NEXT CHAPTER</span><span class="sign-win__t">第二章・沉默書塔</span><span class="sign-win__s">敬請期待</span></div>';
+  var clearRow = '<div class="enemy enemy--clear"><span class="enemy__name">★ 第一章 通關</span><span class="mute" style="font-size:12px;text-shadow:none">11/24 打倒被窩史萊姆</span><span></span></div>';
+  var slimeIdle = '<span class="cursor">▶</span>史萊姆：呼啊……打我也沒用喔……我會在夢裡等你的……';
+  /* 法師（主屬性：智慧）。總經驗不乘主屬性倍率（決策表 3.2），所以普通＝+6金 +10EXP */
   var mageRows = [
-    { t: '閱讀 20 分鐘', attr: 'wisdom', diff: '普通', state: 'done', reward: '+6金 +12EXP', dmg: 12, hit: true },
     { t: '學一個新單字／概念', attr: 'wisdom', diff: '簡單', mini: '複習一個學過的單字' },
     { t: '寫 100 字筆記', attr: 'wisdom', diff: '普通' },
-    { t: '23:30 前上床', attr: 'fitness', diff: '普通' }
+    { t: '23:30 前上床', attr: 'fitness', diff: '普通' },
+    { t: '閱讀 20 分鐘', attr: 'wisdom', diff: '普通', state: 'done', reward: '+6金 +10EXP', dmg: 10, hit: true }
   ];
   var F = [];
 
-  F.push(frame('① 一般・早上打開', '第一個畫面。Boss 在正前方睡覺（待機），隊伍狀態收起只剩 HP＋金幣；▶ 停在第一個未完成項目。右側標註首屏尺寸：不點任何東西就能打勾。',
-    S2.battlePhone({ boss: 'idle', enemy: E(184, 92), dims: true,
-      msg: '<span class="cursor">▶</span>被窩史萊姆還在被窩裡打呼。完成今天的討伐，把牠叫醒吧！',
-      list: S2.list({ cursor: 2 }) })));
+  F.push(frame('① 一般・早上打開', '第一個畫面。Boss 在正前方睡覺（待機），隊伍狀態收起只剩 HP＋金幣；▶ 停在第一個未完成項目（G1-9 建議排序，未完成在前）。右側標註首屏尺寸：不點任何東西就能打勾。訊息：劇情草稿 2.2 第 7 框。',
+    S2.battlePhone({ boss: 'idle', enemy: E(276), dims: true, msg: slimeIdle, list: S2.list({ cursor: 0 }) })));
 
-  F.push(frame('② 隊伍狀態展開', '點右上 HP＋金幣按鈕展開：名稱、職業、Lv、HP、EXP、四屬性、金幣。只疊在戰鬥區內，不推動清單；▴ 收起。',
-    S2.battlePhone({ boss: 'idle', enemy: E(184, 92), party: { open: true },
-      msg: '<span class="cursor">▶</span>被窩史萊姆還在被窩裡打呼。完成今天的討伐，把牠叫醒吧！',
-      list: S2.list({ cursor: 2 }) })));
+  F.push(frame('② 隊伍狀態展開', '點右上 HP＋金幣按鈕展開：名稱、職業、Lv、HP、EXP（本級進度：Lv 3→4 需 120，決策表第 4 節）、四屬性、金幣。只疊在戰鬥區內，不推動清單；▴ 收起。',
+    S2.battlePhone({ boss: 'idle', enemy: E(276), party: { open: true }, msg: slimeIdle, list: S2.list({ cursor: 0 }) })));
 
-  F.push(frame('③ 打勾受擊（戰士斬擊）', '勾「運動 30 分鐘」：戰士衝上前斬擊、畫面震動、Boss 閃白並跳出傷害數字、HP 條減少（白色段＝剛打掉的量，0.9 秒後消失）。該列顯示 ⚔16。',
-    S2.battlePhone({ boss: 'hit', pose: 'attack', shake: true, enemy: E(168, 84, 8),
-      stageExtra: slash + '<span class="dmg" style="left:214px;top:112px">16</span>',
-      msg: '<span class="cursor">▶</span>冒險者的斬擊！被窩史萊姆受到 <b>16</b> 點傷害。（運動 30 分鐘）',
-      list: S2.list({ dailies: ['wake', 'water', 'runDone', 'stretch'], count: '3/4', cursor: 3 }) })));
+  F.push(frame('③ 打勾受擊（戰士斬擊）', '勾「運動 30 分鐘」（困難＝15）：戰士衝上前斬擊、畫面震動、Boss 閃白並跳出傷害數字、HP 條 276→261（白色段＝剛打掉的 15，0.9 秒後消失）。動畫結束後該列移到已完成區（G1-9 建議排序），▶ 留在第一列「伸展 5 分鐘」。訊息：劇情草稿 3.1 輪替第 1 句。',
+    S2.battlePhone({ boss: 'hit', pose: 'attack', shake: true, enemy: E(261, 15),
+      stageExtra: slash + '<span class="dmg" style="left:214px;top:112px">15</span>',
+      msg: '<span class="cursor">▶</span>你揮出一擊！被窩史萊姆受到 <b>15</b> 點傷害！',
+      list: S2.list({ dailies: ['stretch', 'wake', 'water', 'runDone'], count: '3/4', cursor: 0 }) })));
 
-  F.push(frame('④ 取消打勾：HP 退回', '按該列「↶ 取消」：Boss 頭上跳綠色＋16，HP 條補回原本的傷害；金幣／經驗照 Sprint 1 規則退回。沒有攻擊動畫。',
-    S2.battlePhone({ boss: 'awake', enemy: E(184, 92),
-      stageExtra: '<span class="dmg dmg--heal" style="left:204px;top:112px">+16</span>',
-      msg: '<span class="cursor">▶</span>取消了「運動 30 分鐘」。被窩史萊姆的 HP 退回 <b>16</b>。',
-      list: S2.list({ cursor: 2 }) })));
+  F.push(frame('④ 取消打勾：HP 退回', '按該列「↶ 取消」：Boss 頭上跳綠色＋15，HP 條 261→276（照事件記下的傷害退回，不重算）；金幣／經驗照 Sprint 1 規則退回；該列回到未完成區原位置。沒有攻擊動畫。訊息：劇情草稿 3.11。（Boss 已擊敗後的取消是例外，見 ⑩-2）',
+    S2.battlePhone({ boss: 'awake', enemy: E(276),
+      stageExtra: '<span class="dmg dmg--heal" style="left:204px;top:112px">+15</span>',
+      msg: '<span class="cursor">▶</span>你收回了這一擊。被窩史萊姆的 HP 回到 <b>276</b>。',
+      list: S2.list({ cursor: 0 }) })));
 
-  F.push(frame('⑤ 法師攻擊（P1）', '法師：詠唱時腳下魔法陣亮起，再從法杖射出魔法彈。職業圖示從資料包讀（#9）。僧侶、遊俠用通用背影＋通用突刺（D4 = a，見像素圖頁）。',
-    S2.battlePhone({ boss: 'hit', cls: 'mage', pose: 'attack', clsTag: '🔮 法師', enemy: E(172, 86, 6),
-      stageExtra: circle + bolt + '<span class="dmg" style="left:214px;top:112px">12</span>',
-      msg: '<span class="cursor">▶</span>冒險者詠唱魔法！被窩史萊姆受到 <b>12</b> 點傷害。（閱讀 20 分鐘）',
-      list: S2.list({ dailies: mageRows, count: '1/4', cursor: 1 }) })));
+  F.push(frame('⑤ 法師攻擊（P1）', '法師勾「閱讀 20 分鐘」（普通＝10）：詠唱時腳下魔法陣亮起，再從法杖射出魔法彈。職業圖示從資料包讀（#9）。僧侶、遊俠用通用背影＋通用突刺（D4 = a，見像素圖頁）。訊息：劇情草稿 3.1 輪替第 3 句。',
+    S2.battlePhone({ boss: 'hit', cls: 'mage', pose: 'attack', clsTag: '🔮 法師', enemy: E(266, 10),
+      stageExtra: circle + bolt + '<span class="dmg" style="left:214px;top:112px">10</span>',
+      msg: '<span class="cursor">▶</span>誓約之燈一閃！被窩史萊姆受到 <b>10</b> 點傷害！',
+      list: S2.list({ dailies: mageRows, count: '1/4', cursor: 0 }) })));
 
-  F.push(frame('⑥ 換日：Boss 反擊', '換日後第一次打開。昨天漏掉的每日討伐變成史萊姆的反擊（扣血量＝Sprint 1 日結扣血，不另加）。視窗疊在戰鬥區下緣，不擋清單，可直接打勾。',
-    S2.battlePhone({ boss: 'awake', party: { hp: '32/50', hpPct: 64 }, enemy: E(184, 92),
-      stageExtra: '<div class="fx-hurt"></div><span class="dmg dmg--hurt" style="left:70px;top:150px">−6</span>',
-      overlay: '<div class="win stage-win stage-win--hurt" role="status"><p class="stage-win__title">☾ 被窩史萊姆的反擊！</p><p class="stage-win__body">昨天（11/10）漏了「運動 30 分鐘」「伸展 5 分鐘」，冒險者受到 <span class="hurt">6</span> 點傷害。</p><div class="stage-win__actions"><button class="btn btn--sm">知道了</button></div></div>',
-      msg: '<span class="cursor">▶</span>新的一天！今天的討伐在下面，打勾就能還擊。',
-      list: S2.list({ dailies: ['run', 'stretch', 'sleep', R.wake && copy(R.wake, { state: null, reward: null, dmg: null })], count: '0/4', cursor: 0 }) })));
+  F.push(frame('⑥ 換日：Boss 反擊', '換日後第一次打開。昨天漏掉的每日討伐變成史萊姆的反擊，扣血量＝Sprint 1 日結扣血 missedDailyHpPenalty，不另加：困難 6＋簡單 2＝8（決策表第 2 節、14.4），HP 38→30。Boss 不回血（276 不變）。視窗疊在戰鬥區下緣，不擋清單，可直接打勾。視窗與訊息：劇情草稿 3.8 單日。',
+    S2.battlePhone({ boss: 'awake', party: { hp: '30/50', hpPct: 60 }, enemy: E(276),
+      stageExtra: '<div class="fx-hurt"></div><span class="dmg dmg--hurt" style="left:70px;top:150px">−8</span>',
+      overlay: '<div class="win stage-win stage-win--hurt" role="status"><p class="stage-win__title">☾ 被窩史萊姆的反擊！</p><p class="stage-win__body">昨晚，被窩史萊姆趁你沒注意黏了上來！你受到 <span class="hurt">8</span> 點傷害。<br><span class="mute">漏了：運動 30 分鐘、伸展 5 分鐘</span></p><div class="stage-win__actions"><button class="btn btn--sm">知道了</button></div></div>',
+      msg: '<span class="cursor">▶</span>史萊姆：嘿嘿……昨天的你，有一部分留在被窩裡了喔……',
+      list: S2.list({ dailies: ['run', 'stretch', undone(R.wake), undone(R.water)], count: '0/4', cursor: 0, freshDay: true }) })));
 
-  F.push(frame('⑦ 世界狀態＋旅途奇遇（P1）', '左上：章節名稱下方是世界狀態與剩餘天數（金框）。每天第一次打開抽一次旅途奇遇，以金框視窗出現；同一天最多 1～2 則（企劃書 6.3）。',
-    S2.battlePhone({ boss: 'idle', enemy: E(184, 92), world: '🌾 豐收祭・剩 3 天',
-      overlay: '<div class="win stage-win stage-win--event" role="status"><p class="stage-win__title">✦ 旅途奇遇：路邊的蘑菇圈</p><p class="stage-win__body">歐文：「吃了會精神百倍喔！」今天第一次修行，經驗 <span class="gain">×1.5</span>（示意）</p><div class="stage-win__actions"><button class="btn btn--sm">收下</button></div></div>',
-      msg: '<span class="cursor">▶</span>豐收祭期間，金幣 <b>×1.5</b>（示意）。被窩史萊姆還在打呼…',
-      list: S2.list({ cursor: 2 }) })));
+  F.push(frame('⑥-2 多日未開：一則摘要', '11/11～11/14 四天沒打開，11/15 回來。只扣最近 2 天（catchUp.maxPenalizedDays＝2，決策表第 7 節）：每天全漏 普通 4＋簡單 2＋困難 6＋簡單 2＝14，共 28；HP 50→22（情境：離開前滿血）。只顯示這一則，不逐日播放；沒開的日子不補抽事件（14.7.1）。視窗與訊息：劇情草稿 3.8 多日。',
+    S2.battlePhone({ boss: 'awake', party: { hp: '22/50', hpPct: 44 }, enemy: E(276), day: '11/15（日）・換日 04:00',
+      stageExtra: '<div class="fx-hurt"></div><span class="dmg dmg--hurt" style="left:70px;top:150px">−28</span>',
+      overlay: '<div class="win stage-win stage-win--hurt" role="status"><p class="stage-win__title">☾ 被窩史萊姆的反擊！</p><p class="stage-win__body">你離開了 4 天。被窩史萊姆在霧裡偷偷反撲，你一共受到 <span class="hurt">28</span> 點傷害。</p><div class="stage-win__actions"><button class="btn btn--sm">知道了</button></div></div>',
+      msg: '<span class="cursor">▶</span>歐文：回來就好、回來就好。今天先從一件小事開始吧。',
+      list: S2.list({ dailies: ['run', 'stretch', undone(R.wake), undone(R.water)], count: '0/4', cursor: 0, freshDay: true }) })));
 
-  F.push(frame('⑧ 捲動後：收合列', '往下捲清單超過 40px：戰鬥區縮成 56px（小史萊姆＋HP 條＋隊伍狀態）。在收合列上打勾仍跳傷害數字。點收合列捲回頂部。',
-    S2.battlePhone({ compact: true, boss: 'hit', enemy: E(152, 76, 8),
-      miniDmg: '<span class="dmg dmg--sm" style="left:34px;top:-14px">16</span>',
-      list: S2.list({ dailies: ['runDone', R.stretch], count: '3/4', cursor: 1 }) })));
+  F.push(frame('⑦ 世界狀態開始：豐收祭', '每個遊戲日第一次打開時先抽世界狀態（14.7.1）。開始當天出現金框視窗；左上標籤＝名稱＋效果＋剩餘天數，格式照劇情草稿 7.1（豐收祭 5 天，開始當天算第 1 天）。效果：打卡金幣 ×1.5（14.7.4）。視窗與訊息：劇情草稿 7.1 開始。',
+    S2.battlePhone({ boss: 'idle', enemy: E(276), world: '豐收祭　金幣×1.5　剩 5 天',
+      overlay: '<div class="win stage-win stage-win--event" role="status"><p class="stage-win__title">✦ 豐收祭開始</p><p class="stage-win__body">起始之村傳來了鼓聲。今年的麥子收成特別好！</p><div class="stage-win__actions"><button class="btn btn--sm">知道了</button></div></div>',
+      msg: '<span class="cursor">▶</span>歐文：豐收祭開始啦！這幾天大家出手都大方，做完事情的賞金也會多一些喔。',
+      list: S2.list({ dailies: ['run', 'stretch', undone(R.wake), undone(R.water)], count: '0/4', cursor: 0, freshDay: true }) })));
 
-  F.push(frame('⑨ Boss HP 低', 'HP 剩 15% 以下（門檻示意）：史萊姆被子破洞、冒汗、皺眉；HP 條變紅閃爍。訊息列提示「再約 N 項」（G1-4 待決）。',
-    S2.battlePhone({ boss: 'low', enemy: E(24, 12, 0, true),
-      msg: '<span class="cursor">▶</span>被窩史萊姆快撐不住了！被子都破洞了。再完成約 <b>2</b> 項就能打倒（示意）。',
-      list: S2.list({ dailies: ['wake', 'water', 'run', 'stretch'], cursor: 2 }) })));
+  F.push(frame('⑦-2 旅途奇遇：路邊的舊木箱', '豐收祭第 3 天（11/13）。世界狀態之後抽旅途奇遇（每天 60%），以金框視窗出現；同一天最多 2 則事件。enc_roadside_chest：金幣 +8（14.7.3；奇遇的固定金幣不吃豐收祭倍率，14.7.4）。今天已打的卡金幣 ×1.5：普通 6→9、簡單迷你版 3×0.5×1.5＝2.25→2。視窗：劇情草稿 6.1。',
+    S2.battlePhone({ boss: 'idle', enemy: E(276), world: '豐收祭　金幣×1.5　剩 3 天', day: '11/13（五）・換日 04:00',
+      overlay: '<div class="win stage-win stage-win--event" role="status"><p class="stage-win__title">✦ 旅途奇遇：路邊的舊木箱</p><p class="stage-win__body">路邊有個長滿青苔的舊木箱。打開一看——裡面有 <span class="gain">8</span> 枚金幣！還有一張紙條：「給早起的人」。</p><div class="stage-win__actions"><button class="btn btn--sm">收下</button></div></div>',
+      msg: slimeIdle,
+      list: S2.list({ dailies: ['run', 'stretch', copy(R.wake, { reward: '+9金 +10EXP' }), R.water], cursor: 0 }) })));
 
-  F.push(frame('⑩ 擊敗演出', '最後一擊：白光爆開、史萊姆攤平成一灘、「討伐成功！」。造成擊敗的那一列顯示「🔒 決勝一擊」（G1-2 待決）。點舞台或訊息列 ▼ 播放通關對話（劇情頁 ⑦）。',
-    S2.battlePhone({ boss: 'defeated', enemy: { hp: '0/200', pct: 0, lost: 4 },
+  F.push(frame('⑦-3 兩選項奇遇：霧中的岔路', 'enc_fog_fork（14.7.3）：A 繞遠路 −6 金幣／B 穿過霧 HP −4。目前金幣 ◆4，不足 6 → A 灰色停用，按鈕內寫原因（劇情草稿 6.7 註）。用 .dlg__choices＋.dlg__choices--row（左右並排），按鈕 ≥44px。視窗以戰鬥區下緣為底往上長，<b>上限＝HUD 下緣（safe-top＋50）</b>：不蓋隊伍狀態按鈕，也不蓋訊息列與清單（約 112／150px）；一定要選一個，未選前清單照常可打勾。歐文的台詞放訊息列，讓視窗放得下。',
+    S2.battlePhone({ boss: 'idle', enemy: E(276), party: { gold: 4 },
+      overlay: '<div class="win stage-win stage-win--event stage-win--choice" role="dialog" aria-label="旅途奇遇：霧中的岔路"><p class="stage-win__title">✦ 旅途奇遇：霧中的岔路</p><p class="stage-win__body" style="grid-column:1/-1">前方的路分成兩條。右邊被濃霧蓋住，左邊要繞好一大段路。</p>' +
+        '<div class="dlg__choices dlg__choices--row" style="grid-column:1/-1;margin-top:6px">' +
+          '<button class="btn btn--sm btn--block" disabled aria-disabled="true" style="flex-direction:column;gap:0;line-height:1.2">繞遠路（金幣不夠）<small class="mute" style="font-size:11px">需要 6 金幣，目前 ◆4</small></button>' +
+          '<button class="btn btn--sm btn--block">穿過霧（HP −4）</button>' +
+        '</div></div>',
+      msg: '<span class="cursor">▶</span>歐文：嗯……我記得左邊有個收過路費的橋。右邊嘛……霧很刺眼。',
+      list: S2.list({ cursor: 0 }) })));
+
+  F.push(frame('⑧ 捲動後：收合列', '往下捲清單超過 40px：戰鬥區縮成 56px（小史萊姆＋HP 條＋隊伍狀態）。在收合列上打勾仍跳傷害數字（此例：運動 30 分鐘 15，HP 276→261）。點收合列捲回頂部。',
+    S2.battlePhone({ compact: true, boss: 'hit', enemy: E(261, 15),
+      miniDmg: '<span class="dmg dmg--sm" style="left:34px;top:-14px">15</span>',
+      list: S2.list({ dailies: [R.stretch, 'runDone'], count: '3/4', cursor: 0 }) })));
+
+  F.push(frame('⑨ Boss HP 低', 'HP 剩 25% 以下（與劇情草稿 3.7 第三階段同一門檻）：史萊姆被子破洞、冒汗、皺眉；HP 條變紅閃爍。此例 HP 20，剩「運動 30 分鐘」15＋「伸展 5 分鐘」5＝20，所以「再約 2 項」（G1-4 待決）。第一次跌破 25% 時，訊息列先出現 3.7 的台詞一次。',
+    S2.battlePhone({ boss: 'low', enemy: E(20, 0, true),
+      msg: '<span class="cursor">▶</span>被窩史萊姆快撐不住了！再完成約 <b>2</b> 項就能打倒。',
+      list: S2.list({ cursor: 0 }) })));
+
+  F.push(frame('⑩ 擊敗演出', '接 ⑨：運動 15（HP 20→5）、伸展 5（5→0）。最後一擊：白光爆開、史萊姆攤平成一灘、「討伐成功！」，當下寫入 boss_defeated（14.5）。造成擊敗的那一列照常顯示「↶ 取消」，旁邊加一句「取消不會讓 Boss 復活」。訊息：劇情草稿 4.1 第 1 框；點舞台或訊息列 ▼ 播放 4.1 其餘＋4.2 通關（劇情頁 ⑦⑧）。',
+    S2.battlePhone({ boss: 'defeated', enemy: E(0, 5), day: '11/24（二）・換日 04:00',
       stageExtra: '<div class="fx-burst"></div><span class="fx-sparkle" style="left:150px;top:150px">✦</span><span class="fx-sparkle" style="left:300px;top:132px">✧</span><span class="fx-sparkle" style="left:230px;top:118px">˙</span><span class="dmg" style="left:244px;top:150px">5</span>',
-      overlay: '<div class="win stage-win stage-win--victory" role="status"><p class="victory-title">討伐成功！</p><p class="stage-win__body">被窩史萊姆被打倒了。晨霧森林的霧開始散去…</p></div>',
-      msg: '<span class="cursor">▶</span>最後一擊：伸展 5 分鐘（⚔5）。歐文好像有話要說… <b>▼</b>',
-      list: S2.list({ dailies: ['wake', 'water', 'runDone', copy(R.stretchDone, { lock: '🔒 決勝一擊' })], count: '4/4' }) })));
+      overlay: '<div class="win stage-win stage-win--victory" role="status"><p class="victory-title">討伐成功！</p></div>',
+      msg: '<span class="cursor">▶</span>最後一擊！被窩史萊姆被晨光照得透亮—— <b>▼</b>',
+      list: S2.list({ dailies: ['wake', 'water', copy(R.runDone, { hit: false }), copy(R.stretchDone, { hit: true, note: '取消不會讓 Boss 復活' })], count: '4/4' }) })));
 
-  F.push(frame('⑪ 通關後：和平的森林', 'D3 = a：沒有 Boss，森林變晴朗、開花；木牌寫「第二章・沉默書塔 敬請期待」。打卡照常記錄金幣經驗，列上不再顯示 ⚔。',
-    S2.battlePhone({ bg: 'peace', boss: null, chapter: '第一章・晨霧森林 ★',
-      stageExtra: '<div class="win sign-win"><span class="sign-win__k">NEXT CHAPTER</span><span class="sign-win__t">第二章・沉默書塔</span><span class="sign-win__s">敬請期待</span></div><span class="fx-sparkle" style="left:290px;top:180px">✧</span>',
-      enemyHtml: '<div class="enemy enemy--clear"><span class="enemy__name">★ 第一章 通關</span><span class="mute" style="font-size:12px;text-shadow:none">11/24 打倒被窩史萊姆（示意）</span><span></span></div>',
-      msg: '<span class="cursor">▶</span>晨霧森林恢復了平靜。打卡照常記錄金幣與經驗。',
-      list: S2.list({ dailies: [copy(R.wake, { dmg: null }), copy(R.water, { dmg: null }), R.run, R.stretch], cursor: 2 }) })));
+  F.push(frame('⑩-2 擊敗後取消打勾', '決策表 14.5：擊敗後取消任何一列（含擊敗那一下），金幣／經驗／HP 照 Sprint 1 規則退回，但不退 Boss 傷害、Boss 不復活；沒有綠色＋數字，畫面維持和平的森林。擊敗前完成的列保留 ⚔ 數字（那是實際打出的傷害）。底部提示：劇情草稿 3.11（顯示時間沿用 Sprint 1 .toast）。',
+    S2.battlePhone({ bg: 'peace', boss: null, chapter: '第一章・晨霧森林 ★', day: '11/24（二）・換日 04:00',
+      stageExtra: sign, enemyHtml: clearRow,
+      msg: '<span class="cursor">▶</span>取消了「伸展 5 分鐘」。',
+      toast: '<div class="toast" role="status"><span aria-hidden="true">★</span><div>被窩史萊姆已經倒下了，取消不會讓牠回來。（金幣與經驗已退回）</div></div>',
+      list: S2.list({ dailies: [R.stretch, 'wake', 'water', copy(R.runDone, { hit: false })], count: '3/4', cursor: 0 }) })));
 
-  F.push(frame('⑫ 旅館：營火休息', '入住旅館：夜晚、營火、冒險者坐著休息，Boss 不在畫面（不反擊、不回血）。左上改顯示旅館狀態。打勾照常記錄，不造成傷害（G1-3 待決）。',
-    S2.battlePhone({ bg: 'night', boss: null, pose: 'camp', world: '🛏 旅館休息中・11/10 起', stageExtra: fire, day: '11/11（三）・換日 04:00',
-      enemyHtml: '<div class="enemy"><span class="enemy__name">被窩史萊姆</span><span class="tag tag--inn" style="justify-self:start">休戰中・HP 不變</span><span class="enemy__hp num">184/200</span></div>',
-      msg: '<span class="cursor">▶</span>在營火旁休息。換日不扣 HP，史萊姆不反擊；退房請到「設定」。',
-      list: S2.list({ dailies: [copy(R.wake, { dmg: null }), R.water && copy(R.water, { dmg: null }), R.run, R.stretch], cursor: 2 }) })));
+  F.push(frame('⑪ 通關後：和平的森林', 'D3 = a：隔天（11/25）。沒有 Boss，森林變晴朗、開花；木牌寫「第二章・沉默書塔 敬請期待」。打卡照常記錄金幣經驗、沒有傷害，列上不顯示 ⚔（14.2）。訊息：劇情草稿第 5 節輪替；打勾時改用第 5 節「點燈」句。',
+    S2.battlePhone({ bg: 'peace', boss: null, chapter: '第一章・晨霧森林 ★', day: '11/25（三）・換日 04:00',
+      stageExtra: sign + '<span class="fx-sparkle" style="left:290px;top:180px">✧</span>', enemyHtml: clearRow,
+      msg: '<span class="cursor">▶</span>晨霧森林很安靜。陽光從樹葉縫裡灑下來。',
+      list: S2.list({ dailies: ['run', 'stretch', copy(R.wake, { dmg: null }), copy(R.water, { dmg: null })], cursor: 0, noDmg: true }) })));
 
-  F.push(frame('⑬ HP 低：單膝跪地（P2）', 'HP 低於門檻（沿用 hp.lowRatio）：戰士以劍撐地單膝跪下、冒汗；隊伍狀態變紅。取代 Sprint 1 的「HP 低」橫幅。',
-    S2.battlePhone({ boss: 'awake', pose: 'kneel', party: { hp: '9/50', hpPct: 18, low: true }, enemy: E(184, 92),
+  F.push(frame('⑫ 旅館：營火休息', '入住旅館：夜晚、營火、冒險者坐著休息，Boss 不在畫面（不反擊、不回血，HP 停在 276）。左上改顯示旅館狀態。打勾照常記錄金幣經驗，<b>不造成傷害</b>，列上不顯示 ⚔（已定案：決策表 14.2、14.12 #5）。退房在「設定」。訊息：劇情草稿 3.9 住宿期間輪替。',
+    S2.battlePhone({ bg: 'night', boss: null, pose: 'camp', world: '🛏 旅館休息中・11/10 起', stageExtra: fire,
+      enemyHtml: '<div class="enemy"><span class="enemy__name">被窩史萊姆</span><span class="tag tag--inn" style="justify-self:start">休戰中・HP 不變</span><span class="enemy__hp num">276/300</span></div>',
+      msg: '<span class="cursor">▶</span>營火很暖。被窩史萊姆也在遠處睡著了。',
+      list: S2.list({ dailies: ['run', 'stretch', copy(R.wake, { dmg: null }), copy(R.water, { dmg: null })], cursor: 0, noDmg: true }) })));
+
+  F.push(frame('⑬ HP 低：單膝跪地（P2）', 'HP ≤ 15（hp.max 50 × hp.lowRatio 0.3，決策表第 5 節）：戰士以劍撐地單膝跪下、冒汗；隊伍狀態變紅。取代 Sprint 1 的「HP 低」橫幅。',
+    S2.battlePhone({ boss: 'awake', pose: 'kneel', party: { hp: '9/50', hpPct: 18, low: true }, enemy: E(276),
       stageExtra: '<span class="fx-sweat" style="left:118px;top:150px">💧</span><span class="fx-sweat" style="left:30px;top:166px">,</span>',
       msg: '<span class="cursor">▶</span><span class="hurt">HP 剩 9</span>，冒險者單膝跪地… 做迷你版也算完成，別讓史萊姆再反擊！',
-      list: S2.list({ dailies: ['run', 'stretch', 'sleep'], count: '0/3', countLow: true, cursor: 0 }) })));
+      list: S2.list({ dailies: ['run', 'stretch', undone(R.wake), undone(R.water)], count: '0/4', countLow: true, cursor: 0, freshDay: true }) })));
 
   document.getElementById('frames').innerHTML = F.join('');
 })();

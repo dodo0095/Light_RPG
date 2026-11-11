@@ -16,7 +16,7 @@
 
 <header class="mk-head">
   <h1>序章／劇情對話框</h1>
-  <p>Sprint 2 G1 送審稿 v0.1（2026-11-11，design-director）。對應提案範圍 <b>#4</b> 序章＋第一章內容資料包（對話框逐字跳出、▼ 繼續，企劃書 7.1）、<b>#3</b> 擊敗／通關演出的接續。對話文字全部來自內容資料包（CLAUDE.md 規則 3），本頁文字為<b>示意</b>，正式劇情由 product-manager 撰寫。</p>
+  <p>Sprint 2 G1 送審稿 v0.1（2026-11-11，design-director）。對應提案範圍 <b>#4</b> 序章＋第一章內容資料包（對話框逐字跳出、▼ 繼續，企劃書 7.1）、<b>#3</b> 擊敗／通關演出的接續。對話文字全部來自內容資料包（CLAUDE.md 規則 3）；本頁每格台詞取自 <code>docs/content/sprint2-story-draft.md</code> v0.1，說明列註明段落 id。</p>
 </header>
 <nav class="mk-nav">
   <a href="index.html">← 索引</a>
@@ -33,12 +33,13 @@
     <tr><th>#</th><th>狀態</th><th>何時出現</th></tr>
     <tr><td>①</td><td>逐字跳出中（游標 ▌，尚未跳出的字保留位置）</td><td>新使用者：選職業「建立」後</td></tr>
     <tr><td>②</td><td>一段結束（右下 ▼ 跳動，點任意處繼續）</td><td>每一段</td></tr>
-    <tr><td>③</td><td>既有使用者升級後的序章（不重選職業，第一句不同）</td><td>Sprint 1 角色升級到 v2 後第一次打開，只播一次</td></tr>
+    <tr><td>③</td><td>既有使用者升級後的序章（不重選職業，改播 prologue_returning）</td><td>Sprint 1 角色升級到 v2 後第一次打開，只播一次</td></tr>
     <tr><td>④</td><td>跳過確認</td><td>按右上「跳過 ▶▶」</td></tr>
     <tr><td>⑤</td><td>章節標題卡「第一章・晨霧森林」</td><td>序章結束 → 進入第一章</td></tr>
     <tr><td>⑥</td><td>Boss 登場對話（說話者換成被窩史萊姆）</td><td>標題卡後</td></tr>
+    <tr><td>⑥-2</td><td>旁白對話框（無說話者：不顯示名牌與頭像）</td><td>戰鬥頁 ⑩ 點 ▼，擊敗劇情第 1 框</td></tr>
     <tr><td>⑦</td><td>擊敗後對話（歐文）</td><td>戰鬥頁 ⑩ 點 ▼</td></tr>
-    <tr><td>⑧</td><td>通關卡：「第一章 完」＋「第二章 敬請期待」</td><td>⑦ 結束 → 回到戰鬥頁 ⑪</td></tr>
+    <tr><td>⑧</td><td>通關卡：「晨霧森林　已解放」＋「第二章・沉默書塔　敬請期待」</td><td>⑦ 結束 → 回到戰鬥頁 ⑪</td></tr>
   </table></div>
   <h2>互動規則</h2>
   <ul>
@@ -59,12 +60,12 @@
 
 <div class="mk-legend" style="margin-top:20px">
   <span><i></i>安全區域示意</span>
-  <span style="color:var(--c-warn)">對話文字皆為示意，正式劇情待 product-manager</span>
+  <span style="color:var(--c-warn)">台詞取自 sprint2-story-draft.md（各格註明 id）</span>
 </div>
 
 <div class="mk-row" id="frames"></div>
 
-<p class="mk-foot">⚠ 對話文字、日期為示意。歐文、被窩史萊姆、地名皆為原創（企劃書 4.1、4.3）。</p>
+<p class="mk-foot">⚠ 台詞依劇情草稿 v0.1，草稿定稿後同步；日期為情境設定。歐文、被窩史萊姆、地名皆為原創（企劃書 4.1、4.3）。</p>
 </div>
 <script>
 (function () {
@@ -80,7 +81,8 @@
   var slimeFace = '<div class="dlg__face"><canvas class="pix" data-sprite="slime" data-pose="awake" data-scale="2"></canvas></div>';
   function dlg(name, face, text, opt) {
     opt = opt || {};
-    return '<div class="dlg"><span class="win dlg__name">' + name + '</span><div class="win win--strong dlg__box">' + face +
+    /* 旁白（無說話者）：name 傳空字串、face 傳空字串 → 不顯示名牌，框改 .dlg__box--noface */
+    return '<div class="dlg">' + (name ? '<span class="win dlg__name">' + name + '</span>' : '') + '<div class="win win--strong dlg__box' + (face ? '' : ' dlg__box--noface') + '">' + face +
       '<p class="dlg__text">' + text + '</p>' + (opt.next ? '<span class="dlg__next" aria-hidden="true">▼</span>' : '') +
       '<span class="dlg__hint">' + (opt.hint || '點一下繼續') + '</span></div></div>';
   }
@@ -88,38 +90,43 @@
   var owenBig = '<div style="position:absolute;right:46px;bottom:300px;z-index:2"><canvas class="pix" data-sprite="owen" data-scale="4"></canvas></div>';
   var F = [];
 
-  F.push(frame('① 序章・逐字跳出中', '起始之村。歐文的開場白一個字一個字跳出，游標 ▌ 在最後；後面的字先保留位置，框不會跳動。點一下＝整段立刻顯示。',
+  F.push(frame('① 序章・逐字跳出中', '起始之村。歐文的開場白一個字一個字跳出，游標 ▌ 在最後；後面的字先保留位置，框不會跳動。點一下＝整段立刻顯示。台詞：prologue_new 第 1 框。',
     phone(bg('village') + chap('序章・起始之村') + skip + hero(170) +
-      dlg('歐文', owenFace, '喔喔，你就是新來的見習冒險者吧！我是歐文，這村子最<span class="dlg__caret"></span><span class="ghost">博學、也最多話的老賢者。</span>', { hint: '點一下顯示整段' }))));
+      dlg('歐文', owenFace, '哎呀呀，來了來了！你就是新來的<span class="dlg__caret"></span><span class="ghost">見習冒險者吧？</span>', { hint: '點一下顯示整段' }))));
 
-  F.push(frame('② 一段結束・▼ 繼續', '整段顯示完，右下 ▼ 上下跳動。點畫面任意處進入下一段。',
+  F.push(frame('② 一段結束・▼ 繼續', '整段顯示完，右下 ▼ 上下跳動。點畫面任意處進入下一段。台詞：prologue_new 第 3 框。',
     phone(bg('village') + chap('序章・起始之村') + skip + hero(170) +
-      dlg('歐文', owenFace, '王國被「怠惰之霧」籠罩了。每完成一件該做的事，你就能點亮一盞誓約之燈，把霧氣驅散一點點。', { next: true }))));
+      dlg('歐文', owenFace, '你看外面那片灰灰的東西——那就是「怠惰之霧」。', { next: true }))));
 
-  F.push(frame('③ 既有使用者：升級後的序章', 'Sprint 1 已在用的角色：升級後第一次打開播一次，不重選職業；第一段改成「你已經在冒險了」，其餘段落相同。',
+  F.push(frame('③ 既有使用者：升級後的序章', 'Sprint 1 已在用的角色：升級後第一次打開播一次，不重選職業；整段改用 prologue_returning（8 框，比新玩家少職業一句）。台詞：prologue_returning 第 1 框。',
     phone(bg('village') + chap('序章・起始之村') + skip + hero(170) +
-      dlg('歐文', owenFace, '哎呀，原來你早就在默默修行了！這幾天的努力我都看到了。來，讓我把這趟冒險的來龍去脈說清楚…', { next: true }))));
+      dlg('歐文', owenFace, '哎呀，是你！這幾天你在村子裡練得很勤嘛，我都看在眼裡。', { next: true }))));
 
   F.push(frame('④ 跳過確認（S-1 待決）', '按「跳過 ▶▶」：確認後直接進入第一章戰鬥畫面。序章只播一次，所以提醒「之後不會再播」。',
     phone(bg('village') + chap('序章・起始之村') + hero(170) +
-      dlg('歐文', owenFace, '王國被「怠惰之霧」籠罩了。每完成一件該做的事…', {}) +
+      dlg('歐文', owenFace, '你看外面那片灰灰的東西——那就是「怠惰之霧」。', {}) +
       '<div class="scrim"></div><div class="sheet" role="dialog" aria-modal="true"><div class="win win--strong"><h3 class="win__title">跳過序章？</h3><p class="sheet__lead">會直接前往第一章「晨霧森林」。序章之後不會再播放。</p><div class="sheet__actions"><button class="btn btn--ghost">繼續看</button><button class="btn btn--primary">跳過</button></div></div></div>')));
 
   F.push(frame('⑤ 章節標題卡', '序章結束 → 「第一章・晨霧森林」標題卡（約 2 秒或點一下）。背景換成晨霧森林。',
     phone(bg('mist') + '<div class="title-card"><div><div class="title-card__k">CHAPTER 1</div><div class="title-card__t">晨霧森林</div><div class="title-card__rule"></div><div class="title-card__s">屬性：體能　Boss：被窩史萊姆</div></div></div>')));
 
-  F.push(frame('⑥ Boss 登場', '說話者換成被窩史萊姆（頭像＝醒來姿勢）。Boss 本體出現在畫面中央。',
+  F.push(frame('⑥ Boss 登場', '說話者換成被窩史萊姆（頭像＝醒來姿勢）。Boss 本體出現在畫面中央。語氣是溫柔的誘惑（劇情草稿 0.2）。台詞：boss_bed_slime_appear 第 3 框。',
     phone(bg('mist') + chap('第一章・晨霧森林') + skip +
       '<div style="position:absolute;left:50%;top:200px;transform:translateX(-50%);z-index:2"><canvas class="pix" data-sprite="slime" data-pose="awake" data-scale="5"></canvas></div>' +
-      dlg('被窩史萊姆', slimeFace, '…吵死了。外面這麼冷，幹嘛要起床？再睡五分鐘…不，五個小時吧。', { next: true }))));
+      dlg('被窩史萊姆', slimeFace, '外面好冷喔……你要不要也進來躺一下下？裡面暖暖的……', { next: true }))));
 
-  F.push(frame('⑦ 擊敗後對話', '戰鬥頁 ⑩ 點 ▼ 後播放。森林還是霧，但史萊姆已經攤平。',
+  F.push(frame('⑥-2 旁白對話框（無頭像）', '說話者為空＝旁白／系統（劇情草稿 0.1）：不顯示名牌與頭像，文字佔滿整框（.dlg__box--noface）。戰鬥頁 ⑩ 點 ▼ 後，劇情從這一框開始播。台詞：boss_bed_slime_defeat（4.1）第 1 框。',
     phone(bg('mist') + chap('第一章・晨霧森林') + skip +
       '<div style="position:absolute;left:50%;top:300px;transform:translateX(-50%);z-index:2"><canvas class="pix" data-sprite="slime" data-pose="defeated" data-scale="5"></canvas></div>' +
-      dlg('歐文', owenFace, '了不起！被窩史萊姆可不好對付。你看，晨霧森林的霧氣散了，連陽光都照進來了。', { next: true }))));
+      dlg('', '', '最後一擊！被窩史萊姆被晨光照得透亮——', { next: true }))));
 
-  F.push(frame('⑧ 通關卡', 'D3 = a：「第一章 完」＋「第二章・沉默書塔 敬請期待」。按「回到冒險」→ 戰鬥頁 ⑪ 和平的森林。',
-    phone(bg('peace') + '<div class="title-card"><div><div class="title-card__k">CHAPTER 1 CLEAR</div><div class="title-card__t">晨霧森林・完</div><div class="title-card__s">打倒被窩史萊姆　11/24（示意）</div><div class="title-card__rule"></div>' +
+  F.push(frame('⑦ 擊敗後對話', '戰鬥頁 ⑩ 點 ▼ 後播放：先 boss_bed_slime_defeat（4.1）其餘 3 框，再 chapter_1_clear（4.2）。森林還是霧，但史萊姆已經攤平。台詞：chapter_1_clear 第 2 框。',
+    phone(bg('mist') + chap('第一章・晨霧森林') + skip +
+      '<div style="position:absolute;left:50%;top:300px;transform:translateX(-50%);z-index:2"><canvas class="pix" data-sprite="slime" data-pose="defeated" data-scale="5"></canvas></div>' +
+      dlg('歐文', owenFace, '哎呀呀呀！你做到了！你真的做到了！', { next: true }))));
+
+  F.push(frame('⑧ 通關卡', 'D3 = a：chapter_1_clear 最後一框「晨霧森林　已解放」＋ chapter_2_coming_soon（4.3）的歐文對話播完後，顯示「第二章・沉默書塔　敬請期待」。按「回到冒險」→ 戰鬥頁 ⑪ 和平的森林。',
+    phone(bg('peace') + '<div class="title-card"><div><div class="title-card__k">CHAPTER 1 CLEAR</div><div class="title-card__t">晨霧森林　已解放</div><div class="title-card__s">打倒被窩史萊姆　11/24</div><div class="title-card__rule"></div>' +
       '<div class="title-card__k" style="margin-top:14px">NEXT</div><div class="title-card__t" style="font-size:26px">第二章・沉默書塔</div><div class="title-card__s">敬請期待。打卡照常記錄，冒險不會中斷。</div>' +
       '<button class="btn btn--primary" style="margin-top:24px;min-width:200px">回到冒險</button></div></div>')));
 

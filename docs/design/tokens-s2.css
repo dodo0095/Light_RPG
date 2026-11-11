@@ -1,7 +1,9 @@
 /* =====================================================================
    晨光之誓 — Sprint 2 元件（tokens-s2.css）
    版本：G1 送審稿 v0.1（2026-11-11，design-director）
-   延續 tokens.css：只用既有變數，不另開 UI 色碼（像素圖調色盤屬美術資料，在 mockup-s2.js）。
+   延續 tokens.css：元件內不寫色碼，只用 tokens.css 變數＋本檔第 1 節的「疊色變數」
+   （半透明的影子、遮罩、特效光暈；每個都註明對應 tokens.css 哪個色）。
+   像素圖調色盤屬美術資料，在 mockup-s2.js；第 99 節 .mk-* 圖稿專用不受此限。
    實作時合併進 src/ui/styles/（建議檔名 battle.css）；最後一節 .mk-* 仍只給圖稿用。
 
    結構
@@ -17,7 +19,7 @@
 
 /* ---------- 1. 變數 ---------- */
 :root {
-  --stage-h: 208px;              /* 戰鬥區高度（不含瀏海安全區）；首屏清單 435px 的依據 */
+  --stage-h: 208px;              /* 戰鬥區高度（不含瀏海安全區）；首屏清單 433px 的依據 */
   --stage-h-compact: 56px;       /* 捲動後收合列 */
   --strip-h: 64px;               /* Boss HP＋訊息列 */
   --c-enemy: var(--c-danger);    /* 敵方 HP */
@@ -26,6 +28,18 @@
   --c-heal: var(--c-ok);         /* 取消打勾時 Boss HP 退回的數字 */
   --c-hurt: var(--c-hp-low);     /* 冒險者被反擊 */
   --ts-num: 2px 0 0 var(--c-shadow), -2px 0 0 var(--c-shadow), 0 2px 0 var(--c-shadow), 0 -2px 0 var(--c-shadow), 2px 2px 0 var(--c-shadow);
+  /* 疊色變數（rgba 只准出現在這裡；括號為對應的 tokens.css 色） */
+  --c-hud-top: rgba(58, 98, 208, 0.9);     /* --c-win-top 90% */
+  --c-hud-bot: rgba(20, 39, 114, 0.9);     /* --c-win-bot 90% */
+  --c-ground-shadow: rgba(0, 0, 0, 0.35);  /* Boss 地面影子 */
+  --c-well: rgba(0, 0, 0, 0.3);            /* 隊伍屬性格底 */
+  --c-track: rgba(0, 0, 0, 0.45);          /* Boss HP 條底 */
+  --c-fx-hurt: rgba(255, 77, 94, 0.45);    /* --c-hp-low 45%：反擊紅光 */
+  --c-fx-burst-core: rgba(255, 255, 255, 0.75); /* --c-ink 75%：擊敗白光 */
+  --c-fx-burst-glow: rgba(255, 215, 94, 0.25);  /* --c-gold 25%：擊敗金光 */
+  --c-story-scrim: rgba(3, 6, 25, 0.55);   /* 同 tokens.css .scrim 底色，55% */
+  --c-title-scrim: rgba(3, 6, 25, 0.62);   /* 同上，62% */
+  --c-row-hit: rgba(255, 215, 94, 0.14);   /* --c-gold 14%：剛打勾的列 */
 }
 .pix { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
 
@@ -48,7 +62,7 @@
 .hud-chip {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 2px 8px; border: 1px solid var(--c-border); border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(58, 98, 208, 0.9), rgba(20, 39, 114, 0.9));
+  background: linear-gradient(180deg, var(--c-hud-top), var(--c-hud-bot));
   font-family: var(--font-pixel); font-size: var(--fs-sm); text-shadow: var(--ts); white-space: nowrap;
 }
 .hud-chip--world { border-color: var(--c-gold); color: var(--c-gold); font-size: var(--fs-xs); }
@@ -59,7 +73,7 @@
 .stage__boss { position: absolute; left: 50%; top: calc(var(--safe-top) + 34px); z-index: 1; transform: translateX(-28%); }
 .stage__boss::after { /* 地面影子 */
   content: ""; position: absolute; left: 14%; right: 14%; bottom: -4px; height: 10px;
-  border-radius: 50%; background: rgba(0, 0, 0, 0.35); z-index: -1;
+  border-radius: 50%; background: var(--c-ground-shadow); z-index: -1;
 }
 .stage__boss.is-defeated::after { display: none; }
 .stage__hero { position: absolute; left: 14px; bottom: -40px; z-index: 2; }
@@ -101,7 +115,7 @@
 .party-panel .bar { grid-template-columns: 30px 1fr auto; font-size: var(--fs-xs); }
 .party-panel .bar__value { min-width: 46px; }
 .pp-attrs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; margin-top: 6px; font-size: var(--fs-xs); text-shadow: none; }
-.pp-attrs span { display: flex; justify-content: space-between; padding: 0 4px; border-radius: var(--radius-sm); background: rgba(0, 0, 0, 0.3); }
+.pp-attrs span { display: flex; justify-content: space-between; padding: 0 4px; border-radius: var(--radius-sm); background: var(--c-well); }
 .pp-attrs em { font-style: normal; }
 .pp-attrs b { font-family: var(--font-pixel); font-weight: 400; }
 .pp-close { display: block; width: 100%; min-height: var(--touch); margin-top: 4px; background: none; border: 0; border-top: 1px solid var(--c-border-dim); color: var(--c-ink-dim); font-size: var(--fs-sm); }
@@ -124,7 +138,7 @@
 }
 .enemy { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; }
 .enemy__name { font-family: var(--font-pixel); font-size: var(--fs-sm); }
-.enemy__bar { position: relative; height: 10px; border: 1px solid var(--c-border); border-radius: var(--radius-sm); background: rgba(0, 0, 0, 0.45); overflow: hidden; }
+.enemy__bar { position: relative; height: 10px; border: 1px solid var(--c-border); border-radius: var(--radius-sm); background: var(--c-track); overflow: hidden; }
 .enemy__bar i { display: block; height: 100%; background: var(--c-enemy); }
 .enemy__bar b { position: absolute; top: 0; bottom: 0; background: var(--c-enemy-lost); }
 .is-playing .enemy__bar b { animation: lost 0.9s steps(3) 1 forwards; }
@@ -160,9 +174,9 @@
 .fx-slash { position: absolute; z-index: 5; pointer-events: none; }
 .fx-circle { position: absolute; z-index: 1; pointer-events: none; }
 .fx-bolt { position: absolute; z-index: 5; pointer-events: none; }
-.fx-hurt { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: radial-gradient(ellipse at 30% 100%, rgba(255, 77, 94, 0.45), transparent 60%); }
+.fx-hurt { position: absolute; inset: 0; z-index: 3; pointer-events: none; background: radial-gradient(ellipse at 30% 100%, var(--c-fx-hurt), transparent 60%); }
 .fx-sweat { position: absolute; z-index: 3; font-family: var(--font-pixel); color: var(--c-exp); font-size: 14px; text-shadow: var(--ts); }
-.fx-burst { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(circle at 58% 48%, rgba(255, 255, 255, 0.75), rgba(255, 215, 94, 0.25) 28%, transparent 55%); }
+.fx-burst { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(circle at 58% 48%, var(--c-fx-burst-core), var(--c-fx-burst-glow) 28%, transparent 55%); }
 .fx-sparkle { position: absolute; z-index: 3; color: var(--c-gold); font-family: var(--font-pixel); text-shadow: var(--ts); }
 @media (prefers-reduced-motion: reduce) {
   .zzz, .dmg, .enemy__bar b, .enemy.is-low .enemy__bar i, .stage__boss.is-hit canvas, .stage.is-shake, .dlg__next, .dlg__caret { animation: none; }
@@ -183,6 +197,9 @@
 .stage-win__actions .btn { min-height: var(--touch); }
 .stage-win--hurt { border-color: var(--c-hp-low); }
 .stage-win--event { border-color: var(--c-gold); }
+/* 兩選項奇遇：往上長的上限＝HUD 下緣（safe-top＋50），不蓋隊伍狀態按鈕（safe-top＋6～＋50）。208 − 50 − 下緣 8 ＝ 150px
+   選項改左右並排（.dlg__choices--row），兩個 44px 按鈕只佔一列；超出時框內捲動（保險，正式字型需實測） */
+.stage-win--choice { max-height: calc(var(--stage-h) - 58px); overflow-y: auto; }
 .stage-win--victory { display: block; top: calc(var(--safe-top) + 10px); bottom: auto; text-align: center; border-color: var(--c-gold); }
 .victory-title { font-family: var(--font-pixel); font-size: var(--fs-2xl); color: var(--c-gold); text-shadow: var(--ts-num); margin: 0; letter-spacing: 0.1em; }
 .sign-win { position: absolute; left: 50%; top: calc(var(--safe-top) + 48px); transform: translateX(-50%); z-index: 4; text-align: center; padding: 8px 14px; white-space: nowrap; }
@@ -193,7 +210,7 @@
 /* ---------- 6. 劇情對話框（企劃書 7.1：逐字跳出、右下 ▼） ---------- */
 .story { position: relative; height: 100%; overflow: hidden; background: var(--c-bg); }
 .story__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.story__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, rgba(3, 6, 25, 0.55) 75%); }
+.story__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 45%, var(--c-story-scrim) 75%); }
 .story__skip { position: absolute; top: calc(var(--safe-top) + 8px); right: var(--sp-3); z-index: 5; }
 .story__chapter { position: absolute; top: calc(var(--safe-top) + 14px); left: var(--sp-3); z-index: 5; }
 .dlg { position: absolute; left: var(--sp-3); right: var(--sp-3); bottom: calc(var(--safe-bottom) + var(--sp-3)); z-index: 6; }
@@ -212,7 +229,8 @@
 @keyframes bob { 50% { transform: translateY(3px); } }
 .dlg__hint { position: absolute; left: 14px; bottom: 8px; font-size: var(--fs-xs); color: var(--c-ink-mute); text-shadow: none; }
 .dlg__choices { display: grid; gap: 8px; margin-top: 10px; }
-.title-card { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; text-align: center; background: rgba(3, 6, 25, 0.62); }
+.dlg__choices--row { grid-template-columns: 1fr 1fr; }
+.title-card { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; text-align: center; background: var(--c-title-scrim); }
 .title-card__k { font-family: var(--font-pixel); color: var(--c-gold); font-size: var(--fs-md); letter-spacing: 0.3em; text-shadow: var(--ts-strong); }
 .title-card__t { font-family: var(--font-pixel); font-size: 34px; letter-spacing: 0.12em; text-shadow: var(--ts-num); margin: 6px 0; }
 .title-card__s { font-size: var(--fs-sm); color: var(--c-ink-dim); text-shadow: var(--ts); }
@@ -222,7 +240,7 @@
 .dmg-tag { font-family: var(--font-pixel); color: var(--c-dmg); }
 .task { position: relative; }
 .row-cursor { position: absolute; left: -16px; top: 20px; font-size: 13px; }
-.task.is-hit { background: rgba(255, 215, 94, 0.14); }
+.task.is-hit { background: var(--c-row-hit); }
 
 /* ---------- 99. 圖稿專用 ---------- */
 .mk-dim { position: absolute; right: 0; width: 8px; z-index: 60; pointer-events: none; border: 1px dashed #ff6bd6; border-right: 0; background: rgba(255, 107, 214, 0.12); }

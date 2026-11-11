@@ -60,12 +60,12 @@
 <div class="mk-legend" style="margin-top:20px">
   <span><i></i>安全區域示意</span>
   <span>灰色區塊＝iOS 鍵盤（示意，高度 336px 含 Home 條）</span>
-  <span style="color:var(--c-warn)">預設庫內容取自 habit_library.json；數字為示意</span>
+  <span style="color:var(--c-warn)">預設庫內容取自 habit_library.json；Boss HP、傷害依 decision-tables.md 第 14 節 v1.1</span>
 </div>
 
 <div class="mk-row" id="frames"></div>
 
-<p class="mk-foot">⚠ 數字為示意。關鍵字與模板來自內容資料包 <code>src/content/habit_library.json</code>（程式不寫關鍵字）。</p>
+<p class="mk-foot">⚠ Boss HP（300）與傷害數字依 <code>.knowledge/decision-tables.md</code> 第 14 節 v1.1。關鍵字與模板來自內容資料包 <code>src/content/habit_library.json</code>（程式不寫關鍵字）。</p>
 </div>
 <script>
 (function () {
@@ -89,7 +89,7 @@
       body + '<div class="sheet__actions"><button type="button" class="btn btn--ghost"' + (o.status === 'empty' ? ' disabled' : '') + '>' + (o.status === 'unknown' ? '手動選擇' : '進階編輯') + '</button>' +
       '<button type="button" class="btn btn--primary' + (o.loading ? ' is-loading' : '') + '"' + (o.status !== 'matched' || o.loading ? ' disabled' : '') + '>建立</button></div></div></div>' + (o.kb ? kb : '');
   }
-  var base = { boss: 'idle', enemy: { hp: '184/200', pct: 92 }, msg: '<span class="cursor">▶</span>被窩史萊姆還在被窩裡打呼。完成今天的討伐，把牠叫醒吧！', list: S2.list({ cursor: 2 }) };
+  var base = { boss: 'idle', enemy: { hp: '276/300', pct: 92 }, msg: '<span class="cursor">▶</span>史萊姆：呼啊……打我也沒用喔……我會在夢裡等你的……', list: S2.list({ cursor: 0 }) };
   function bp(extra) { var o = {}; for (var k in base) o[k] = base[k]; for (k in extra) o[k] = extra[k]; return S2.battlePhone(o); }
   var F = [];
   F.push(frame('① 剛打開（空白）', '今天頁右下「＋」打開。輸入框自動聚焦、鍵盤升起；sheet 停在鍵盤上方（Q-1）。沒有輸入時「進階編輯」「建立」都停用。',
@@ -102,8 +102,8 @@
     bp({ fab: false, after: sheet({ status: 'unknown', text: '整理冰箱' }) })));
   F.push(frame('⑤ 建立中', '按「建立」後按鈕顯示轉圈並停用，避免重複新增。',
     bp({ fab: false, after: sheet({ status: 'matched', text: '早睡早起', loading: true }) })));
-  F.push(frame('⑥ 建立完成', 'sheet 關閉；Toast「已新增」出現在分頁列上方（顯示期間取代「＋」，同 Sprint 1）。新項目進每日討伐清單，沒有 ⚔，打勾後才攻擊。',
-    bp({ fab: false, list: S2.list({ dailies: ['wake', 'water', 'run', 'stretch', { t: '早睡早起', attr: 'fitness', diff: '普通', mini: '24:00 前上床' }], count: '2/5', cursor: 2 }),
+  F.push(frame('⑥ 建立完成', 'sheet 關閉；Toast「已新增」出現在分頁列上方（顯示期間取代「＋」，同 Sprint 1）。新項目排在未完成區最後（已完成列之前，G1-9 建議排序），沒有 ⚔，打勾後才攻擊。',
+    bp({ fab: false, list: S2.list({ dailies: ['run', 'stretch', { t: '早睡早起', attr: 'fitness', diff: '普通', mini: '24:00 前上床' }, 'wake', 'water'], count: '2/5', cursor: 0 }),
       toast: '<div class="toast" role="status"><span aria-hidden="true">✓</span><div><b class="px">已新增</b><br>「早睡早起」已加入今天。</div></div>' })));
   document.getElementById('frames').innerHTML = F.join('');
 })();
