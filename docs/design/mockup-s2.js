@@ -430,8 +430,7 @@
     run: { t: '運動 30 分鐘', attr: 'fitness', diff: '困難', streak: '連續 4 天', mini: '運動 10 分鐘' },
     runDone: { t: '運動 30 分鐘', attr: 'fitness', diff: '困難', state: 'done', reward: '+10金 +16EXP', dmg: 15, hit: true },
     stretch: { t: '伸展 5 分鐘', attr: 'fitness', diff: '簡單' },
-    stretchDone: { t: '伸展 5 分鐘', attr: 'fitness', diff: '簡單', state: 'done', reward: '+3金 +5EXP', dmg: 5 },
-    sleep: { t: '23:30 前上床', attr: 'fitness', diff: '普通' }
+    stretchDone: { t: '伸展 5 分鐘', attr: 'fitness', diff: '簡單', state: 'done', reward: '+3金 +5EXP', dmg: 5 }
   };
   function taskRow(r, cursor) {
     var check = r.state === 'done' ? '<button class="check is-done" aria-label="已完成"></button>'

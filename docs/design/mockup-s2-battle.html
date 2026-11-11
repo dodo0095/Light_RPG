@@ -109,6 +109,7 @@
     <tr><td>僧侶祈禱（自動觸發）</td><td>訊息列＋隊伍狀態 HP 跳綠色數字（<code>.dmg--heal</code>）</td><td>3.10</td></tr>
     <tr><td>其他世界狀態（濃霧瀰漫、獵人之月）開始／結束</td><td>⑦ 的視窗與左上標籤</td><td>7.2、7.3 標籤格式同 7.1</td></tr>
     <tr><td>黏答答的足跡（兩選項）</td><td>⑦-3</td><td>6.8</td></tr>
+    <tr><td>含 Boss 傷害的奇遇選項，選擇當下 Boss 不在場（同日已擊敗，或已入住旅館；奇遇仍可當天選）</td><td>⑦-3 的停用按鈕：該選項灰色停用，按鈕內寫「被窩史萊姆不在」（例：<code>enc_slime_trail</code> A「追上去」），只能選另一個選項。判斷用選項 <code>effect.bossDamage &gt; 0</code>；不含 Boss 傷害的奇遇（如 <code>enc_fog_fork</code>）照常。依決策表 14.13.3 (d)（tech-lead 已決）</td><td>6.8</td></tr>
     <tr><td>其他單一效果奇遇（婆婆、小貓、歐文往事、陷阱、安靜的早晨）</td><td>⑦-2；HP 增加用 <code>.gain</code>，傷害 Boss 時同時播 ③ 的 Boss 受擊</td><td>6.2～6.6</td></tr>
     <tr><td>和平森林的日結（霧氣侵蝕）</td><td>⑥ 的視窗，標題改「☾ 霧氣又飄回來了」</td><td>第 5 節</td></tr>
     <tr><td>旅館入住／退房</td><td>⑫ 的訊息列</td><td>3.9</td></tr>
@@ -205,10 +206,10 @@
       msg: '<span class="cursor">▶</span>歐文：回來就好、回來就好。今天先從一件小事開始吧。',
       list: S2.list({ dailies: ['run', 'stretch', undone(R.wake), undone(R.water)], count: '0/4', cursor: 0, freshDay: true }) })));
 
-  F.push(frame('⑦ 世界狀態開始：豐收祭', '每個遊戲日第一次打開時先抽世界狀態（14.7.1）。開始當天出現金框視窗；左上標籤＝名稱＋效果＋剩餘天數，格式照劇情草稿 7.1（豐收祭 5 天，開始當天算第 1 天）。效果：打卡金幣 ×1.5（14.7.4）。視窗與訊息：劇情草稿 7.1 開始。',
+  F.push(frame('⑦ 世界狀態開始：豐收祭', '每個遊戲日第一次打開時先抽世界狀態（14.7.1）。開始當天出現金框視窗；左上標籤＝名稱＋效果＋剩餘天數，格式照劇情草稿 7.1（豐收祭 5 天，開始當天算第 1 天）。效果：打卡金幣 ×1.5（14.7.4）。視窗＝劇情草稿 v0.2 7.1 開始第 1 行（旁白）；訊息列＝歐文的 2 框，先顯示第 1 框，句尾 ▼ 表示有下一框，點訊息列換第 2 框「歐文：所以啊，做完事情的賞金也會多一些喔。」',
     S2.battlePhone({ boss: 'idle', enemy: E(276), world: '豐收祭　金幣×1.5　剩 5 天',
       overlay: '<div class="win stage-win stage-win--event" role="status"><p class="stage-win__title">✦ 豐收祭開始</p><p class="stage-win__body">起始之村傳來了鼓聲。今年的麥子收成特別好！</p><div class="stage-win__actions"><button class="btn btn--sm">知道了</button></div></div>',
-      msg: '<span class="cursor">▶</span>歐文：豐收祭開始啦！這幾天大家出手都大方，做完事情的賞金也會多一些喔。',
+      msg: '<span class="cursor">▶</span>歐文：豐收祭開始啦！這幾天大家出手都很大方。 <b>▼</b>',
       list: S2.list({ dailies: ['run', 'stretch', undone(R.wake), undone(R.water)], count: '0/4', cursor: 0, freshDay: true }) })));
 
   F.push(frame('⑦-2 旅途奇遇：路邊的舊木箱', '豐收祭第 3 天（11/13）。世界狀態之後抽旅途奇遇（每天 60%），以金框視窗出現；同一天最多 2 則事件。enc_roadside_chest：金幣 +8（14.7.3；奇遇的固定金幣不吃豐收祭倍率，14.7.4）。今天已打的卡金幣 ×1.5：普通 6→9、簡單迷你版 3×0.5×1.5＝2.25→2。視窗：劇情草稿 6.1。',
@@ -217,14 +218,14 @@
       msg: slimeIdle,
       list: S2.list({ dailies: ['run', 'stretch', copy(R.wake, { reward: '+9金 +10EXP' }), R.water], cursor: 0 }) })));
 
-  F.push(frame('⑦-3 兩選項奇遇：霧中的岔路', 'enc_fog_fork（14.7.3）：A 繞遠路 −6 金幣／B 穿過霧 HP −4。目前金幣 ◆4，不足 6 → A 灰色停用，按鈕內寫原因（劇情草稿 6.7 註）。用 .dlg__choices＋.dlg__choices--row（左右並排），按鈕 ≥44px。視窗以戰鬥區下緣為底往上長，<b>上限＝HUD 下緣（safe-top＋50）</b>：不蓋隊伍狀態按鈕，也不蓋訊息列與清單（約 112／150px）；一定要選一個，未選前清單照常可打勾。歐文的台詞放訊息列，讓視窗放得下。',
+  F.push(frame('⑦-3 兩選項奇遇：霧中的岔路', 'enc_fog_fork（14.7.3）：A 繞遠路 −6 金幣／B 穿過霧 HP −4。目前金幣 ◆4，不足 6 → A 灰色停用，按鈕內寫原因（劇情草稿 6.7 註）。用 .dlg__choices＋.dlg__choices--row（左右並排），按鈕 ≥44px。視窗以戰鬥區下緣為底往上長，<b>上限＝HUD 下緣（safe-top＋50）</b>：不蓋隊伍狀態按鈕，也不蓋訊息列與清單（約 112／150px）；一定要選一個，未選前清單照常可打勾。歐文的台詞放訊息列，讓視窗放得下：劇情草稿 v0.2 6.7 拆成 2 框，先顯示第 1 框（▼），點訊息列換第 2 框「歐文：右邊嘛……霧很刺眼就是了。」',
     S2.battlePhone({ boss: 'idle', enemy: E(276), party: { gold: 4 },
       overlay: '<div class="win stage-win stage-win--event stage-win--choice" role="dialog" aria-label="旅途奇遇：霧中的岔路"><p class="stage-win__title">✦ 旅途奇遇：霧中的岔路</p><p class="stage-win__body" style="grid-column:1/-1">前方的路分成兩條。右邊被濃霧蓋住，左邊要繞好一大段路。</p>' +
         '<div class="dlg__choices dlg__choices--row" style="grid-column:1/-1;margin-top:6px">' +
           '<button class="btn btn--sm btn--block" disabled aria-disabled="true" style="flex-direction:column;gap:0;line-height:1.2">繞遠路（金幣不夠）<small class="mute" style="font-size:11px">需要 6 金幣，目前 ◆4</small></button>' +
           '<button class="btn btn--sm btn--block">穿過霧（HP −4）</button>' +
         '</div></div>',
-      msg: '<span class="cursor">▶</span>歐文：嗯……我記得左邊有個收過路費的橋。右邊嘛……霧很刺眼。',
+      msg: '<span class="cursor">▶</span>歐文：嗯……我記得左邊有座收過路費的橋。 <b>▼</b>',
       list: S2.list({ cursor: 0 }) })));
 
   F.push(frame('⑧ 捲動後：收合列', '往下捲清單超過 40px：戰鬥區縮成 56px（小史萊姆＋HP 條＋隊伍狀態）。在收合列上打勾仍跳傷害數字（此例：運動 30 分鐘 15，HP 276→261）。點收合列捲回頂部。',
@@ -232,7 +233,7 @@
       miniDmg: '<span class="dmg dmg--sm" style="left:34px;top:-14px">15</span>',
       list: S2.list({ dailies: [R.stretch, 'runDone'], count: '3/4', cursor: 0 }) })));
 
-  F.push(frame('⑨ Boss HP 低', 'HP 剩 25% 以下（與劇情草稿 3.7 第三階段同一門檻）：史萊姆被子破洞、冒汗、皺眉；HP 條變紅閃爍。此例 HP 20，剩「運動 30 分鐘」15＋「伸展 5 分鐘」5＝20，所以「再約 2 項」（G1-4 待決）。第一次跌破 25% 時，訊息列先出現 3.7 的台詞一次。',
+  F.push(frame('⑨ Boss HP 低', '門檻＝boss 資料包 <code>lowHpPercent</code>（被窩史萊姆 25；判斷 HP×100 ≤ maxHp×25，即 HP ≤ 75，決策表 14.13.1）：史萊姆被子破洞、冒汗、皺眉；HP 條變紅閃爍。「再約 N 項」依 14.13.2：今天未完成的每日討伐以完整版傷害由大到小累加——運動 15＋伸展 5＝20 ≥ HP 20 → N＝2（≤ finishHintMaxTasks 3，顯示項數；超過或不夠打倒時改用「再加把勁！」句）。第一次跌破門檻當下先播 3.7 該階段台詞，之後換成本句。訊息：劇情草稿 v0.2 3.7-1 boss_bed_slime_low_hp_hint。',
     S2.battlePhone({ boss: 'low', enemy: E(20, 0, true),
       msg: '<span class="cursor">▶</span>被窩史萊姆快撐不住了！再完成約 <b>2</b> 項就能打倒。',
       list: S2.list({ cursor: 0 }) })));
@@ -263,10 +264,10 @@
       msg: '<span class="cursor">▶</span>營火很暖。被窩史萊姆也在遠處睡著了。',
       list: S2.list({ dailies: ['run', 'stretch', copy(R.wake, { dmg: null }), copy(R.water, { dmg: null })], cursor: 0, noDmg: true }) })));
 
-  F.push(frame('⑬ HP 低：單膝跪地（P2）', 'HP ≤ 15（hp.max 50 × hp.lowRatio 0.3，決策表第 5 節）：戰士以劍撐地單膝跪下、冒汗；隊伍狀態變紅。取代 Sprint 1 的「HP 低」橫幅。',
+  F.push(frame('⑬ HP 低：單膝跪地（P2）', 'HP ≤ 15（hp.max 50 × hp.lowRatio 0.3，決策表第 5 節）：戰士以劍撐地單膝跪下、冒汗；隊伍狀態變紅。取代 Sprint 1 的「HP 低」橫幅。訊息：劇情草稿 v0.2 3.12 party_low_hp（Boss 在場版，{hpNow}＝9），輪替另一句「歐文：撐著點！今天先做迷你版也好，別讓史萊姆再反擊。」；和平森林／旅館改用「霧就不敢靠近」版。',
     S2.battlePhone({ boss: 'awake', pose: 'kneel', party: { hp: '9/50', hpPct: 18, low: true }, enemy: E(276),
       stageExtra: '<span class="fx-sweat" style="left:118px;top:150px">💧</span><span class="fx-sweat" style="left:30px;top:166px">,</span>',
-      msg: '<span class="cursor">▶</span><span class="hurt">HP 剩 9</span>，冒險者單膝跪地… 做迷你版也算完成，別讓史萊姆再反擊！',
+      msg: '<span class="cursor">▶</span><span class="hurt">HP 只剩 9</span>，你單膝跪地……做迷你版也算完成，撐住！',
       list: S2.list({ dailies: ['run', 'stretch', undone(R.wake), undone(R.water)], count: '0/4', countLow: true, cursor: 0, freshDay: true }) })));
 
   document.getElementById('frames').innerHTML = F.join('');

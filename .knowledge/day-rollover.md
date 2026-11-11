@@ -148,6 +148,8 @@ transaction 失敗時資料完全不變，下次打開 App 會再試一次。
 
 > 如果之後發現需要跨分頁鎖定，可以加 Web Locks API（`navigator.locks`）。S1 先靠上面兩層保護。
 
+> **v2 註記（2026-11-11，Sprint 2 資料模型 v2 草案）**：本節規格不變。Sprint 2 起日結多讀 `adventure`、`worldStates`、`dailyDraws`，在同一個 transaction 寫世界狀態結束事件，並在 `rollover_penalty.payload` 加 Boss 反擊呈現與濃霧加重資訊；**日結不寫 Boss 狀態**（Boss 不回血）。冪等仍靠本節兩層保護，外加 `worldStates.endedEventId`。每日抽籤在日結之後、另一個 transaction 執行。詳見 `.knowledge/data-model.md` 第 12.6 節（含 12.6.1 各動作的 transaction 表）與 12.10.6 測試清單。
+
 ## 4. 模組切分
 
 | 模組 | 位置 | 純函式？ | 內容 |

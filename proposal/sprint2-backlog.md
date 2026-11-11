@@ -16,3 +16,4 @@
 | B7 | 主畫面 App 的持久儲存觀察 | T3 S1 | Safari 分頁 `persist()` 回 false；主畫面 App 的結果由設定頁顯示，14 天試用期間記錄 | experiment-tracker |
 | B8 | ✅ 已在 Sprint 1 修正（`1f050a4`）— 事件紀錄的項目名稱 | 2026-11-11 桌機預檢 | `src/ui/pages/settings.tsx:180` 名稱對照只收「今天畫面上的項目」，已刪除的任務、今天不用做的 Daily（如週末的平日任務）在事件紀錄只顯示「完成每日討伐」、沒有名稱；應改用含已刪除項目的完整任務清單 | frontend-developer |
 | B9 | ✅ 已在 Sprint 1 修正（`1f050a4`）— 編輯器小項 | 2026-11-11 桌機預檢 | (1) 頻率切到「自訂」時星期全空，可預填目前頻率對應的星期；(2) 今天頁 Daily／To-do 的「⋯」`aria-label` 只有「編輯」，沒帶項目名稱（Habit 有帶） | frontend-developer |
+| B10 | 遷移／匯入的「讀舊資料」與「寫新資料」不在同一個 transaction | 2026-11-11 data-model v2 審查（Minor 8） | `src/storage/upgrade.ts:79-89` 先用 readonly transaction 匯出 v1 資料，之後才在 versionchange transaction 寫入遷移結果；兩者之間若另一個 v1 分頁寫入（例：打卡），該筆會被覆蓋而遺失。`importAll`（`src/storage/export-import.ts`）的自動備份與清空寫入也分屬兩個 transaction（快照可能少最後一筆）。個人單機、需兩分頁同時操作，機率極低；Sprint 2 不修，記錄於 `data-model.md` 12.10.5 MG-17。可行修法：在 versionchange transaction 內讀出舊資料再遷移（遷移函式是同步純函式），或用 Web Locks 擋其他分頁 | tech-lead |

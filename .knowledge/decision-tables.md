@@ -2,7 +2,7 @@
 
 > 層級：🔴 規範
 > 狀態：**v1.0 定案（2026-10-23 老闆確認，第 13 節 6 項照建議通過）**— T9 阻斷解除
-> Sprint 2：第 14 節「戰鬥與事件」**v1.1 定案（2026-11-11 老闆回覆「繼續」，14.12 十項照 product-manager 建議；G1 前仍可調整）**— Sprint 2 #2 阻斷解除；第 1～13 節數值不變
+> Sprint 2：第 14 節「戰鬥與事件」**v1.1 定案（2026-11-11 老闆回覆「繼續」，14.12 十項照 product-manager 建議；G1 前仍可調整）**— Sprint 2 #2 阻斷解除；第 1～13 節數值不變；14.13 為 **v1.2 草案（待老闆 G1 確認）**
 > 對應：`src/config/balance.json`；欄位路徑與 `.knowledge/data-model.md` 第 5 節一一對應（新增欄位見第 11 節）
 > 依據：企劃書 v0.2 第 3、5 節；提案書第 2 節 #6、第 6 節；`day-rollover.md` v0.3 已拍板事項
 > 原則：**數字只寫在這份文件與 `balance.json`**，程式碼與測試都不得寫死（測試用 `tests/fixtures/balance.test.json`）
@@ -585,6 +585,60 @@ K = 3 時，Daily 稍微多一點的人只要出差回來就會「一打開就�
 | 9 | 打倒 Boss 後隨機事件要不要繼續 | **繼續**（排除跟 Boss 有關的），讓和平的森林每天還有一點變化 | 擊敗後停掉事件 |
 | 10 | 劇情語氣與村名 | 歐文「話很多、愛離題、會自己打斷自己」的老賢者；村子沿用企劃書「起始之村」 | 看過草稿後調整 |
 
+### 14.13 v1.2 草案：補欄位與規則（⏳ 待老闆 G1 確認）
+
+> 來源：Sprint 2 G1 圖稿 L1 複驗（`docs/design/mockup-s2-battle.html` ⑨）＋ data-model v2 設計審查（`.knowledge/data-model.md` 第 13 節待決 #1、#2、#3、#6、#8、#9、(d)）。
+> 只補欄位與規則；14.1～14.12 的數值不變。老闆確認前，實作先照本節建議（G1 前仍可調整）。
+
+#### 14.13.1 新增欄位
+
+| 位置 | 欄位（建議） | 值 | 說明 |
+|------|------------|----|------|
+| `balance.json` | `defaults.reminderTime` | `"08:00"` | 每日提醒預設時間（台灣時間），與 `defaults.rolloverTime` 並列；使用者可在設定頁改。老闆未另行指定，依 `proposal/sprint2-tech-push.md` 暫用（data-model 待決 #3） |
+| `balance.json` | `battle.finishHintMaxTasks` | `3` | Boss HP 低時「再約 N 項就能打倒」的 N 最多顯示到幾；N 超過或算不出來時改用不帶數字的句子；設 `0` ＝永遠不顯示項數（14.13.2） |
+| `boss` 資料包 | `items[].phases[]` | 被窩史萊姆 `[{ hpPercent: 75 }, { hpPercent: 50 }, { hpPercent: 25 }]`（各帶 `sceneId`） | 血量階段台詞門檻（劇情草稿 3.7）；與 data-model 第 12 節資料包表 `phases: { hpPercent, sceneId }[]` 同一欄位 |
+| `boss` 資料包 | `items[].lowHpPercent` | 被窩史萊姆 `25` | Boss「HP 低」畫面（破被子、冒汗、HP 條紅色閃爍，圖稿 ⑨）的門檻；建議與最後一個階段同值，但分開一欄，試用時可單獨調 |
+
+- **「在門檻以下」的判斷**：`Boss 目前 HP × 100 ≤ maxHp × hpPercent`（整數比較，不用小數）。被窩史萊姆 300：75%＝225、50%＝150、25%＝75。
+- 所有門檻都從資料包讀，程式不寫 75／50／25 或 0.25。
+
+#### 14.13.2 「再約 N 項就能打倒」的算法（文案：劇情草稿 3.7-1）
+
+1. 只在 Boss 在場、且 HP 在 `lowHpPercent` 以下時算；旅館期間、擊敗後不顯示。
+2. 候選：**今天排程內、還沒完成的每日討伐**（不含公會委託、修行「＋」），每項以**完整版**照 14.2 算傷害（含進行中世界狀態倍率）。
+3. 依傷害由大到小累加，加到 ≥ Boss 目前 HP 為止，用了幾項就是 N（＝最少要幾項）。
+4. 全部候選加起來仍 < Boss HP，或 N > `battle.finishHintMaxTasks` → 改用不帶數字的句子。
+5. 每次打卡／取消後重算；只是畫面提示，不寫事件。
+
+例（圖稿 ⑨）：Boss HP 20，未完成「運動 30 分鐘」15、「伸展 5 分鐘」5 → 15＋5＝20 ≥ 20 → N＝2。
+
+#### 14.13.3 data-model v2 待決（product-manager 部分）的建議規則
+
+| 待決 | 建議規則 | 理由 |
+|------|---------|------|
+| #1 有選項的奇遇當天沒選 | 過了換日就**過期、沒有效果**；隔天不再顯示、不補、不提示；不佔隔天的 `maxPerDay` | 與「事件不補抽」（14.7.1）一致；隔天不會一次跳兩則 |
+| #2 世界狀態冷卻怎麼數 | 遊戲日 `d` 可開始新狀態的條件＝`d > endDayKey + worldStateCooldownDays`（結束後完整空出 N 天）。例：11/17 結束、N＝3 → 11/18～11/20 空，最早 11/21 | 「冷卻 3 天」照字面就是中間完整空 3 天，玩家與測試都好懂 |
+| #6 `maxHp` 下修到低於累計傷害 | 下次打開 App 時判定擊敗：寫 `boss_defeated`（`causeType: 'content_change'`），照常播 4.1 擊敗＋4.2 通關；沒播過的血量階段台詞**不補播** | 已造成的傷害不消失（14.3）；直接進通關比停在 0 HP 不倒合理 |
+| #8 升級後、序章看完前的打卡 | **不造成 Boss 傷害**（金幣、經驗照給），也不補算 | Boss 還沒登場；序章在打開 App 時就播，實際上幾乎不會發生 |
+| #9 血量階段台詞 | 每個階段**只播一次**；取消打卡讓 HP 回到門檻以上再跌破也不重播 | 台詞是劇情節點不是狀態提示；重播會像出錯（狀態提示由 14.13.2 的待機句負責） |
+| (d) 已有 `pending` 奇遇時入住旅館，或 Boss 同一天被擊敗 | 奇遇仍可在當天選（旅館只擋「抽新的」，14.7.1）；**選擇當下 Boss 不在場時，效果含對 Boss 傷害的選項停用**（`enc_slime_trail` A 灰色，寫「被窩史萊姆不在」），只能選其他選項；不含 Boss 傷害的奇遇（如 `enc_fog_fork`）照常 | 「追上去打牠」卻打不到、還要扣血，對玩家不公平、劇情也矛盾；另一個選項一定沒有負面效果（14.7.2），不會卡住。✅ tech-lead 2026-11-11 採本方案，已同步 data-model 12.4.1 第 6 點；判斷用「選項 `effect.bossDamage > 0`」推算，不新增欄位 |
+
+#### 14.13.4 `balance.json` 片段（v1.2，加在 14.8 之上）
+
+```json
+{
+  "configVersion": "1.2.0",
+  "defaults": { "rolloverTime": "04:00", "reminderTime": "08:00" },
+  "battle": {
+    "taskTypeDamageMultiplier": { "daily": 1.0, "todo": 1.0, "habitUp": 0.4 },
+    "miniDamageRatio": 0.5,
+    "finishHintMaxTasks": 3
+  }
+}
+```
+
+> 只列有變動的區塊；其他欄位同 14.8／附錄 A。`boss` 資料包的 `phases`、`lowHpPercent` 不在 `balance.json`。
+
 ## 附錄 A：`balance.json` 完整內容
 
 T9 開工時照這份建立 `src/config/balance.json`（schema 調整見第 11 節）：
@@ -618,6 +672,7 @@ T9 開工時照這份建立 `src/config/balance.json`（schema 調整見第 11 �
 
 | 版本 | 日期 | 變更 | 作者 |
 |------|------|------|------|
+| v1.2-draft | 2026-11-11 | ⏳ **待老闆 G1 確認**。新增 14.13：`defaults.reminderTime`、`battle.finishHintMaxTasks`、`boss` 資料包 `phases[].hpPercent`／`lowHpPercent`；「再約 N 項」算法；data-model v2 待決 #1、#2、#6、#8、#9、(d) 建議規則（來源：G1 圖稿 L1 複驗＋data-model v2 審查）；14.1～14.12 數值不變 | product-manager |
 | v1.1 | 2026-11-11 | 老闆回覆「繼續」＝14.12 十項照 product-manager 建議，第 14 節定案（G1 前仍可調整）；標題同步（tech-lead 依 L1 圖稿審查指出） | product-manager |
 | v1.1-draft | 2026-11-11 | 新增第 14 節「Sprint 2 戰鬥與事件」草案（傷害、Boss HP、擊敗取消、僧侶祈禱、隨機事件）；第 1～13 節不變 | product-manager |
 | v1.0 | 2026-10-23 | 老闆確認第 13 節 6 項照建議通過，定案 | product-manager |

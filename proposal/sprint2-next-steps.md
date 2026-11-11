@@ -1,7 +1,7 @@
 # Sprint 2：目前進度與接續步驟
 
 > **更新**: 2026-11-11（tech-lead）
-> **Sprint 1 的進度**另見 `proposal/sprint1-next-steps.md`（G3 iPhone 實機驗收進行中）
+> **Sprint 1 的進度**另見 `proposal/sprint1-next-steps.md`（G3 附條件通過：D1／D2 隔日補確認；G5 待部署機自動啟動）
 
 ## 目前進度
 
@@ -9,11 +9,26 @@
 |------|------|------|
 | G0 提案 | ✅ 調整後通過（2026-11-11） | `proposal/sprint2-proposal.md`（第 12 節末：老闆決策 D1～D8） |
 | 推播技術決策 | ✅ 老闆選 A：併入 `serve.mjs`；預設提醒 08:00 | `proposal/sprint2-tech-push.md` |
-| 戰鬥與事件數值 | ✅ v1.1 定案（老闆「繼續」＝照建議） | `.knowledge/decision-tables.md` 第 14 節 |
-| 劇情與事件文案 | 🟡 草稿，G1 時請老闆一起看 | `docs/content/sprint2-story-draft.md` |
-| UI 圖稿 | 🟡 完成，L1 初步檢查通過（檔案齊全、程式繪製、JS 語法 OK），**待 tech-lead 逐頁審閱 → 老闆 G1** | `docs/design/mockup-s2-battle.html`（13 狀態）、`-story`（8）、`-sprites`、`-quickadd`（6）、`-reminder`（8）；`mockup-s2.js`、`tokens-s2.css`；`docs/design/index.html` 有入口 |
-| 資料模型 v2＋遷移設計 | ⬜ 未開始（tech-lead） | 將更新 `.knowledge/data-model.md` |
-| 開發計畫書 | ⬜ 未開始 | 將產出 `proposal/sprint2-dev-plan.md` |
+| 戰鬥與事件數值 | ✅ v1.1 定案；🟡 14.13 補欄位 v1.2 草案（Boss 階段門檻、低血提示、預設提醒時間、待決規則），**待老闆 G1 確認** | `.knowledge/decision-tables.md` 第 14 節 |
+| 劇情與事件文案 | 🟡 草稿 v0.2，**G1 時請老闆一起看** | `docs/content/sprint2-story-draft.md` |
+| UI 圖稿 | ✅ L1 獨立審查三輪通過（第一輪 6 Major 已修；390×844 headless 實測），**待老闆 G1** | `docs/design/index.html` 入口；battle 17 格、story 9 格、sprites、quickadd 6 格、reminder 8 格 |
+| 資料模型 v2＋遷移設計 | ✅ L1 獨立審查三輪通過，可定案（第 13 節 #5 回滾策略待老闆） | `.knowledge/data-model.md` 第 12、13 節；`day-rollover.md` v2 註記；backlog B10 |
+| 開發計畫書 | ⬜ G1 通過後產出 | 將產出 `proposal/sprint2-dev-plan.md` |
+
+### G1 請老闆決定（附建議）
+
+1. G1-1 戰鬥版面：**建議 A**（固定 208px 戰鬥區，清單捲動後收成 56px 條）
+2. G1-9 已完成的 Daily 排到未完成之後：**建議排後面**（不排的話 4 項做完 3 項時，下一項掉出首屏）
+3. 程式繪製像素圖品質是否夠（D7）：看實圖決定，夠就維持
+4. 劇情語氣（歐文話多愛離題、史萊姆溫柔誘惑）：**建議照草稿**
+5. S-1 跳過序章要二次確認：**建議要**（序章只播一次）
+6. B5 App 圖示用誓約之燈：**建議同意**
+7. G1-5 分頁名：**建議維持「今天」**
+8. R-1 每日推播文字：從 reminder 頁 (a)(b)(c) 三句選一
+9. 決策表 14.13 v1.2 草案：未作答奇遇換日過期、世界狀態冷卻完整空 N 天、Boss maxHp 下修低於已造成傷害視為擊敗、序章前打卡不造成傷害、階段台詞只播一次、Boss 低血門檻 25%／階段 75·50·25、預設提醒 08:00：**建議照 PM 建議**
+10. data-model #5 回滾策略：v2 上線後資料庫只能往前，回滾只退畫面與戰鬥邏輯、儲存層保留 v2；最後手段是 Safari 刪網站資料＋匯入 v1 匯出檔（會一併刪自動備份快照與推播訂閱）：**建議同意**，提案書第 8 節同步
+
+已定案、不需老闆決定：G1-2 擊敗確定制（14.5）、G1-3 旅館打卡無傷害、R-2 本 Sprint 不做、08:00 暫用、Boss 不在場時含 Boss 傷害的奇遇選項停用（tech-lead 採 PM 方案）。G1 後小修：擊敗旁白第 1 框在 battle ⑩ 與 story ⑥-2 可能重播，擇一統一。
 
 ## 老闆已確認的重點
 
@@ -23,7 +38,7 @@
 
 ## 接下來（照順序）
 
-1. **UI 圖稿 L1 審閱 → 老闆 G1**（同時看劇情草稿）。design-director 交回的 G1 待決事項：
+1. ~~UI 圖稿 L1 審閱~~ ✅ 2026-11-11 完成 → **老闆 G1**（決策清單見上方「G1 請老闆決定」；以下為 design-director 原始待決紀錄，G1-2 已解決）：
    - G1-1 版面：建議 **A**＝固定 208px 戰鬥區＋64px Boss HP／訊息條，清單從 y=319 開始（首屏 435px 可見 3～5 個 Daily），清單捲動 40px 後戰鬥區收成 56px 條；反擊／奇遇訊息疊在戰鬥區、不遮清單。B＝半屏戰鬥區（多一步）、C＝預設關閉（又變「沒有敵人」）
    - 程式繪製像素圖品質是否足夠（不夠→重議 D7 美術來源）
    - G1-2 擊敗那一下：圖稿畫成「🔒 決勝一擊」鎖住；但決策表 14.5 已定「擊敗確定制」＝**仍可取消、只是不退 Boss 傷害** → G1 前請 design-director 改圖稿與 14.5 一致
