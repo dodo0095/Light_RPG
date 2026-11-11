@@ -14,3 +14,5 @@
 | B5 | App 圖示配色 | G2 第二輪附註 | `scripts/generate-icons.mjs` 圖示底色仍為 G1 前的 `#1a2b4c`，theme-color 已改 `#0a1030`；正式圖示由設計決定 | design-director |
 | B6 | 「來自職業套組」判斷的邊界 | T15／T16 | 選職業當天又從預設庫加入同一模板時，也會顯示「來自職業套組」；若需精確，任務需記錄建立來源 | frontend-developer |
 | B7 | 主畫面 App 的持久儲存觀察 | T3 S1 | Safari 分頁 `persist()` 回 false；主畫面 App 的結果由設定頁顯示，14 天試用期間記錄 | experiment-tracker |
+| B8 | 事件紀錄的項目名稱 | 2026-11-11 桌機預檢 | `src/ui/pages/settings.tsx:180` 名稱對照只收「今天畫面上的項目」，已刪除的任務、今天不用做的 Daily（如週末的平日任務）在事件紀錄只顯示「完成每日討伐」、沒有名稱；應改用含已刪除項目的完整任務清單 | frontend-developer |
+| B9 | 編輯器小項 | 2026-11-11 桌機預檢 | (1) 頻率切到「自訂」時星期全空，可預填目前頻率對應的星期；(2) 今天頁 Daily／To-do 的「⋯」`aria-label` 只有「編輯」，沒帶項目名稱（Habit 有帶） | frontend-developer |

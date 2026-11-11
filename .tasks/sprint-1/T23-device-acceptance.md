@@ -33,3 +33,6 @@
 
 ### 2026-10-23T07:23:49.853Z — 建立任務（assigned）
 由 tech-lead 依 `proposal/sprint1-dev-plan.md` 第 6 節派工（老闆 2026-10-23 指示繼續執行）
+
+### 2026-11-11 — 桌機預檢（tech-lead，T23 前置，非實機）
+部署機未啟動（`rpg.starklab.tw` 回 502），先在開發機以正式 build 預演：A1、A3、A4（模擬）、B2、C1～C7、D3、E1～E6 通過；發現 2 項 Minor 已列 Sprint 2 backlog B8、B9。詳見 `docs/acceptance/sprint1-desktop-prescreen.md`。實機驗收仍待部署機恢復。
