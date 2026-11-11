@@ -1,0 +1,19 @@
+{
+  "id": "boss",
+  "packType": "boss",
+  "formatVersion": 1,
+  "version": "1.0.0",
+  "items": [
+    {
+      "id": "boss_bed_slime",
+      "name": "被窩史萊姆",
+      "maxHp": 300,
+      "phases": [
+        { "hpPercent": 75, "sceneId": "boss_bed_slime_phase_1" },
+        { "hpPercent": 50, "sceneId": "boss_bed_slime_phase_2" },
+        { "hpPercent": 25, "sceneId": "boss_bed_slime_phase_3" }
+      ],
+      "lowHpPercent": 25
+    }
+  ]
+}

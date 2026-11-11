@@ -1,5 +1,5 @@
 /**
- * 數值設定檔 Zod schema（對應 `.knowledge/data-model.md` 第 5 節，欄位路徑一一對應）。
+ * 數值設定檔 Zod schema（對應 `.knowledge/data-model.md` 第 5 節＋12.11 v2 欄位，欄位路徑一一對應）。
  *
  * 規則：
  * - 只定結構與「語意上必然成立」的約束（非負、整數、遞增），不含任何遊戲數值。
@@ -8,6 +8,7 @@
  */
 import { z } from 'zod';
 import { parseHHmm } from '../core/time';
+import { ATTRIBUTE_KEYS } from '../core/types';
 
 const nonNegative = z.number().nonnegative();
 const nonNegativeInt = z.number().int().nonnegative();
@@ -30,9 +31,45 @@ export const difficultyBalanceSchema = z.strictObject({
   attributeExpReward: nonNegative,
   missedDailyHpPenalty: nonNegative,
   habitDownHpPenalty: nonNegative,
+  /** 完整版、每日討伐的基礎 Boss 傷害（決策表 14.2） */
+  bossDamage: nonNegative,
 });
 
 const ratio = z.number().min(0).max(1);
+
+/** 戰鬥（決策表 14.2、14.13.1）。 */
+const battleSchema = z.strictObject({
+  taskTypeDamageMultiplier: z.strictObject({
+    daily: nonNegative,
+    todo: nonNegative,
+    habitUp: nonNegative,
+  }),
+  miniDamageRatio: nonNegative,
+  finishHintMaxTasks: nonNegativeInt,
+});
+
+/** 職業技能（決策表 14.6；只有僧侶祈禱）。 */
+const skillsSchema = z.strictObject({
+  prayer: z.strictObject({
+    triggerAttribute: z.enum(ATTRIBUTE_KEYS),
+    healPerTrigger: nonNegativeInt,
+    maxTriggersPerDay: nonNegativeInt,
+  }),
+});
+
+/** 隨機事件（決策表 14.7）。 */
+const randomEventsSchema = z.strictObject({
+  maxPerDay: nonNegativeInt,
+  encounterDailyChance: ratio,
+  worldStateDailyChance: ratio,
+  worldStateCooldownDays: nonNegativeInt,
+  luckHpLossMaxPerDay: nonNegativeInt,
+});
+
+/** 劇情播放（決策表 14.13.1 v1.2.1）：只影響畫面。 */
+const storySchema = z.strictObject({
+  charsPerSecond: z.number().positive(),
+});
 
 /**
  * 等級曲線：決策表 v1.0 只採表格型（formula 型已移除）。
@@ -66,6 +103,7 @@ export const balanceConfigSchema = z.strictObject({
   configVersion: z.string().min(1),
   defaults: z.strictObject({
     rolloverTime: hhmmSchema,
+    reminderTime: hhmmSchema,
   }),
   difficulties: z
     .record(z.string().min(1), difficultyBalanceSchema)
@@ -91,4 +129,8 @@ export const balanceConfigSchema = z.strictObject({
   backup: z.strictObject({
     keepSnapshots: nonNegativeInt,
   }),
+  battle: battleSchema,
+  skills: skillsSchema,
+  randomEvents: randomEventsSchema,
+  story: storySchema,
 });

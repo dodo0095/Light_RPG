@@ -74,6 +74,7 @@
 | 用 JS 樣板字串改檔，Windows 路徑反斜線被吃掉 | 樣板字串會解析跳脫字元 | 含反斜線的內容一律用 Edit 工具；改完 read-back |
 | 解衝突腳本未生效，衝突標記被 commit | 檔案是 CRLF，`\n` 比對不到 | 用 Edit 工具解衝突；commit 前檢查衝突標記，有結果就不 commit |
 | 同一毫秒內兩次寫入互相覆寫（lost update） | 讀取在 transaction 外、用毫秒 `updatedAt` 當版本 | 讀取→計算→寫入在同一個 readwrite transaction；不得用時間戳當版本 |
+| `sed -i` 把 CRLF 檔改成 LF，grep 檢查卻回報正常 | Git Bash 的 grep 會吃掉 CR，`$'\r$'` 比對不可信 | CRLF 檢查用 node 讀 bytes 或 `file` 指令；CRLF 檔不用 `sed -i`，用 Edit 工具 |
 
 ## 可用指令（Slash Commands）— 強制使用
 

@@ -1,0 +1,24 @@
+{
+  "id": "boss",
+  "packType": "boss",
+  "formatVersion": 1,
+  "version": "0.0.1-test",
+  "items": [
+    {
+      "id": "test_boss_a",
+      "name": "測試 Boss A",
+      "maxHp": 40,
+      "phases": [
+        {
+          "hpPercent": 60,
+          "sceneId": "test_scene_phase_a"
+        },
+        {
+          "hpPercent": 20,
+          "sceneId": "test_scene_phase_b"
+        }
+      ],
+      "lowHpPercent": 30
+    }
+  ]
+}

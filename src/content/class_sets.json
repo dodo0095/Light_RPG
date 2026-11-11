@@ -1,12 +1,14 @@
 {
   "id": "class_sets",
   "packType": "class_sets",
-  "formatVersion": 1,
-  "version": "1.0.0",
+  "formatVersion": 2,
+  "version": "1.1.0",
   "items": [
     {
       "id": "class_warrior",
       "name": "戰士",
+      "icon": "⚔️",
+      "skillIds": [],
       "primaryAttributes": ["fitness"],
       "taskTemplateIds": [
         "daily_wake_before_7",
@@ -24,6 +26,8 @@
     {
       "id": "class_mage",
       "name": "法師",
+      "icon": "🔮",
+      "skillIds": [],
       "primaryAttributes": ["wisdom"],
       "taskTemplateIds": [
         "daily_read_20",
@@ -41,6 +45,8 @@
     {
       "id": "class_monk",
       "name": "僧侶",
+      "icon": "✨",
+      "skillIds": ["skill_prayer"],
       "primaryAttributes": ["spirit"],
       "taskTemplateIds": [
         "daily_meditate",
@@ -58,6 +64,8 @@
     {
       "id": "class_ranger",
       "name": "遊俠",
+      "icon": "🏹",
+      "skillIds": [],
       "primaryAttributes": ["bond", "finance"],
       "taskTemplateIds": [
         "daily_greet_someone",

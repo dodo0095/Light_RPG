@@ -1,10 +1,10 @@
 {
-  "configVersion": "1.0.0",
-  "defaults": { "rolloverTime": "04:00" },
+  "configVersion": "1.2.0",
+  "defaults": { "rolloverTime": "04:00", "reminderTime": "08:00" },
   "difficulties": {
-    "easy":   { "goldReward": 3,  "expReward": 5,  "attributeExpReward": 5,  "missedDailyHpPenalty": 2, "habitDownHpPenalty": 2 },
-    "normal": { "goldReward": 6,  "expReward": 10, "attributeExpReward": 10, "missedDailyHpPenalty": 4, "habitDownHpPenalty": 4 },
-    "hard":   { "goldReward": 10, "expReward": 16, "attributeExpReward": 16, "missedDailyHpPenalty": 6, "habitDownHpPenalty": 6 }
+    "easy":   { "goldReward": 3,  "expReward": 5,  "attributeExpReward": 5,  "missedDailyHpPenalty": 2, "habitDownHpPenalty": 2, "bossDamage": 5 },
+    "normal": { "goldReward": 6,  "expReward": 10, "attributeExpReward": 10, "missedDailyHpPenalty": 4, "habitDownHpPenalty": 4, "bossDamage": 10 },
+    "hard":   { "goldReward": 10, "expReward": 16, "attributeExpReward": 16, "missedDailyHpPenalty": 6, "habitDownHpPenalty": 6, "bossDamage": 15 }
   },
   "miniVariantRatio": 0.5,
   "primaryAttributeMultiplier": 1.2,
@@ -18,5 +18,21 @@
   "catchUp": { "maxPenalizedDays": 2, "penalizeWhich": "most_recent" },
   "gold": { "allowNegative": true },
   "eventLog": { "visibleCount": 50 },
-  "backup": { "keepSnapshots": 3 }
+  "backup": { "keepSnapshots": 3 },
+  "battle": {
+    "taskTypeDamageMultiplier": { "daily": 1.0, "todo": 1.0, "habitUp": 0.4 },
+    "miniDamageRatio": 0.5,
+    "finishHintMaxTasks": 3
+  },
+  "skills": {
+    "prayer": { "triggerAttribute": "spirit", "healPerTrigger": 2, "maxTriggersPerDay": 3 }
+  },
+  "randomEvents": {
+    "maxPerDay": 2,
+    "encounterDailyChance": 0.6,
+    "worldStateDailyChance": 0.25,
+    "worldStateCooldownDays": 3,
+    "luckHpLossMaxPerDay": 5
+  },
+  "story": { "charsPerSecond": 30 }
 }

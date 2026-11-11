@@ -1,7 +1,8 @@
 {
   "configVersion": "test-only-0.0.0",
   "defaults": {
-    "rolloverTime": "04:00"
+    "rolloverTime": "04:00",
+    "reminderTime": "07:15"
   },
   "difficulties": {
     "alpha": {
@@ -9,14 +10,16 @@
       "expReward": 22,
       "attributeExpReward": 33,
       "missedDailyHpPenalty": 4,
-      "habitDownHpPenalty": 5
+      "habitDownHpPenalty": 5,
+      "bossDamage": 7
     },
     "beta": {
       "goldReward": 111,
       "expReward": 222,
       "attributeExpReward": 333,
       "missedDailyHpPenalty": 44,
-      "habitDownHpPenalty": 55
+      "habitDownHpPenalty": 55,
+      "bossDamage": 77
     }
   },
   "miniVariantRatio": 0.5,
@@ -49,5 +52,31 @@
   },
   "backup": {
     "keepSnapshots": 2
+  },
+  "battle": {
+    "taskTypeDamageMultiplier": {
+      "daily": 1.5,
+      "todo": 2,
+      "habitUp": 0.25
+    },
+    "miniDamageRatio": 0.75,
+    "finishHintMaxTasks": 4
+  },
+  "skills": {
+    "prayer": {
+      "triggerAttribute": "wisdom",
+      "healPerTrigger": 3,
+      "maxTriggersPerDay": 2
+    }
+  },
+  "randomEvents": {
+    "maxPerDay": 3,
+    "encounterDailyChance": 0.35,
+    "worldStateDailyChance": 0.45,
+    "worldStateCooldownDays": 4,
+    "luckHpLossMaxPerDay": 7
+  },
+  "story": {
+    "charsPerSecond": 12
   }
 }

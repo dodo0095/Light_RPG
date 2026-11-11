@@ -76,3 +76,15 @@
 | 預防 | 任何「讀後寫」都要在同一個 readwrite transaction 內完成；不得用時間戳當版本；整合測試保留「同一毫秒雙寫」案例 |
 | 狀態 | resolved（commit 67e2454） |
 | 到期日 | 2026-11-07 |
+
+### 2026-11-12 — Git Bash 的 grep 檢查 CRLF 不可靠，sed -i 把檔案改成 LF 沒被發現
+
+| 項目 | 內容 |
+|------|------|
+| 分類 | process |
+| 問題 | Sprint 2 T5 補修時 backend-architect 用 `sed -i` 改 `tests/fixtures/content/world_event.test.json`，檔案被轉成 LF；先前用 Git Bash `grep -c $'\r$'` 檢查回報「全部 CRLF」，實際不準，後來改用 node 讀 bytes 才發現並修正（未 commit 前） |
+| 原因 | Git Bash（MSYS）的 grep 預設以文字模式處理、會吃掉 CR，`$'\r$'` 比對結果不可信；`sed -i` 也可能改變換行 |
+| 解法 | 用 node 讀 bytes 計算 `\r\n` 與單獨 `\n` 的數量；已轉回 CRLF |
+| 預防 | CRLF 檢查一律用 node（或 `file` 指令看 "with CRLF line terminators"），不用 grep；CRLF 檔不用 `sed -i` 改，改用 Edit 工具 |
+| 狀態 | resolved |
+| 到期日 | — |

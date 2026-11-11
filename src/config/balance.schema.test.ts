@@ -2,6 +2,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import type { z } from 'zod';
 import fixture from '../../tests/fixtures/balance.test.json';
 import type { BalanceConfig } from '../core/balance-types';
+import official from './balance.json';
 import { balanceConfigSchema } from './balance.schema';
 import { BalanceConfigError, formatIssuePath, parseBalanceConfig } from './load-balance';
 
@@ -68,7 +69,44 @@ const REQUIRED_PATHS = [
   'eventLog.visibleCount',
   'backup',
   'backup.keepSnapshots',
+  // v2（data-model 12.11；決策表 14.8、14.13.4 v1.2.1）
+  'defaults.reminderTime',
+  'difficulties.alpha.bossDamage',
+  'battle',
+  'battle.taskTypeDamageMultiplier',
+  'battle.taskTypeDamageMultiplier.daily',
+  'battle.taskTypeDamageMultiplier.todo',
+  'battle.taskTypeDamageMultiplier.habitUp',
+  'battle.miniDamageRatio',
+  'battle.finishHintMaxTasks',
+  'skills',
+  'skills.prayer',
+  'skills.prayer.triggerAttribute',
+  'skills.prayer.healPerTrigger',
+  'skills.prayer.maxTriggersPerDay',
+  'randomEvents',
+  'randomEvents.maxPerDay',
+  'randomEvents.encounterDailyChance',
+  'randomEvents.worldStateDailyChance',
+  'randomEvents.worldStateCooldownDays',
+  'randomEvents.luckHpLossMaxPerDay',
+  'story',
+  'story.charsPerSecond',
 ];
+
+/** 所有葉節點路徑（物件往下展開；陣列與純值視為葉節點）。 */
+function leafPaths(node: Json, prefix = ''): string[] {
+  if (node === null || typeof node !== 'object' || Array.isArray(node)) return [prefix];
+  return Object.entries(node).flatMap(([key, value]) =>
+    leafPaths(value, prefix === '' ? key : `${prefix}.${key}`),
+  );
+}
+
+function valueAt(root: Json, path: string): Json {
+  return path
+    .split('.')
+    .reduce<Json>((node, key) => (node as Record<string, Json>)[key] as Json, root);
+}
 
 function wrongTypeOf(value: Json): Json {
   if (typeof value === 'number') return 'not-a-number';
@@ -228,6 +266,80 @@ describe('parseBalanceConfig', () => {
     const raw = clone();
     (raw.gold as Record<string, Json>).allow_negative = true;
     expect(captureError(raw).message).toContain('gold');
+  });
+
+  it.each([
+    ['(root)', ''],
+    ['defaults', 'defaults'],
+    ['difficulties.alpha', 'difficulties.alpha'],
+    ['battle', 'battle'],
+    ['battle.taskTypeDamageMultiplier', 'battle.taskTypeDamageMultiplier'],
+    ['skills', 'skills'],
+    ['skills.prayer', 'skills.prayer'],
+    ['randomEvents', 'randomEvents'],
+    ['story', 'story'],
+  ])('v2 區塊 %s 多出未知欄位時失敗', (label, path) => {
+    const raw = clone();
+    const target = (path === '' ? raw : valueAt(raw, path)) as Record<string, Json>;
+    target.unknownField = 1;
+    const issue = captureError(raw).issues.find((i) => i.message.includes('unknownField'));
+    expect(issue?.path).toBe(label);
+  });
+
+  it.each([
+    ['battle.taskTypeDamageMultiplier.habitUp', -0.1],
+    ['battle.miniDamageRatio', -1],
+    ['battle.finishHintMaxTasks', -1],
+    ['battle.finishHintMaxTasks', 1.5],
+    ['difficulties.alpha.bossDamage', -1],
+    ['skills.prayer.triggerAttribute', 'luck'],
+    ['skills.prayer.healPerTrigger', 1.5],
+    ['skills.prayer.maxTriggersPerDay', -1],
+    ['randomEvents.maxPerDay', 1.5],
+    ['randomEvents.encounterDailyChance', 1.1],
+    ['randomEvents.worldStateDailyChance', -0.1],
+    ['randomEvents.worldStateCooldownDays', 0.5],
+    ['randomEvents.luckHpLossMaxPerDay', -1],
+    ['story.charsPerSecond', 0],
+    ['story.charsPerSecond', -5],
+    ['defaults.reminderTime', '8:00'],
+    ['defaults.reminderTime', '24:00'],
+  ])('%s 超出範圍或格式錯誤（%s）時失敗', (path, value) => {
+    const raw = clone();
+    const [parent, key] = locate(raw, path);
+    parent[key] = value;
+    expect(captureError(raw).issues.some((issue) => issue.path === path)).toBe(true);
+  });
+
+  it.each([
+    ['battle.finishHintMaxTasks', 0],
+    ['randomEvents.encounterDailyChance', 0],
+    ['randomEvents.encounterDailyChance', 1],
+    ['randomEvents.worldStateCooldownDays', 0],
+    ['skills.prayer.healPerTrigger', 0],
+  ])('%s 邊界值 %s 可以通過', (path, value) => {
+    const raw = clone();
+    const [parent, key] = locate(raw, path);
+    parent[key] = value;
+    expect(() => parseBalanceConfig(raw)).not.toThrow();
+  });
+
+  it('測試設定檔的 v2 數值與正式設定檔不同（決策表第 0 節：測試不用正式數字）', () => {
+    const officialJson = official as unknown as Json;
+    const fixtureJson = fixture as unknown as Json;
+    const v2Leaves = leafPaths(fixtureJson).filter(
+      (path) =>
+        /^(battle|skills|randomEvents|story)\./.test(path) || path === 'defaults.reminderTime',
+    );
+    expect(v2Leaves).toHaveLength(15);
+    const same = v2Leaves.filter(
+      (path) => valueAt(fixtureJson, path) === valueAt(officialJson, path),
+    );
+    expect(same).toEqual([]);
+
+    const officialBossDamage = Object.values(official.difficulties).map((d) => d.bossDamage);
+    const fixtureBossDamage = Object.values(fixture.difficulties).map((d) => d.bossDamage);
+    expect(fixtureBossDamage.filter((value) => officialBossDamage.includes(value))).toEqual([]);
   });
 
   it('非物件輸入時失敗，根層路徑標為 (root)', () => {

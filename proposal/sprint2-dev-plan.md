@@ -438,8 +438,8 @@ P2（可延後，須在 G2 前完成才併入本 Sprint）：T26 祈禱（T8、T
 | T1 | | | |
 | T2 | | | |
 | T3 | | | |
-| T4 | | | |
-| T5 | | | |
+| T4 | 2026-11-12 | ✅ 完成 | balance.json 1.2.0（14.8＋14.13.4 v1.2.1）、schema strict、型別、fixture；測試逐欄比對決策表。「T15 不寫死 30」T15 實作時由 L1 驗；L1 獨立審查通過（0 Blocker／0 Major） |
+| T5 | 2026-11-12 | ✅ 完成 | 4 個 v2 資料包 schema＋正式／測試資料、class_sets icon／skillIds、跨檔參照、CONTENT_FILES（缺檔＝content_missing）；劇情 155 句逐字轉檔，待 PM 校對；已依 tech-lead 8 項決定補修（data-model 12.7.1～12.7.6、草稿 v0.2.1、`{effectLabel}`／`{bossName}`）；L1 獨立審查通過（0 Blocker／0 Major） |
 | T6 | | | |
 | T7 | | | |
 | T8 | | | |

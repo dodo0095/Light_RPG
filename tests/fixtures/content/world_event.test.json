@@ -1,0 +1,129 @@
+{
+  "id": "world_event",
+  "packType": "world_event",
+  "formatVersion": 1,
+  "version": "0.0.1-test",
+  "items": [
+    {
+      "id": "test_enc_gold",
+      "type": "encounter",
+      "name": "測試奇遇：金幣",
+      "weight": 5,
+      "requiresBossAlive": false,
+      "lines": [
+        {
+          "speaker": null,
+          "text": "測試獲得 {gold} 金幣"
+        }
+      ],
+      "effect": {
+        "gold": 7
+      },
+      "options": []
+    },
+    {
+      "id": "test_enc_choice",
+      "type": "encounter",
+      "name": "測試奇遇：選項",
+      "weight": 4,
+      "requiresBossAlive": true,
+      "lines": [
+        {
+          "speaker": "test_speaker_a",
+          "text": "測試選一個"
+        }
+      ],
+      "effect": null,
+      "options": [
+        {
+          "id": "test_enc_choice_pay",
+          "label": "測試付 {goldCost} 金幣",
+          "effect": {
+            "exp": 11
+          },
+          "goldCost": 3,
+          "notEnoughGoldLabel": "測試金幣不夠",
+          "resultLines": [
+            {
+              "speaker": null,
+              "text": "測試付了"
+            }
+          ]
+        },
+        {
+          "id": "test_enc_choice_hit",
+          "label": "測試 HP −{hpLoss}、傷害 {damage}",
+          "effect": {
+            "hp": -2,
+            "bossDamage": 9
+          },
+          "bossAbsentLabel": "測試（{bossName}不在）",
+          "resultLines": [
+            {
+              "speaker": null,
+              "text": "測試打了"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "test_ws_a",
+      "type": "world_state",
+      "name": "測試狀態 A",
+      "weight": 4,
+      "requiresBossAlive": false,
+      "durationDays": 2,
+      "effect": {
+        "goldMultiplier": 3
+      },
+      "blockedWhenHpLow": false,
+      "tagLabel": "測試狀態 A {effectLabel} 剩 {days} 天",
+      "startLines": [
+        {
+          "speaker": null,
+          "text": "測試狀態 A 開始"
+        }
+      ],
+      "startLinesBossAbsent": null,
+      "endLines": [
+        {
+          "speaker": null,
+          "text": "測試狀態 A 結束"
+        }
+      ]
+    },
+    {
+      "id": "test_ws_b",
+      "type": "world_state",
+      "name": "測試狀態 B",
+      "weight": 6,
+      "requiresBossAlive": true,
+      "durationDays": 6,
+      "effect": {
+        "bossDamageMultiplier": 2,
+        "missedDailyHpMultiplier": 3
+      },
+      "blockedWhenHpLow": true,
+      "tagLabel": "測試狀態 B {effectLabel} 剩 {days} 天",
+      "startLines": [
+        {
+          "speaker": null,
+          "text": "測試狀態 B 開始"
+        }
+      ],
+      "startLinesBossAbsent": [
+        {
+          "speaker": null,
+          "text": "測試狀態 B 開始（無 Boss）"
+        }
+      ],
+      "endLines": [
+        {
+          "speaker": null,
+          "text": "測試狀態 B 結束"
+        }
+      ]
+    }
+  ]
+}

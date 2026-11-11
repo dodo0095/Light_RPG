@@ -7,6 +7,8 @@
     {
       "id": "test_class_a",
       "name": "測試職業 A",
+      "icon": "A",
+      "skillIds": ["skill_prayer"],
       "primaryAttributes": ["fitness"],
       "taskTemplateIds": ["test_habit_a", "test_daily_b"],
       "rewardTemplateIds": ["test_reward_a"]
@@ -14,6 +16,8 @@
     {
       "id": "test_class_b",
       "name": "測試職業 B",
+      "icon": "B",
+      "skillIds": [],
       "primaryAttributes": ["bond", "finance"],
       "taskTemplateIds": ["test_todo_c"],
       "rewardTemplateIds": ["test_reward_a", "test_reward_b"]

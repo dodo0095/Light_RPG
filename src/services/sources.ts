@@ -2,8 +2,8 @@
  * 數值設定檔與內容資料包的讀取來源（可注入）。
  *
  * - 正式：數值設定檔 = `src/config/balance.json`；內容資料包 = `src/content/` 下的
- *   `class_sets.json`、`habit_library.json`、`reward_library.json`（用 Vite `import.meta.glob`，
- *   檔案不存在時不會建置失敗，而是由 bootstrap 回傳 `content_missing`）。
+ *   `CONTENT_FILES` 各檔（用 Vite `import.meta.glob`，檔案不存在時不會建置失敗，
+ *   而是由 bootstrap 回傳 `content_missing`；v2 新資料包缺檔同樣是 `content_missing`，不降級）。
  * - 測試：注入 `tests/fixtures/` 的資料。
  *
  * 這裡**不**捏造任何內容或數值：讀不到就回報缺少。
@@ -24,9 +24,13 @@ export const CONTENT_FILES: Readonly<Record<keyof RawContentPacks, string>> = {
   classSets: 'class_sets.json',
   habitLibrary: 'habit_library.json',
   rewardLibrary: 'reward_library.json',
+  chapter: 'chapter.json',
+  boss: 'boss.json',
+  story: 'story.json',
+  worldEvent: 'world_event.json',
 };
 
-/** 從 glob 結果（路徑 → JSON）挑出三個資料包。 */
+/** 從 glob 結果（路徑 → JSON）挑出 `CONTENT_FILES` 列的資料包。 */
 export function pickContentFiles(modules: Record<string, unknown>): Partial<RawContentPacks> {
   const result: Partial<RawContentPacks> = {};
   for (const [key, fileName] of Object.entries(CONTENT_FILES) as [

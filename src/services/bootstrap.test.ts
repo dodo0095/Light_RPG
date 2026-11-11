@@ -79,9 +79,41 @@ describe('bootstrap：設定檔與內容', () => {
     });
     expect(result).toMatchObject({
       ok: false,
-      error: { code: 'content_missing', missing: ['habit_library.json', 'reward_library.json'] },
+      error: {
+        code: 'content_missing',
+        missing: [
+          'habit_library.json',
+          'reward_library.json',
+          // T5：v2 新資料包（CONTENT_FILES）
+          'chapter.json',
+          'boss.json',
+          'story.json',
+          'world_event.json',
+        ],
+      },
     });
   });
+
+  it.each([
+    ['chapter', 'chapter.json'],
+    ['boss', 'boss.json'],
+    ['story', 'story.json'],
+    ['worldEvent', 'world_event.json'],
+  ] as const)(
+    'v2 資料包 %s 缺檔＝內容錯誤：回傳 content_missing 且 missing 只列 %s（不降級）',
+    async (key, fileName) => {
+      const result = await bootstrap({
+        clock: new FakeClock(NOW),
+        balanceSource: () => fixtureBalance,
+        contentSource: async () => ({ ...(await fixtureContent()), [key]: undefined }),
+        autoSettle: false,
+      });
+      expect(result).toMatchObject({
+        ok: false,
+        error: { code: 'content_missing', missing: [fileName] },
+      });
+    },
+  );
 
   it('pickContentFiles 只挑三個資料包檔名', () => {
     expect(
@@ -301,9 +333,17 @@ describe('選職業', () => {
 });
 
 describe('正式數值＋正式內容（src/config/balance.json、src/content/*.json）', () => {
-  it('bundled 來源讀得到三個正式資料包', async () => {
+  it('bundled 來源讀得到全部正式資料包（S1 三個＋T5 v2 四個）', async () => {
     const raw = await bundledContentSource();
-    expect(Object.keys(raw).sort()).toEqual(['classSets', 'habitLibrary', 'rewardLibrary']);
+    expect(Object.keys(raw).sort()).toEqual([
+      'boss',
+      'chapter',
+      'classSets',
+      'habitLibrary',
+      'rewardLibrary',
+      'story',
+      'worldEvent',
+    ]);
   });
 
   it.each(officialClassSets.items.map((c) => [c.id, c] as const))(

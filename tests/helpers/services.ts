@@ -7,6 +7,10 @@ import balanceFixture from '../fixtures/balance.test.json';
 import classSetsFixture from '../fixtures/content/class_sets.test.json';
 import habitLibraryFixture from '../fixtures/content/habit_library.test.json';
 import rewardLibraryFixture from '../fixtures/content/reward_library.test.json';
+import chapterFixture from '../fixtures/content/chapter.test.json';
+import bossFixture from '../fixtures/content/boss.test.json';
+import storyFixture from '../fixtures/content/story.test.json';
+import worldEventFixture from '../fixtures/content/world_event.test.json';
 import type { Clock } from '../../src/services/clock';
 import type { AppService } from '../../src/services/app-service';
 import {
@@ -27,6 +31,10 @@ export const fixtureContent: ContentSource = () => ({
   classSets: structuredClone(classSetsFixture),
   habitLibrary: structuredClone(habitLibraryFixture),
   rewardLibrary: structuredClone(rewardLibraryFixture),
+  chapter: structuredClone(chapterFixture),
+  boss: structuredClone(bossFixture),
+  story: structuredClone(storyFixture),
+  worldEvent: structuredClone(worldEventFixture),
 });
 
 interface FakeTimer {

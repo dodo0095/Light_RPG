@@ -730,6 +730,138 @@ migrate_v1_to_v2(backup: BackupV1): BackupV2
 
 規則同第 7.1 節：item id 跨資料包不得重複；嚴格驗證；跨檔參照（`chapter.bossId` 存在於 `boss` 等）由 `src/content/validate.ts` 檢查。
 
+> ✅ 以下 12.7.1～12.7.6 為正式規格（T5 實作，tech-lead 2026-11-12 依 T5 回報定案）。實作：`src/content/schema.ts`、`src/content/validate.ts`；資料檔：`src/content/{chapter,boss,story,world_event}.json`；檔名＝`packType`，列在 `src/services/sources.ts` 的 `CONTENT_FILES`，**缺檔＝`content_missing`**（App 內建檔，缺檔是建置錯誤，不降級；12.9.1 的降級只用於「資料參照到資料包沒有的 id」）。所有物件一律 strict（多出欄位＝錯誤），不設預設值。
+
+#### 12.7.1 各資料包欄位
+
+共通外框同第 7.1 節（`id`、`packType`、`formatVersion`、`version`、`items`）。v2 四個資料包 `formatVersion = 1`；`class_sets` 因新增必要欄位升 `formatVersion = 2`、`version = 1.1.0`。
+
+**`class_sets`（擴充）**：第 7.3 節欄位＋
+
+| 欄位 | 型別 | 說明 |
+|------|------|------|
+| `icon` | `string`（非空） | 職業圖示（B2；UI 改讀此欄位在 T17） |
+| `skillIds` | `SkillId[]`（不重複） | `SkillId` ＝ 程式內的技能 id 清單（`SKILL_IDS`，S2 只有 `skill_prayer`）；技能效果由程式依 id 實作、數值在 `balance.skills`，資料包只決定「哪個職業有哪個技能」 |
+
+**`story`**：`items` 依 `kind` 分三種
+
+| `kind` | 欄位 | 說明 |
+|--------|------|------|
+| `speaker` | `id`、`name` | 說話者；`name` 顯示在名牌，頭像由繪製器依 `id` 決定 |
+| `sequence` | `id`、`lines: StoryLine[]`（≥ 1） | 依序播放每一框（序章、Boss 登場、擊敗、通關、反擊摘要、取消提示等） |
+| `rotation` | `id`、`lines: StoryLine[]`（≥ 1） | 輪替，每次挑一框（戰鬥訊息、受擊台詞、和平的森林待機句等；挑法由 UI 決定） |
+
+`StoryLine` ＝ `{ speaker: string \| null, text: string }`：一行＝一個對話框（劇情草稿 0.1）；`speaker = null`＝旁白／系統（不顯示名牌與頭像）；`text` 的 `{變數}` 只能是白名單（12.7.4）。
+
+**`chapter`**：`items` 依 `kind` 分兩種；共通 `id`、`label`（標題卡小字，例「第一章」）、`title`（標題卡大字，例「晨霧森林」）、`nextChapterId: string \| null`
+
+| `kind` | 專屬欄位 |
+|--------|---------|
+| `prologue` | `bossId: null`；`scenes: { prologueNew, prologueReturning }`（皆 `sequence`）；`classLines: { classId, sceneId }[]`（職業一句，劇情草稿 1.3；用陣列而非以 classId 為鍵的物件，因為欄位名必須 camelCase） |
+| `boss` | `bossId: string`；`scenes: { intro, bossAppear, bossDefeat, clear, comingSoon: string \| null, peaceful }`（`peaceful` 為 `rotation`，其餘 `sequence`；`comingSoon` 只在沒有下一章時需要） |
+
+**`boss`**：`id`、`name`（也是 `{bossName}` 的來源）、`maxHp`（正整數）、`phases: { hpPercent, sceneId }[]`（`hpPercent` 整數 1～100，依 `hpPercent` 由高到低、不重複；`sceneId` 為 `sequence`）、`lowHpPercent`（整數 1～100）。
+
+**`world_event`**：`items` 依 `type` 分兩種；共通 `id`、`name`、`weight`（正整數）、`requiresBossAlive: boolean`
+
+| `type` | 專屬欄位 |
+|--------|---------|
+| `encounter` | `lines: StoryLine[]`（奇遇本文）；`effect: EncounterEffect \| null`；`options: EncounterOption[]`。**單一效果**：`effect` 有值、`options = []`；**兩個選項**：`effect = null`、`options` 剛好 2 個 |
+| `world_state` | `durationDays`（正整數）；`effect: WorldStateEffect`；`blockedWhenHpLow: boolean`；`tagLabel`（畫面左上標籤，例 `豐收祭　{effectLabel}　剩 {days} 天`）；`startLines`；`startLinesBossAbsent: StoryLine[] \| null`（Boss 不在場時改用的整段開始台詞，`null`＝沿用 `startLines`）；`endLines` |
+
+- `EncounterEffect` ＝ `{ gold?, exp?, hp?, bossDamage? }`：`gold`、`exp`、`bossDamage` 為非負整數（正數＝獲得）；`hp` 為整數，負數＝運氣扣血（受 `randomEvents.luckHpLossMaxPerDay` 限制，12.5.1）。空物件＝沒有效果（例：`enc_quiet_morning`）。
+- `EncounterOption` ＝ `{ id, label, effect: EncounterEffect, goldCost?, notEnoughGoldLabel?, bossAbsentLabel?, resultLines }`：`id` 供 `dailyDraws.resolvedOptionId`；`goldCost` 正整數；`notEnoughGoldLabel` 是金幣不足時按鈕上的文字；`bossAbsentLabel` 是 Boss 不在場時按鈕上的文字（12.4.1 第 6 點）；`resultLines` 是選擇後的對話。
+- `WorldStateEffect` ＝ `{ goldMultiplier?, expMultiplier?, missedDailyHpMultiplier?, bossDamageMultiplier? }`：正數；沒有的欄位＝1。
+
+#### 12.7.2 為什麼選項付金幣用 `goldCost`，不用 `effect.gold` 負值
+
+1. **語意不同**：`goldCost` 是「選之前就要知道、不足就停用」的**門檻**（決策表 14.7.3「金幣不足 6 時不能選」；T-ENC 守門條件 `goldCost ≤ character.gold`，12.6.1）；`effect` 是選了之後**獲得**的東西。混在一起，UI 與 T-ENC 都得從效果裡反推「這是不是費用」。
+2. **金幣不會變負**：Sprint 1 `gold.allowNegative = true`（兌換可以欠款），但奇遇扣金幣**不得**讓金幣變負（14.7.3）。若用 `effect.gold` 負值，要另外約定「負的 gold 改用不同規則」；獨立欄位讓規則只跟著 `goldCost` 走。
+3. **`effect` 欄位語意單一**：決策表 14.1 定義 `effect` 為「正數＝獲得，`hp` 負數＝扣血」；只有 `hp` 允許負值，且有專屬的運氣扣血上限規則。`gold` 維持非負，schema 可直接擋掉誤填的負值。
+4. **事件記錄已分開**：`encounter_resolved.payload.goldCost`（12.5.1）記實際付的金幣，`deltas.gold` 記實際變動（＝效果金幣 − `goldCost`）；資料包與事件結構一致。
+
+#### 12.7.3 id 命名慣例（snake_case；所有資料包之間不得重複）
+
+| 對象 | 規則 | 例 |
+|------|------|----|
+| 章節 | 序章固定 `chapter_prologue`（契約 id，12.3.3）；之後 `chapter_<序號>` | `chapter_1` |
+| Boss | `boss_<名稱>` | `boss_bed_slime` |
+| 說話者 | `speaker_<名稱>` | `speaker_owen`、`speaker_bed_slime`、`speaker_herb_granny` |
+| 序章劇情 | `prologue_new`／`prologue_returning`；職業一句 `prologue_class_line_<職業>`（職業去掉 `class_` 前綴） | `prologue_class_line_monk` |
+| 章節劇情 | `chapter_<序號>_<場景>`；預告 `chapter_<下一章序號>_coming_soon` | `chapter_1_intro`、`chapter_1_clear`、`chapter_2_coming_soon` |
+| Boss 劇情與台詞 | `boss_<名稱>_<場景>`；血量階段 `boss_<名稱>_phase_<序號>`（序號由高門檻到低，**不帶門檻數字**；門檻在 `phases[].hpPercent`） | `boss_bed_slime_appear`、`boss_bed_slime_phase_1` |
+| 通用戰鬥訊息 | `battle_<情境>` | `battle_hit_daily`、`battle_cancel` |
+| 旅館、角色狀態 | `inn_campfire*`、`party_*` | `inn_campfire_check_in`、`party_low_hp` |
+| 技能訊息 | `<技能 id>_message`，其他情境 `<技能 id>_<情境>`；**不得與技能 id 同名** | `skill_prayer_message`、`skill_prayer_exhausted` |
+| 同一段的不同情境 | 基本 id ＋ `_<情境>` 後綴 | `boss_bed_slime_counter_multi_day`、`party_low_hp_no_boss`、`chapter_1_peaceful_check` |
+| 奇遇／世界狀態 | `enc_<名稱>`／`ws_<名稱>` | `enc_fog_fork`、`ws_thick_fog` |
+| 奇遇選項 | `<奇遇 id>_<動作>`（同一奇遇內不重複；帶奇遇前綴讓匯出檔的 `resolvedOptionId` 單獨看得懂） | `enc_fog_fork_detour` |
+
+**S2 正式資料包 id 清單**（與 `docs/content/sprint2-story-draft.md` v0.2.1 標註一致）：
+
+| 資料包 | id |
+|--------|----|
+| `chapter` | `chapter_prologue`、`chapter_1` |
+| `boss` | `boss_bed_slime` |
+| `story`（speaker） | `speaker_owen`、`speaker_bed_slime`、`speaker_herb_granny` |
+| `story`（sequence） | `prologue_new`、`prologue_returning`、`prologue_class_line_{warrior,mage,monk,ranger}`、`chapter_1_intro`、`boss_bed_slime_appear`、`battle_habit_over_cap`、`boss_bed_slime_phase_{1,2,3}`、`boss_bed_slime_low_hp_hint`、`boss_bed_slime_low_hp_hint_no_count`、`boss_bed_slime_counter`、`boss_bed_slime_counter_{multi_day,none,fog}`、`inn_campfire_check_in`、`inn_campfire_check_out`、`skill_prayer_exhausted`、`battle_cancel`、`battle_cancel_boss_defeated`、`boss_bed_slime_defeat`、`chapter_1_clear`、`chapter_2_coming_soon`、`chapter_1_peaceful_rollover` |
+| `story`（rotation） | `battle_hit_daily`、`battle_hit_mini`、`battle_hit_habit`、`battle_hit_todo`、`boss_bed_slime_hurt`、`inn_campfire`、`skill_prayer_message`、`party_low_hp`、`party_low_hp_no_boss`、`chapter_1_peaceful`、`chapter_1_peaceful_check` |
+| `world_event`（encounter） | `enc_roadside_chest`、`enc_herb_granny`、`enc_lost_kitten`、`enc_owen_long_story`、`enc_hunter_snare`、`enc_quiet_morning`、`enc_fog_fork`（選項 `enc_fog_fork_detour`、`enc_fog_fork_through_fog`）、`enc_slime_trail`（選項 `enc_slime_trail_chase`、`enc_slime_trail_avoid`） |
+| `world_event`（world_state） | `ws_harvest_festival`、`ws_thick_fog`、`ws_hunters_moon` |
+
+章節、Boss、血量階段以外的訊息 id（`battle_*`、`boss_bed_slime_hurt`、`boss_bed_slime_counter*`、`inn_campfire*`、`skill_prayer_*`、`party_*`、`chapter_1_peaceful_*`）沒有資料包欄位指向它們，由 UI／service 以固定 id 引用（同 `chapter_prologue` 的契約性質）；改名必須同步程式。
+
+#### 12.7.4 文案變數與 `{effectLabel}` 產生規則
+
+- **變數白名單**（`src/content/schema.ts` 的 `TEXT_VARIABLES`；與劇情草稿 0.1 同步）：`className`、`damage`、`hp`、`gold`、`exp`、`days`、`bossHp`、`hpLoss`、`goldCost`、`hpNow`、`taskCount`、`effectLabel`、`bossName`。不在清單裡的 `{...}` 由內容驗證擋下。
+- **文案不寫死數字與 Boss 名稱**：數字一律由程式帶入；`{bossName}` ＝ 目前章節 Boss（`adventure.boss.bossId`，已擊敗也算）在 `boss` 資料包的 `name`；找不到時依 12.9.1 降級原則處理（不拋錯）。
+- **`{effectLabel}`**（世界狀態 `tagLabel` 用）：由該項 `effect` 依下列**固定順序**產生，各段以全形空白「　」連接；欄位不存在或值 ＝ 1 的不顯示：
+
+| 順序 | 欄位 | 文字 |
+|:---:|------|------|
+| 1 | `goldMultiplier` | `金幣×{倍率}` |
+| 2 | `expMultiplier` | `經驗×{倍率}` |
+| 3 | `bossDamageMultiplier` | `傷害×{倍率}` |
+| 4 | `missedDailyHpMultiplier` | 大於 1：`反擊加重`（不顯示倍率，同劇情草稿 7.2）；小於 1 的文字未定，資料包出現時由 product-manager 補規則 |
+
+  `{倍率}` 為數字的最短十進位寫法（JS `String(n)`：`1.5`→`1.5`、`2.0`→`2`）。以目前資料包產生：豐收祭「金幣×1.5」、濃霧瀰漫「經驗×2　反擊加重」、獵人之月「傷害×1.5」，與劇情草稿 7.1～7.3 的原標籤一致。產生函式由 T16 實作（只是畫面文字，不寫事件）。
+
+#### 12.7.5 驗證規則清單（`validateContentPacks`；錯誤全部列出、路徑帶資料包名）
+
+| # | 規則 | 依據 |
+|---|------|------|
+| V1 | 各資料包 schema（strict、型別、snake_case id、semver） | 7.1 |
+| V2 | item id 在**全部 7 個資料包**之間不重複 | 7.1 |
+| V3 | `class_sets.taskTemplateIds`／`rewardTemplateIds` 存在於 habit／reward 資料包；`skillIds` 屬 `SKILL_IDS` 且不重複 | 7.3、12.7.1 |
+| V4 | 必須有 `chapter_prologue` 且 `kind = 'prologue'` | 12.3.3 |
+| V5 | `nextChapterId` 存在於 `chapter`；從序章依 `nextChapterId` 走不得循環 | 12.3.3 |
+| V6 | Boss 章 `bossId` 存在於 `boss`；序章 `bossId` 必須是 `null`、Boss 章不得為 `null` | 12.7 |
+| V7 | 章節 `scenes` 各 id、`classLines[].sceneId`、`boss.phases[].sceneId` 存在於 `story`，且種類正確（`peaceful` 為 `rotation`，其餘 `sequence`；說話者不算劇情） | 12.7 |
+| V8 | `classLines[].classId` 存在於 `class_sets`，且**每個職業剛好一句** | 劇情草稿 1.3 |
+| V9 | `phases` 依 `hpPercent` 由高到低且不重複；`hpPercent`、`lowHpPercent` 為 1～100 整數；`maxHp` 正整數 | 14.13.1 |
+| V10 | `story` 與 `world_event` 的所有對話行 `speaker` 存在於 `story` 的 `speaker` 項目 | 12.7.1 |
+| V11 | 文案 `{變數}` 屬白名單 | 12.7.4 |
+| V12 | 奇遇：單一效果 ⇔ `options` 為空；有選項時剛好 2 個、選項 id 不重複 | 14.1 |
+| V13 | 單一效果的奇遇不得扣血（扣血一定做成選項） | 14.7.2 |
+| V14 | 有選項的奇遇至少一個選項不扣血 | 14.7.2 |
+| V15 | 單一效果含對 Boss 傷害（`bossDamage > 0`）時 `requiresBossAlive` 必須為 `true` | 14.7.3、12.4.1 第 6 點 |
+| V16 | `goldCost` 與 `notEnoughGoldLabel` 成對；選項 `effect.bossDamage > 0` ⇔ 有 `bossAbsentLabel` | 14.7.3、14.13.3 (d) |
+| V17 | 效果數值：奇遇 `gold`／`exp`／`bossDamage` 非負整數、`hp` 整數；世界狀態倍率正數；`durationDays`、`weight` 正整數 | 14.1 |
+| V18 | 任務模板難度存在於 `balance.difficulties`（`checkDifficultiesExist`，啟動時） | 第 5 節 |
+
+#### 12.7.6 與 12.4／12.5、決策表 14.7 的一致性（已核對，無衝突）
+
+| 對照 | 結論 |
+|------|------|
+| 12.4.1 `resolvedOptionId` | ＝ `EncounterOption.id` |
+| 12.4.1 第 6 點（Boss 不在場停用含 Boss 傷害的選項，以 `effect.bossDamage > 0` 推算） | 不新增「是否停用」欄位；`bossAbsentLabel` 只是停用時的顯示文字，且 V16 保證「會被停用的選項一定有文字」 |
+| 12.4.4 效果倍率每次從資料包讀 | `WorldStateEffect` 即讀取來源；`tagLabel` 的 `{effectLabel}` 也由它產生，調資料包時標籤同步 |
+| 12.5.1 `encounter_resolved.payload` 的 `goldCost`、`luckHpLoss`、`bossDamage` | 分別對應選項 `goldCost`、`effect.hp`（負值）、`effect.bossDamage`；`deltas` 記實際量 |
+| 12.5.2 `worldEffect`／12.5.4 `missedDailyHpMultiplier` | 對應 `WorldStateEffect` 同名欄位 |
+| 決策表 14.1 第二張表（`type`、`weight`、`requiresBossAlive`、`effect`、`options`、`durationDays`、`blockedWhenHpLow`） | 欄位名稱全部沿用；新增的只有文字欄位（`name`、`lines`、`label`、`tagLabel` 等）與 `notEnoughGoldLabel`／`bossAbsentLabel` |
+| 決策表 14.7.2（負面事件一定有應對方法） | V13、V14 |
+| 決策表 14.7.3／14.7.4 數值 | 正式資料包逐格比對測試：`src/content/official-v2.test.ts` |
+
 ### 12.8 推播：伺服器存什麼、本機存什麼
 
 依 `CLAUDE.md` 規則 1（已改）與 `proposal/sprint2-tech-push.md`：

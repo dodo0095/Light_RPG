@@ -1,0 +1,42 @@
+{
+  "id": "chapter",
+  "packType": "chapter",
+  "formatVersion": 1,
+  "version": "1.0.0",
+  "items": [
+    {
+      "id": "chapter_prologue",
+      "kind": "prologue",
+      "label": "序章",
+      "title": "起始之村",
+      "bossId": null,
+      "nextChapterId": "chapter_1",
+      "scenes": {
+        "prologueNew": "prologue_new",
+        "prologueReturning": "prologue_returning"
+      },
+      "classLines": [
+        { "classId": "class_warrior", "sceneId": "prologue_class_line_warrior" },
+        { "classId": "class_mage", "sceneId": "prologue_class_line_mage" },
+        { "classId": "class_monk", "sceneId": "prologue_class_line_monk" },
+        { "classId": "class_ranger", "sceneId": "prologue_class_line_ranger" }
+      ]
+    },
+    {
+      "id": "chapter_1",
+      "kind": "boss",
+      "label": "第一章",
+      "title": "晨霧森林",
+      "bossId": "boss_bed_slime",
+      "nextChapterId": null,
+      "scenes": {
+        "intro": "chapter_1_intro",
+        "bossAppear": "boss_bed_slime_appear",
+        "bossDefeat": "boss_bed_slime_defeat",
+        "clear": "chapter_1_clear",
+        "comingSoon": "chapter_2_coming_soon",
+        "peaceful": "chapter_1_peaceful"
+      }
+    }
+  ]
+}

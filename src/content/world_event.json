@@ -1,0 +1,244 @@
+{
+  "id": "world_event",
+  "packType": "world_event",
+  "formatVersion": 1,
+  "version": "1.0.0",
+  "items": [
+    {
+      "id": "enc_roadside_chest",
+      "type": "encounter",
+      "name": "路邊的舊木箱",
+      "weight": 3,
+      "requiresBossAlive": false,
+      "lines": [
+        { "speaker": null, "text": "路邊有個長滿青苔的舊木箱。打開一看——" },
+        { "speaker": null, "text": "裡面有 {gold} 枚金幣！還有一張紙條：「給早起的人」。" }
+      ],
+      "effect": { "gold": 8 },
+      "options": []
+    },
+    {
+      "id": "enc_herb_granny",
+      "type": "encounter",
+      "name": "採藥的婆婆",
+      "weight": 2,
+      "requiresBossAlive": false,
+      "lines": [
+        { "speaker": null, "text": "一位背著竹簍的婆婆叫住了你。" },
+        { "speaker": "speaker_herb_granny", "text": "年輕人，臉色不太好喔。這個拿去泡茶喝。" },
+        { "speaker": null, "text": "你喝了藥草茶，HP 回復了 {hp}。" }
+      ],
+      "effect": { "hp": 6 },
+      "options": []
+    },
+    {
+      "id": "enc_lost_kitten",
+      "type": "encounter",
+      "name": "迷路的小貓",
+      "weight": 2,
+      "requiresBossAlive": false,
+      "lines": [
+        { "speaker": null, "text": "一隻橘色小貓在路邊喵喵叫，項圈上寫著麵包店的名字。" },
+        { "speaker": null, "text": "你把牠送了回去。老闆塞給你 {gold} 枚金幣當謝禮。" },
+        { "speaker": "speaker_owen", "text": "我也想要貓。不過貓好像不太喜歡我講話。" }
+      ],
+      "effect": { "gold": 4 },
+      "options": []
+    },
+    {
+      "id": "enc_owen_long_story",
+      "type": "encounter",
+      "name": "歐文的長篇往事",
+      "weight": 2,
+      "requiresBossAlive": false,
+      "lines": [
+        {
+          "speaker": "speaker_owen",
+          "text": "對了，我有沒有跟你說過，我年輕時一個人走過三座山的故事？"
+        },
+        { "speaker": "speaker_owen", "text": "那年冬天特別冷，我帶了兩個饅頭——不對，是三個——" },
+        { "speaker": null, "text": "（一段很長的時間過去了……）" },
+        { "speaker": null, "text": "雖然很長，但好像學到了什麼。獲得 {exp} 點經驗。" }
+      ],
+      "effect": { "exp": 10 },
+      "options": []
+    },
+    {
+      "id": "enc_hunter_snare",
+      "type": "encounter",
+      "name": "獵人留下的陷阱",
+      "weight": 2,
+      "requiresBossAlive": true,
+      "lines": [
+        { "speaker": null, "text": "草叢裡有一個獵人留下的陷阱，上面寫著：「專抓懶東西」。" },
+        { "speaker": null, "text": "你把陷阱挪到被窩史萊姆常經過的路上……" },
+        { "speaker": null, "text": "啪！被窩史萊姆受到 {damage} 點傷害！" },
+        { "speaker": "speaker_bed_slime", "text": "誰、誰在路上放這種東西啦……" }
+      ],
+      "effect": { "bossDamage": 15 },
+      "options": []
+    },
+    {
+      "id": "enc_quiet_morning",
+      "type": "encounter",
+      "name": "安靜的早晨",
+      "weight": 2,
+      "requiresBossAlive": false,
+      "lines": [
+        { "speaker": null, "text": "今天的路上什麼也沒發生。" },
+        { "speaker": null, "text": "只有風、樹葉，和你自己的腳步聲。" },
+        { "speaker": "speaker_owen", "text": "沒事發生的日子，也是好日子。" }
+      ],
+      "effect": {},
+      "options": []
+    },
+    {
+      "id": "enc_fog_fork",
+      "type": "encounter",
+      "name": "霧中的岔路",
+      "weight": 1,
+      "requiresBossAlive": false,
+      "lines": [
+        { "speaker": null, "text": "前方的路分成兩條。右邊被濃霧蓋住，左邊要繞好一大段路。" },
+        { "speaker": "speaker_owen", "text": "嗯……我記得左邊有座收過路費的橋。" },
+        { "speaker": "speaker_owen", "text": "右邊嘛……霧很刺眼就是了。" }
+      ],
+      "effect": null,
+      "options": [
+        {
+          "id": "enc_fog_fork_detour",
+          "label": "繞遠路（付 {goldCost} 金幣過橋）",
+          "effect": {},
+          "goldCost": 6,
+          "notEnoughGoldLabel": "繞遠路（金幣不夠）",
+          "resultLines": [{ "speaker": null, "text": "你付了過橋費，平平安安地走過去了。" }]
+        },
+        {
+          "id": "enc_fog_fork_through_fog",
+          "label": "穿過霧（HP −{hpLoss}）",
+          "effect": { "hp": -4 },
+          "resultLines": [
+            { "speaker": null, "text": "你瞇著眼睛衝過濃霧，被樹枝刮了幾下。HP −{hpLoss}。" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "enc_slime_trail",
+      "type": "encounter",
+      "name": "黏答答的足跡",
+      "weight": 1,
+      "requiresBossAlive": true,
+      "lines": [
+        { "speaker": null, "text": "地上有一串黏答答、亮晶晶的足跡，一路通往森林深處。" },
+        { "speaker": "speaker_owen", "text": "是被窩史萊姆的！要追嗎？不過那個黏液……很難洗喔。" }
+      ],
+      "effect": null,
+      "options": [
+        {
+          "id": "enc_slime_trail_chase",
+          "label": "追上去（HP −{hpLoss}，對被窩史萊姆造成 {damage} 點傷害）",
+          "effect": { "hp": -3, "bossDamage": 10 },
+          "bossAbsentLabel": "追上去（{bossName}不在）",
+          "resultLines": [
+            { "speaker": null, "text": "你一路追進樹叢，踩得滿腳都是黏液，但總算逮到牠了！" },
+            {
+              "speaker": null,
+              "text": "被窩史萊姆受到 {damage} 點傷害！你也被黏住了一下，HP −{hpLoss}。"
+            }
+          ]
+        },
+        {
+          "id": "enc_slime_trail_avoid",
+          "label": "繞開走",
+          "effect": {},
+          "resultLines": [
+            {
+              "speaker": null,
+              "text": "你決定今天不跟黏液過不去。歐文鬆了一口氣，因為他的鞋是新的。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ws_harvest_festival",
+      "type": "world_state",
+      "name": "豐收祭",
+      "weight": 2,
+      "requiresBossAlive": false,
+      "durationDays": 5,
+      "effect": { "goldMultiplier": 1.5 },
+      "blockedWhenHpLow": false,
+      "tagLabel": "豐收祭　{effectLabel}　剩 {days} 天",
+      "startLines": [
+        { "speaker": null, "text": "起始之村傳來了鼓聲。今年的麥子收成特別好！" },
+        { "speaker": "speaker_owen", "text": "豐收祭開始啦！這幾天大家出手都很大方。" },
+        { "speaker": "speaker_owen", "text": "所以啊，做完事情的賞金也會多一些喔。" }
+      ],
+      "startLinesBossAbsent": null,
+      "endLines": [
+        { "speaker": null, "text": "豐收祭的最後一盞燈籠熄了。村子又回到平常的樣子。" },
+        { "speaker": "speaker_owen", "text": "好吃的都吃完了……明年請早。" }
+      ]
+    },
+    {
+      "id": "ws_thick_fog",
+      "type": "world_state",
+      "name": "濃霧瀰漫",
+      "weight": 1,
+      "requiresBossAlive": false,
+      "durationDays": 3,
+      "effect": { "expMultiplier": 2.0, "missedDailyHpMultiplier": 1.5 },
+      "blockedWhenHpLow": true,
+      "tagLabel": "濃霧瀰漫　{effectLabel}　剩 {days} 天",
+      "startLines": [
+        { "speaker": null, "text": "一夜之間，濃霧從森林深處湧了出來，連三步外都看不清楚。" },
+        {
+          "speaker": "speaker_owen",
+          "text": "注意了！這幾天漏掉的討伐，被窩史萊姆的反擊會更黏人。"
+        },
+        {
+          "speaker": "speaker_owen",
+          "text": "不過啊，在霧裡堅持下來的人，學到的東西也是平常的兩倍。"
+        },
+        { "speaker": "speaker_owen", "text": "今天的每日討伐，能做多少就做多少吧。" }
+      ],
+      "startLinesBossAbsent": [
+        { "speaker": null, "text": "一夜之間，濃霧從森林深處湧了出來，連三步外都看不清楚。" },
+        { "speaker": "speaker_owen", "text": "注意了！這幾天漏掉的事，霧氣會侵蝕得更厲害。" },
+        {
+          "speaker": "speaker_owen",
+          "text": "不過啊，在霧裡堅持下來的人，學到的東西也是平常的兩倍。"
+        },
+        { "speaker": "speaker_owen", "text": "今天的每日討伐，能做多少就做多少吧。" }
+      ],
+      "endLines": [
+        { "speaker": null, "text": "濃霧慢慢退回森林深處。你覺得自己比三天前更穩了一點。" }
+      ]
+    },
+    {
+      "id": "ws_hunters_moon",
+      "type": "world_state",
+      "name": "獵人之月",
+      "weight": 1,
+      "requiresBossAlive": true,
+      "durationDays": 4,
+      "effect": { "bossDamageMultiplier": 1.5 },
+      "blockedWhenHpLow": false,
+      "tagLabel": "獵人之月　{effectLabel}　剩 {days} 天",
+      "startLines": [
+        { "speaker": null, "text": "今晚的月亮又大又亮，把森林照得像白天一樣。" },
+        {
+          "speaker": "speaker_owen",
+          "text": "獵人之月！這幾天被窩史萊姆躲不了，你的每一擊都會更準。"
+        },
+        { "speaker": "speaker_bed_slime", "text": "好亮……這樣要怎麼睡嘛……" }
+      ],
+      "startLinesBossAbsent": null,
+      "endLines": [
+        { "speaker": null, "text": "月亮變回了平常的大小。被窩史萊姆鬆了一口氣，鑽回落葉堆裡。" }
+      ]
+    }
+  ]
+}

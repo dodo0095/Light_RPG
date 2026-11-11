@@ -66,6 +66,9 @@ describe('buildClassSelectVM', () => {
             {
               id: 'class_x',
               name: 'X',
+              // T5：class_sets 新增必要欄位（UI 改讀 icon 在 T17／B2）
+              icon: 'X',
+              skillIds: [],
               primaryAttributes: ['bond'],
               taskTemplateIds: [],
               rewardTemplateIds: [],

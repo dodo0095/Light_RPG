@@ -1,0 +1,46 @@
+{
+  "id": "chapter",
+  "packType": "chapter",
+  "formatVersion": 1,
+  "version": "0.0.1-test",
+  "items": [
+    {
+      "id": "chapter_prologue",
+      "kind": "prologue",
+      "label": "測試序章",
+      "title": "測試村",
+      "bossId": null,
+      "nextChapterId": "test_chapter_one",
+      "scenes": {
+        "prologueNew": "test_scene_prologue_new",
+        "prologueReturning": "test_scene_prologue_returning"
+      },
+      "classLines": [
+        {
+          "classId": "test_class_a",
+          "sceneId": "test_scene_class_line_a"
+        },
+        {
+          "classId": "test_class_b",
+          "sceneId": "test_scene_class_line_b"
+        }
+      ]
+    },
+    {
+      "id": "test_chapter_one",
+      "kind": "boss",
+      "label": "測試第一章",
+      "title": "測試森林",
+      "bossId": "test_boss_a",
+      "nextChapterId": null,
+      "scenes": {
+        "intro": "test_scene_intro",
+        "bossAppear": "test_scene_boss_appear",
+        "bossDefeat": "test_scene_boss_defeat",
+        "clear": "test_scene_clear",
+        "comingSoon": "test_scene_coming_soon",
+        "peaceful": "test_scene_peaceful"
+      }
+    }
+  ]
+}

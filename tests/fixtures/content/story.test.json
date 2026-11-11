@@ -1,0 +1,141 @@
+{
+  "id": "story",
+  "packType": "story",
+  "formatVersion": 1,
+  "version": "0.0.1-test",
+  "items": [
+    {
+      "id": "test_speaker_a",
+      "kind": "speaker",
+      "name": "測試說話者 A"
+    },
+    {
+      "id": "test_scene_prologue_new",
+      "kind": "sequence",
+      "lines": [
+        {
+          "speaker": "test_speaker_a",
+          "text": "測試序章（新）{className}"
+        },
+        {
+          "speaker": null,
+          "text": "測試旁白"
+        }
+      ]
+    },
+    {
+      "id": "test_scene_prologue_returning",
+      "kind": "sequence",
+      "lines": [
+        {
+          "speaker": "test_speaker_a",
+          "text": "測試序章（回來）{className}"
+        }
+      ]
+    },
+    {
+      "id": "test_scene_class_line_a",
+      "kind": "sequence",
+      "lines": [
+        {
+          "speaker": "test_speaker_a",
+          "text": "測試職業 A 一句"
+        }
+      ]
+    },
+    {
+      "id": "test_scene_class_line_b",
+      "kind": "sequence",
+      "lines": [
+        {
+          "speaker": "test_speaker_a",
+          "text": "測試職業 B 一句"
+        }
+      ]
+    },
+    {
+      "id": "test_scene_intro",
+      "kind": "sequence",
+      "lines": [
+        {
+          "speaker": null,
+          "text": "測試章節開場"
+        }
+      ]
+    },
+    {
+      "id": "test_scene_boss_appear",
+      "kind": "sequence",
+      "lines": [
+        {
+          "speaker": "test_speaker_a",
+          "text": "測試 Boss 登場"
+        }
+      ]
+    },
+    {
+      "id": "test_scene_boss_defeat",
+      "kind": "sequence",
+      "lines": [
+        {
+          "speaker": null,
+          "text": "測試擊敗"
+        }
+      ]
+    },
+    {
+      "id": "test_scene_clear",
+      "kind": "sequence",
+      "lines": [
+        {
+          "speaker": null,
+          "text": "測試通關"
+        }
+      ]
+    },
+    {
+      "id": "test_scene_coming_soon",
+      "kind": "sequence",
+      "lines": [
+        {
+          "speaker": null,
+          "text": "測試敬請期待"
+        }
+      ]
+    },
+    {
+      "id": "test_scene_peaceful",
+      "kind": "rotation",
+      "lines": [
+        {
+          "speaker": null,
+          "text": "測試和平一"
+        },
+        {
+          "speaker": null,
+          "text": "測試和平二"
+        }
+      ]
+    },
+    {
+      "id": "test_scene_phase_a",
+      "kind": "sequence",
+      "lines": [
+        {
+          "speaker": "test_speaker_a",
+          "text": "測試階段 A"
+        }
+      ]
+    },
+    {
+      "id": "test_scene_phase_b",
+      "kind": "sequence",
+      "lines": [
+        {
+          "speaker": "test_speaker_a",
+          "text": "測試階段 B"
+        }
+      ]
+    }
+  ]
+}
