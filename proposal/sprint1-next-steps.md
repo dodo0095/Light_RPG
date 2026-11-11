@@ -8,6 +8,8 @@
 - Gate：G0 ✅、G1 ✅、G2 ✅（2026-10-24）；下一關 **G3 測試驗收**，再來 **G5 部署就緒**
 - 任務：T1～T21 全部完成；**T22 正式部署**進行中；**T23 iPhone 實機驗收**未開始
 - 2026-11-11：`rpg.starklab.tw` 回 502（Caddy 正常，`127.0.0.1:5810` 沒在跑）→ 需在部署機重新啟動 `deploy/serve.mjs`，建議同時設定開機自動啟動
+- 2026-11-11：部署機已重新啟動，線上版本 `6788c4f`；iPhone 實機驗收（T23）開始
+- 2026-11-11：老闆回饋「沒有敵人」（Sprint 1 範圍本來就不含戰鬥，屬 Sprint 2）→ 老闆選**方案 B**：14 天試用與 Sprint 2 規劃並行。PM 撰寫 `proposal/sprint2-proposal.md` 送 G0；設計稿待 G0 範圍確定後才開始；G3 照常進行
 - 2026-11-11：已在開發機完成桌機預檢，桌機能確認的項目全部通過，無 Blocker／Major（`docs/acceptance/sprint1-desktop-prescreen.md`）
 - 規格、審查報告、待辦：
   - 開發計畫書：`proposal/sprint1-dev-plan.md`（第 10 節有所有任務、Review、Gate 紀錄）
