@@ -4,7 +4,7 @@
 > **日期**: 2026-10-23
 > **專案**: 晨光之誓
 > **Sprint 提案書**: `proposal/sprint1-proposal.md`
-> **狀態**: G0、G1、G2 通過；進入測試步驟（T22 部署、T23 iPhone 實機驗收 → G3）
+> **狀態**: G0、G1、G2 通過；G3 附條件通過（2026-11-11，D1／D2 隔日補確認）；下一關 G5（待部署機自動啟動）
 > **備註**: 交辦單原定由 project-lead 彙整本計畫書；因跨 Agent 傳訊服務離線、老闆指示繼續執行，由 tech-lead 先產出。project-lead 可直接接手修訂。
 
 ---
@@ -279,8 +279,8 @@ T2 → X6 → T3 ─┬→ T4 ────────────────�
 | T19 | 2026-10-24 | ✅ 完成 | 合併 commit e9a0801 |
 | T20 | 2026-10-24 | ✅ 完成 | commit 464f866；「＋」改開快速新增，G2 確認 |
 | T21 | 2026-10-24 | ✅ 完成 | 找到 lost update bug 並修正（67e2454）|
-| T22 | | | |
-| T23 | | | |
+| T22 | 2026-11-11 | ✅ 完成 | 線上 `6788c4f`；老闆 iPhone 確認全螢幕＋更新提示；發佈／回滾見 `deploy/README.md` |
+| T23 | 2026-11-11 | ✅ 完成 | 老闆回報驗收 OK、無 Critical／High；D1、D2 隔日補確認（G3 附帶條件） |
 
 ### Review 紀錄
 
@@ -291,7 +291,7 @@ T2 → X6 → T3 ─┬→ T4 ────────────────�
 | 實作 Review（G2 第一輪，獨立審查員） | 2026-10-24 | 不通過 | `docs/reviews/sprint1-g2-review-round1.md`（0 Blocker／1 Major：匯入驗證不足／9 Minor） |
 | 實作 Review（G2 第二輪複驗，同一獨立審查員） | 2026-10-24 | 通過 | `docs/reviews/sprint1-g2-review-round2.md`（0 Blocker／0 Major／3 Minor：n1 救援優先下載舊快照→G2 提交前修正；n2 忽略；n3 排 S2 backlog） |
 | G2 後追加修正 Review（B8、B9，tech-lead） | 2026-11-11 | 通過 | 桌機預檢發現 2 Minor（`docs/acceptance/sprint1-desktop-prescreen.md`），frontend-developer 修正；L1 對程式碼＋對規範：0 Blocker／0 Major。lint／typecheck 0 錯誤、Vitest 1340／1340、部署 11／11、build 成功；瀏覽器確認已刪除項目名稱、自訂頻率預填、編輯按鈕標籤（`1f050a4`） |
-| 測試 Review | | | |
+| 測試 Review | 2026-11-11 | 通過 | 對功能：桌機預檢 `docs/acceptance/sprint1-desktop-prescreen.md`（0 Blocker／0 Major，B8、B9 已修）＋老闆 iPhone 實機驗收 OK；自動化 Vitest 1340／1340、部署 11／11（`1f050a4`，之後無程式碼變更） |
 
 ### Gate 紀錄
 
@@ -300,7 +300,7 @@ T2 → X6 → T3 ─┬→ T4 ────────────────�
 | G0 | 2026-10-23 | ✅ 通過 | `proposal/sprint1-proposal.md` |
 | G1 | 2026-10-24 | ✅ 通過 | 老闆審核四頁圖稿 `docs/design/`；區段名稱用 RPG 名稱＋英文小字；換日提示附結算明細；獎勵、設定頁不補圖，沿用今天頁元件（tokens.css） |
 | G2 | 2026-10-24 | ✅ 通過 | 老闆審核：獨立審查員兩輪（第一輪 1 Major 匯入驗證→修正；第二輪 0 Blocker／0 Major），報告 `docs/reviews/sprint1-g2-review-round1.md`、`round2.md`。同時確認：今天頁「＋」改開快速新增（design-director 於 S2 補圖，backlog B4）；刪除任務不收回已得獎勵 |
-| G3 | | | |
+| G3 | 2026-11-11 | ⚠️ 附條件通過 | 老闆 iPhone 實機驗收「OK」，無 Critical／High Bug。條件：D1（隔天換日提示＋扣 HP 明細）、D2（旅館不扣 HP）須 2026-11-12 04:00 後實機補確認，有問題再開 Bug |
 | G5 | | | |
 
 ---
